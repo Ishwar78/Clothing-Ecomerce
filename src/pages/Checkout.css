@@ -1,0 +1,175 @@
+.checkout-page {
+    padding: 45px 28px
+}
+
+.checkout-head {
+    text-align: center;
+    margin-bottom: 30px
+}
+
+.checkout-head h1 {
+    font: 45px Georgia, serif;
+    margin: 10px 0
+}
+
+.checkout-head p {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    color: #766565
+}
+
+.checkout-layout {
+    display: grid;
+    grid-template-columns: 1.3fr .7fr;
+    gap: 25px
+}
+
+.checkout-form {
+    display: grid;
+    gap: 15px
+}
+
+.checkout-card,
+.order-review {
+    background: #fff;
+    border: 1px solid #efddda;
+    border-radius: 12px;
+    padding: 22px
+}
+
+.checkout-card h2,
+.order-review h2 {
+    font: 24px Georgia, serif;
+    margin: 0 0 18px
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px
+}
+
+.field.full {
+    grid-column: 1/-1
+}
+
+.payment-option {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 6px;
+    padding: 13px;
+    background: #fff7f4;
+    border: 1px solid #efdfdb;
+    border-radius: 8px;
+    margin: 9px 0;
+    font-weight: 800
+}
+
+.payment-option span {
+    grid-column: 2;
+    font-size: 12px;
+    font-weight: 400;
+    color: #806e6e
+}
+
+.order-review {
+    height: max-content;
+    position: sticky;
+    top: 15px
+}
+
+.review-item {
+    display: grid;
+    grid-template-columns: 55px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee1de
+}
+
+.review-item img {
+    width: 55px;
+    height: 65px;
+    object-fit: cover;
+    border-radius: 6px
+}
+
+.review-item strong,
+.review-item small {
+    display: block;
+    font-size: 12px
+}
+
+.review-item small {
+    color: #837171;
+    margin-top: 5px
+}
+
+.coupon {
+    display: flex;
+    margin: 20px 0
+}
+
+.coupon div {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    border: 1px solid #e7d8d5;
+    border-radius: 7px 0 0 7px;
+    padding: 0 10px
+}
+
+.coupon input {
+    border: 0;
+    outline: 0;
+    width: 100%;
+    padding: 11px
+}
+
+.coupon button {
+    border: 0;
+    background: #f34b67;
+    color: #fff;
+    padding: 0 15px;
+    border-radius: 0 7px 7px 0
+}
+
+.applied {
+    color: #198754;
+    font-size: 12px
+}
+
+.sum {
+    display: flex;
+    justify-content: space-between;
+    margin: 12px 0
+}
+
+.total {
+    font-size: 20px
+}
+
+.place {
+    width: 100%;
+    margin-top: 10px;
+    padding: 14px
+}
+
+@media(max-width:850px) {
+    .checkout-layout {
+        grid-template-columns: 1fr
+    }
+
+    .order-review {
+        position: static
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr
+    }
+
+    .field.full {
+        grid-column: auto
+    }
+}

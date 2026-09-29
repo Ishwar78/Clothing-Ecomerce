@@ -1,0 +1,79 @@
+.auth-page {
+    min-height: 680px;
+    display: grid;
+    grid-template-columns: 1fr 430px;
+    gap: 50px;
+    align-items: center;
+    padding: 50px max(28px, calc((100% - 1240px)/2));
+    background: radial-gradient(circle at 20% 20%, #ffe1dc, #fffaf8 45%, #ffe9ed)
+}
+
+.auth-visual {
+    min-height: 540px;
+    border-radius: 18px;
+    background: url('https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1200&q=80') center/cover;
+    display: flex;
+    align-items: flex-end;
+    padding: 40px;
+    color: #fff
+}
+
+.auth-visual h1 {
+    font: 52px Georgia, serif;
+    margin: 0
+}
+
+.auth-card {
+    background: #fff;
+    border: 1px solid #f0ddda;
+    border-radius: 18px;
+    padding: 34px;
+    box-shadow: 0 20px 60px #b87a721c
+}
+
+.auth-card h2 {
+    font: 34px Georgia, serif;
+    margin: 0 0 10px
+}
+
+.auth-card>p {
+    color: #786767
+}
+
+.auth-form {
+    display: grid;
+    gap: 15px;
+    margin-top: 20px
+}
+
+.auth-card .submit {
+    width: 100%;
+    padding: 14px
+}
+
+.auth-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+    font-size: 12px
+}
+
+.auth-links a {
+    color: #e84664;
+    font-weight: 800
+}
+
+@media(max-width:800px) {
+    .auth-page {
+        grid-template-columns: 1fr;
+        padding: 25px 16px
+    }
+
+    .auth-visual {
+        min-height: 280px
+    }
+
+    .auth-visual h1 {
+        font-size: 38px
+    }
+}

@@ -1,0 +1,68 @@
+.admin-stat {
+    position: relative
+}
+
+.stat-icon {
+    color: #ed4b65;
+    font-size: 22px;
+    margin-bottom: 8px
+}
+
+.admin-stat small {
+    color: #198754;
+    font-size: 10px
+}
+
+.admin-two-col {
+    display: grid;
+    grid-template-columns: 1.3fr .7fr;
+    gap: 15px;
+    margin-top: 20px
+}
+
+.admin-card h3 {
+    margin: 0 0 18px;
+    font-size: 16px
+}
+
+.bar-row {
+    display: grid;
+    grid-template-columns: 95px 1fr 35px;
+    align-items: center;
+    gap: 8px;
+    margin: 16px 0;
+    font-size: 11px
+}
+
+.bar-row div {
+    height: 8px;
+    background: #f4e8e6;
+    border-radius: 99px;
+    overflow: hidden
+}
+
+.bar-row i {
+    height: 100%;
+    display: block;
+    background: linear-gradient(90deg, #ff6674, #ffad8b);
+    border-radius: 99px
+}
+
+.admin-action-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap
+}
+
+.status-select {
+    border: 1px solid #eadbd8;
+    border-radius: 7px;
+    padding: 6px;
+    background: #fff
+}
+
+@media(max-width:900px) {
+    .admin-two-col {
+        grid-template-columns: 1fr
+    }
+}
