@@ -40,10 +40,4 @@ npm run preview
 - `/admin/contact`
 - `/admin/inquiries`
 
-## Notes
 
-- Product/category content is kept inside page files as requested; there is no `data.js`.
-- `src/lib/api.js` is the single frontend API connector and reads `VITE_API_URL`, defaulting to `http://localhost:6035/api`.
-- Cart and wishlist demo state use `localStorage` until a backend is connected.
-- Product Add modal includes four steps, seven-image upload input, sizes/measurements, rich-text-style editor area, discount type, and SEO fields.
-- Page dimensions, sections and responsive behavior are controlled by each page's own CSS file; `base.css` only contains small global resets/base typography.
