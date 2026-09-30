@@ -7,7 +7,6 @@ import {
     FiSearch,
     FiMenu,
     FiX,
-    FiChevronDown,
     FiTruck,
     FiRefreshCw,
     FiShield
@@ -30,45 +29,133 @@ export default function Navbar() {
     const [open, setOpen] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
+
     const cart = JSON.parse(localStorage.getItem('sbv-cart') || '[]');
     const wishlist = JSON.parse(localStorage.getItem('sbv-wishlist') || '[]');
+
     return (
         <>
             <div className="top-strip">
-                <span><FiTruck /> Free Shipping on Orders Above ₹999</span>
-                <span><FiRefreshCw /> Easy 7 Days Returns</span>
-                <span>◉ COD Available</span>
-                <span><FiShield /> 100% Secure Payments</span>
-                <span className="top-right">Track Order &nbsp; • &nbsp; Help & Support</span>
+                <span>
+                    <FiTruck /> Free Shipping on Orders Above ₹999
+                </span>
+
+                <span>
+                    <FiRefreshCw /> Easy 7 Days Returns
+                </span>
+
+                <span>
+                    ◉ COD Available
+                </span>
+
+                <span>
+                    <FiShield /> 100% Secure Payments
+                </span>
+
+                <span className="top-right">
+                    Track Order &nbsp; • &nbsp; Help & Support
+                </span>
             </div>
+
             <header className="site-header">
                 <div className="header-main container">
-                    <button className="mobile-menu" onClick={() => setOpen(!open)}>{open ? <FiX /> : <FiMenu />}</button>
-                    <div className="brand" onClick={() => navigate('/')}>
-                        <span>✦ SBV ✦</span><small>ss VASTRALAYA</small>
-                        <em>TRADITION MEETS TREND</em>
+
+                    <button
+                        className="mobile-menu"
+                        onClick={() => setOpen(!open)}
+                    >
+                        {open ? <FiX /> : <FiMenu />}
+                    </button>
+
+                    {/* LOGO */}
+                    <div
+                        className="brand"
+                        onClick={() => navigate('/')}
+                    >
+                        <img
+                            src="/assets/logo.png"
+                            alt="SBV Vastralaya"
+                            className="brand-logo"
+                        />
                     </div>
+
+                    {/* SEARCH */}
                     <div className="search-box">
-                        <input placeholder="Search for products, categories, brands..." /><FiSearch />
+                        <input
+                            placeholder="Search for products, categories, brands..."
+                        />
+                        <FiSearch />
                     </div>
+
+                    {/* HEADER ACTIONS */}
                     <div className="header-actions">
-                        <button onClick={() => navigate('/wishlist')}><FiHeart />
+
+                        <button onClick={() => navigate('/wishlist')}>
+                            <FiHeart />
                             <small>Wishlist</small>
                             <b>{wishlist.length}</b>
                         </button>
-                        <button onClick={() => navigate('/login')}><FiUser /><small>Account</small></button>
-                        <button onClick={() => navigate('/cart')}><FiShoppingBag />
+
+                        <button onClick={() => {
+                            if (localStorage.getItem('userToken')) {
+                                navigate('/dashboard');
+                            } else {
+                                navigate('/login');
+                            }
+                        }}>
+                            <FiUser />
+                            <small>Account</small>
+                        </button>
+
+                        <button onClick={() => navigate('/cart')}>
+                            <FiShoppingBag />
                             <small>Cart</small>
                             <b>{cart.length}</b>
                         </button>
+
                     </div>
                 </div>
+
+                {/* NAVIGATION */}
                 <nav className={open ? 'main-nav open' : 'main-nav'}>
-                    <div className="container nav-inner">{categories.map(([n, p]) =>
-                         <button key={p} className={location.pathname === p ? 'active' : ''} onClick={() => { navigate(p); setOpen(false) }}>{n}{!['Sale'].includes(n)}
-                    </button>)}
-                    <button onClick={() => navigate('/new-arrivals')}>NEW ARRIVALS</button>
-                        <button onClick={() => navigate('/sale')}>SALE</button>
+                    <div className="container nav-inner">
+
+                        {categories.map(([n, p]) => (
+                            <button
+                                key={p}
+                                className={
+                                    location.pathname === p
+                                        ? 'active'
+                                        : ''
+                                }
+                                onClick={() => {
+                                    navigate(p);
+                                    setOpen(false);
+                                }}
+                            >
+                                {n}
+                                {!['Sale'].includes(n)}
+                            </button>
+                        ))}
+
+                        <button
+                            onClick={() => {
+                                navigate('/new-arrivals');
+                                setOpen(false);
+                            }}
+                        >
+                            NEW ARRIVALS
+                        </button>
+
+                        <button
+                            onClick={() => {
+                                navigate('/sale');
+                                setOpen(false);
+                            }}
+                        >
+                            SALE
+                        </button>
+
                     </div>
                 </nav>
             </header>

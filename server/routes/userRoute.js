@@ -41,12 +41,12 @@ router.post('/login', async (req, res) => {
         
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ success: false, message: 'Invalid credentials' });
+            return res.status(400).json({ success: false, message: 'Please signup first' });
         }
         
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ success: false, message: 'Invalid credentials' });
+            return res.status(400).json({ success: false, message: 'Incorrect password' });
         }
         
         const token = jwt.sign(
@@ -67,6 +67,17 @@ router.post('/login', async (req, res) => {
         });
     } catch (error) {
         console.error('Login error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Get all users (For Admin Dashboard)
+router.get('/all', async (req, res) => {
+    try {
+        const users = await User.find({}).select('-password').sort({ createdAt: -1 });
+        res.json({ success: true, users });
+    } catch (error) {
+        console.error('Fetch users error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 });

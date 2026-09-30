@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+﻿import React, { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   FiChevronDown,
@@ -118,6 +118,32 @@ const benefits = [
 ];
 
 export default function CategoryPage({ slug: propSlug }) {
+  const [categoriesData, setCategoriesData] = useState([]);
+  React.useEffect(() => {
+    import('../lib/api').then(({ default: api }) => {
+      api.get('/categories').then((res) => {
+        if (res.success) {
+          setCategoriesData(res.categories);
+        }
+      });
+    });
+  }, []);
+  const currentDynamicFilters = React.useMemo(() => {
+    const filters = [
+      {
+        title: "Category",
+        items: categoriesData.length > 0 ? categoriesData.map(c => c.name) : filterData[0].items
+      }
+    ];
+    let s = propSlug || window.location.pathname.replace('/', '');
+    const currentCategory = categoriesData.find(c => c.path === "/" + s || c.path === s || c.name.toLowerCase() === s.toLowerCase());
+    if (currentCategory && currentCategory.subcategories?.length > 0) {
+      filters.push({ title: "Sub Category", items: currentCategory.subcategories });
+    } else {
+      filters.push(filterData[1]);
+    }
+    return filters;
+  }, [categoriesData, propSlug]);
   const params = useParams();
   const slug = propSlug || params.slug;
   const navigate = useNavigate();
@@ -126,103 +152,79 @@ export default function CategoryPage({ slug: propSlug }) {
   const [sort, setSort] = useState("popularity");
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [page, setPage] = useState(1);
+  const [dbProducts, setDbProducts] = useState([]);
+  React.useEffect(() => {
+    import('../lib/api').then(({ default: api }) => {
+      api.get('/products').then(res => res.success && setDbProducts(res.products));
+    });
+  }, []);
 
   const title = categoryMap[slug]?.[0] || "Shop All";
   const totalProducts = categoryMap[slug]?.[1] || "412";
 
+  const normalize = (str) => (str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
   const products = useMemo(() => {
-    let result = [...allProducts];
+    // Combine dbProducts and mock allProducts (prioritize dbProducts)
+    const combined = [
+      ...dbProducts,
+      ...allProducts.filter(ap => !dbProducts.some(dp => dp.name?.toLowerCase().trim() === ap.name?.toLowerCase().trim()))
+    ];
+    let result = combined;
 
-    if (slug === "men") {
-      result = result.filter((item) =>
-        item.category.toLowerCase() === "men's collection" || item.category.toLowerCase() === "men"
-      );
+    if (slug) {
+      const cleanSlug = normalize(slug);
+      result = result.filter((item) => {
+        if (!item.category) return false;
+        const cleanCat = normalize(item.category);
+
+        if (cleanSlug === 'sale') {
+          return item.badge === 'Sale' || item.isSale || (item.originalPrice && item.originalPrice > item.price);
+        }
+        if (cleanSlug === 'newarrivals' || cleanSlug === 'new') {
+          return item.badge === 'New' || item.isNewArrival;
+        }
+
+        return (
+          cleanCat === cleanSlug ||
+          cleanCat.startsWith(cleanSlug) ||
+          cleanSlug.startsWith(cleanCat)
+        );
+      });
     }
 
-    if (slug === "women") {
-      result = result.filter((item) =>
-        item.category.toLowerCase() === "women's collection" || item.category.toLowerCase() === "women"
-      );
+    // Subcategory & Category Checkbox Filtering (from sidebar)
+    if (selectedFilters.length > 0) {
+      result = result.filter((item) => {
+        return selectedFilters.some((filter) => {
+          const cleanFilter = normalize(filter);
+          const cleanSub = normalize(item.subcategory);
+          const cleanCat = normalize(item.category);
+          const cleanName = normalize(item.name);
+          return (
+            cleanSub === cleanFilter ||
+            cleanCat === cleanFilter ||
+            cleanName.includes(cleanFilter)
+          );
+        });
+      });
     }
 
-    if (slug === "boys") {
-      result = result.filter((item) =>
-        item.category.toLowerCase().includes("boys")
-      );
-    }
-
-    if (slug === "girls") {
-      result = result.filter((item) =>
-        item.category.toLowerCase().includes("girls")
-      );
-    }
-
-    if (slug === "ethnic-wear") {
-      result = result.filter((item) => item.category === "Ethnic Wear");
-    }
-
-    if (slug === "footwear") {
-      result = [
-        {
-          ...allProducts[0],
-          id: 101,
-          name: "Premium Sneakers",
-          category: "Footwear",
-        },
-        {
-          ...allProducts[5],
-          id: 102,
-          name: "Classic Sneakers",
-          category: "Footwear",
-        },
-        ...result,
-      ];
-    }
-
-    if (slug === "accessories") {
-      result = [
-        {
-          ...allProducts[0],
-          id: 103,
-          name: "Classic Handbag",
-          category: "Accessories",
-        },
-        {
-          ...allProducts[3],
-          id: 104,
-          name: "Premium Watch",
-          category: "Accessories",
-        },
-        ...result,
-      ];
-    }
-
-    if (slug === "sale") {
-      result = result.filter((item) => item.badge !== "New");
-    }
-
-    if (slug === "new-arrivals") {
-      result = result.filter((item) => item.badge === "New");
-    }
-
+    // Sorting
     if (sort === "low") {
-      result.sort((a, b) => a.price - b.price);
-    }
-
-    if (sort === "high") {
-      result.sort((a, b) => b.price - a.price);
-    }
-
-    if (sort === "newest") {
+      result.sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0));
+    } else if (sort === "high") {
+      result.sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0));
+    } else if (sort === "newest") {
       result.sort((a, b) => {
-        if (a.badge === "New" && b.badge !== "New") return -1;
-        if (a.badge !== "New" && b.badge === "New") return 1;
+        if ((a.badge === "New" || a.isNewArrival) && !(b.badge === "New" || b.isNewArrival)) return -1;
+        if (!(a.badge === "New" || a.isNewArrival) && (b.badge === "New" || b.isNewArrival)) return 1;
         return 0;
       });
     }
 
     return result;
-  }, [slug, sort]);
+  }, [slug, sort, selectedFilters, dbProducts]);
 
   const toggleFilter = (value) => {
     setSelectedFilters((current) =>
@@ -301,7 +303,7 @@ export default function CategoryPage({ slug: propSlug }) {
       {/* ================= CATEGORY STRIP ================= */}
       <section className="category-circle-section">
         <div className="category-circle-container">
-          {categories.map((category, index) => (
+          {(categoriesData.length > 0 ? categoriesData : categories).map((category, index) => (
             <button
               type="button"
               key={category.path}
@@ -356,7 +358,7 @@ export default function CategoryPage({ slug: propSlug }) {
             </button>
           </div>
 
-          {filterData.map((group) => (
+          {currentDynamicFilters.map((group) => (
             <div className="filter-group" key={group.title}>
               <div className="filter-group-title">
                 <h4>{group.title}</h4>
@@ -518,14 +520,14 @@ export default function CategoryPage({ slug: propSlug }) {
             {products.map((product) => (
               <article
                 className="category-product-card"
-                key={product.id}
-                onClick={() => navigate('/product/' + product.id)}
+                key={product._id || product.id}
+                onClick={() => navigate('/product/' + (product._id || product.id))}
                 style={{ cursor: 'pointer' }}
               >
                 <div className="category-product-image">
 
                   <img
-                    src={product.image}
+                    src={product.images?.[0] || product.image || '/assets/mencategory1.png'} onError={(e) => { e.target.src = '/assets/mencategory1.png'; }}
                     alt={product.name}
                     loading="lazy"
                   />
@@ -561,12 +563,14 @@ export default function CategoryPage({ slug: propSlug }) {
 
                   <div className="product-price">
                     <strong>
-                      ₹{product.price.toLocaleString("en-IN")}
+                      ₹{Number(product.price || 0).toLocaleString("en-IN")}
                     </strong>
 
-                    <del>
-                      ₹{product.mrp.toLocaleString("en-IN")}
-                    </del>
+                    {Number(product.originalPrice || product.mrp || 0) > Number(product.price || 0) && (
+                      <del>
+                        ₹{Number(product.originalPrice || product.mrp).toLocaleString("en-IN")}
+                      </del>
+                    )}
                   </div>
 
                   <div className="product-card-actions">

@@ -92,12 +92,40 @@ export default function ProductDetails() {
   const { id } = useParams();
   const nav = useNavigate();
   
-  const foundProduct = allProducts.find(p => p.id === parseInt(id));
+  const [dbProduct, setDbProduct] = useState(null);
+  const [dbRelated, setDbRelated] = useState([]);
+  useEffect(() => {
+    import('../lib/api').then(({default: api}) => {
+      api.get('/products').then(res => {
+        if(res.success) {
+           const p = res.products.find(x => x._id === id || String(x.id) === String(id));
+           if (p) setDbProduct(p);
+           setDbRelated(res.products.filter(x => x._id !== id).slice(0, 4));
+        }
+      });
+    });
+  }, [id]);
+  const foundProduct = dbProduct || allProducts.find(p => String(p._id || p.id) === String(id));
+
+  const mainImage = foundProduct?.images?.[0] || foundProduct?.image || defaultProduct.image;
+  const productThumbs = foundProduct?.images && foundProduct.images.length > 0
+    ? foundProduct.images
+    : (foundProduct?.image ? [foundProduct.image, ...defaultProduct.thumbs.slice(1)] : defaultProduct.thumbs);
+
+  const productPrice = Number(foundProduct?.price || defaultProduct.price);
+  const productMrp = Number(foundProduct?.originalPrice || foundProduct?.mrp || defaultProduct.mrp);
+  const discountStr = productMrp > productPrice
+    ? Math.round(((productMrp - productPrice) / productMrp) * 100) + "% OFF"
+    : "Special Price";
+
   const product = foundProduct ? {
     ...defaultProduct,
     ...foundProduct,
-    discount: Math.round(((foundProduct.mrp - foundProduct.price) / foundProduct.mrp) * 100) + "% OFF",
-    thumbs: [foundProduct.image, ...defaultProduct.thumbs.slice(1)]
+    image: mainImage,
+    thumbs: productThumbs,
+    price: productPrice,
+    mrp: productMrp,
+    discount: discountStr
   } : defaultProduct;
 
   const [img, setImg] = useState(product.image);

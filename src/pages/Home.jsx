@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import api from "../lib/api";
 import {
   FiArrowRight,
   FiHeart,
@@ -169,7 +170,7 @@ const slides = [
   },
 ];
 
-const categories = [
+const initialCategories = [
   {
     name: "Men",
     path: "/men",
@@ -280,6 +281,16 @@ function SectionHeading({ title, subtitle }) {
 }
 
 export default function Home() {
+  const [categories, setCategories] = useState(initialCategories);
+  const [dbProducts, setDbProducts] = useState([]);
+  
+  useEffect(() => {
+    api.get('/categories').then(res => {
+      if (res.success && res.categories.length > 0) {
+        setCategories(res.categories);
+      }
+    });
+  }, []);
   const navigate = useNavigate();
 
   const [slide, setSlide] = useState(0);
@@ -543,8 +554,8 @@ export default function Home() {
           />
 
           <div className="home-products-grid">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {(dbProducts.length > 0 ? dbProducts.filter(p => p.isNewArrival) : products).map((product) => (
+              <ProductCard key={product._id || product.id} product={product} />
             ))}
           </div>
         </div>
@@ -652,8 +663,8 @@ export default function Home() {
           </div>
 
           <div className="home-products-grid">
-            {filteredTrending.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {(dbProducts.length > 0 ? dbProducts.filter(p => p.isTrending) : filteredTrending).map((product) => (
+              <ProductCard key={product._id || product.id} product={product} />
             ))}
           </div>
         </div>

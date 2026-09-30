@@ -40,7 +40,7 @@ export function AdminLayout({ children }) {
         </aside><div className="admin-main">
             <header className="admin-top">
                 <button className="admin-menu" onClick={() => setOpen(!open)}>{open ? <FiX /> : <FiMenu />}</button>
-                <div><h1>Shree Balaji Vastralaya</h1>
+                <div><h1>S S Vastralaya</h1>
                     <p>Store Administration</p>
                 </div><div className="admin-user">Admin <span>SB</span>
                 </div>

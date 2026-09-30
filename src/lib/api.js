@@ -40,6 +40,22 @@ export const api = {
     request(path, {
       method: "DELETE",
     }),
+
+  upload: async (path, file) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    const res = await fetch(`${API_URL}${path}`, {
+      method: 'POST',
+      body: formData
+      // Note: Do not set Content-Type for FormData, fetch does it automatically with the boundary
+    });
+    
+    if (!res.ok) {
+      throw new Error(`API upload failed: ${res.status}`);
+    }
+    return res.json();
+  }
 };
 
 export default api;

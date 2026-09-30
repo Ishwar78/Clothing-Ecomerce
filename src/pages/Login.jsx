@@ -19,12 +19,30 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!email || !password) return;
 
-        nav('/dashboard');
+        setLoading(true);
+        setError('');
+        
+        try {
+            const api = (await import('../lib/api')).default;
+            const res = await api.post('/users/login', { email, password });
+            
+            if (res.success) {
+                localStorage.setItem('userToken', res.token);
+                localStorage.setItem('userData', JSON.stringify(res.user));
+                nav('/dashboard');
+            } else {
+                setError(res.message || 'Login failed');
+            }
+        } catch (err) {
+            setError(err.message || 'An error occurred during login');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (

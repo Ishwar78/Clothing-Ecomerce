@@ -8,13 +8,18 @@ dns.setServers([
 require('dotenv').config();
 
 const express = require('express');
+const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 
 const authRoute = require('./routes/authRoute');
 const userRoute = require('./routes/userRoute');
+const categoryRoute = require('./routes/categoryRoute');
+const productRoute = require('./routes/productRoute');
+const uploadRoute = require('./routes/uploadRoute');
 const Admin = require('./models/Admin');
+const Category = require('./models/Category');
 
 const app = express();
 
@@ -22,11 +27,17 @@ const PORT = process.env.PORT || 5035;
 const MONGODB_URL = process.env.MONGODB_URL;
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' })); // Support base64 images
+
+// Serve uploads folder statically
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/auth', authRoute);
 app.use('/api/users', userRoute);
+app.use('/api/categories', categoryRoute);
+app.use('/api/products', productRoute);
+app.use('/api/upload', uploadRoute);
 
 // MongoDB Connection
 async function connectDB() {
@@ -71,6 +82,24 @@ async function connectDB() {
             );
         } else {
             console.log('Admin already exists');
+        }
+
+        // Seed Categories if empty
+        const categoryCount = await Category.countDocuments();
+        if (categoryCount === 0) {
+            console.log('Seeding initial categories...');
+            const initialCategories = [
+                { name: 'Men', path: '/men', image: '/assets/mencategory1.png', subcategories: [] },
+                { name: 'Women', path: '/women', image: '/assets/women.png', subcategories: [] },
+                { name: 'Boys', path: '/boys', image: '/assets/boys.png', subcategories: [] },
+                { name: 'Girls', path: '/girls', image: '/assets/girls.png', subcategories: [] },
+                { name: 'Ethnic Wear', path: '/ethnic-wear', image: '/assets/ethnic.png', subcategories: [] },
+                { name: 'Footwear', path: '/footwear', image: '/assets/footwears.png', subcategories: [] },
+                { name: 'Accessories', path: '/accessories', image: '/assets/accso.png', subcategories: [] },
+                { name: 'Sale', path: '/sale', image: '/assets/sale.png', subcategories: [] }
+            ];
+            await Category.insertMany(initialCategories);
+            console.log('Categories seeded successfully');
         }
 
     } catch (error) {

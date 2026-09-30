@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import api from '../../lib/api';
 import {
   FiPlus,
   FiEdit2,
@@ -62,7 +63,15 @@ const initialCategories = [
 ];
 
 export default function Categories() {
-  const [categories, setCategories] = useState(initialCategories);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  React.useEffect(() => {
+    api.get('/categories').then(res => {
+      if (res.success) setCategories(res.categories.map(c => ({...c, id: c._id})));
+      setLoading(false);
+    });
+  }, []);
 
   const [categoryModal, setCategoryModal] = useState(false);
   const [subcategoryModal, setSubcategoryModal] = useState(false);
@@ -72,6 +81,7 @@ export default function Categories() {
 
   const [categoryName, setCategoryName] = useState('');
   const [categoryImage, setCategoryImage] = useState('');
+  const [categoryImageFile, setCategoryImageFile] = useState(null);
 
   const [subcategoryName, setSubcategoryName] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
@@ -108,6 +118,7 @@ export default function Categories() {
   // =========================
 
   const handleCategoryImage = (e) => {
+    setCategoryImageFile(e.target.files?.[0] || null);
     const file = e.target.files?.[0];
 
     if (!file) return;
@@ -130,7 +141,7 @@ export default function Categories() {
   // SAVE CATEGORY
   // =========================
 
-  const saveCategory = () => {
+  const saveCategory = async () => {
     const trimmedName = categoryName.trim();
 
     if (!trimmedName) {
@@ -138,37 +149,35 @@ export default function Categories() {
       return;
     }
 
-    if (editingCategoryId) {
-      setCategories((prev) =>
-        prev.map((category) =>
-          category.id === editingCategoryId
-            ? {
-                ...category,
-                name: trimmedName,
-                image: categoryImage
-              }
-            : category
-        )
-      );
-    } else {
-      const newCategory = {
-        id: Date.now(),
-        name: trimmedName,
-        image: categoryImage,
-        subcategories: []
-      };
-
-      setCategories((prev) => [...prev, newCategory]);
+    let finalImageUrl = categoryImage;
+    if (categoryImageFile) {
+      try {
+        const uploadRes = await api.upload('/upload', categoryImageFile);
+        if (uploadRes.success) { finalImageUrl = uploadRes.imageUrl; }
+      } catch (err) { alert('Error uploading image'); return; }
     }
-
-    closeCategoryModal();
+    
+    try {
+      if (editingCategoryId) {
+        const res = await api.put('/categories/' + editingCategoryId, { name: trimmedName, image: finalImageUrl });
+        if (res.success) {
+          setCategories(prev => prev.map(c => c.id === editingCategoryId ? {...res.category, id: res.category._id} : c));
+        }
+      } else {
+        const res = await api.post('/categories', { name: trimmedName, image: finalImageUrl, subcategories: [] });
+        if (res.success) {
+          setCategories(prev => [...prev, {...res.category, id: res.category._id}]);
+        }
+      }
+      closeCategoryModal();
+    } catch (err) { alert('Failed to save category'); }
   };
 
   // =========================
   // DELETE CATEGORY
   // =========================
 
-  const deleteCategory = (id) => {
+  const deleteCategory = async (id) => {
     const category = categories.find((item) => item.id === id);
 
     if (!category) return;
@@ -179,11 +188,13 @@ export default function Categories() {
 
     if (!confirmed) return;
 
-    setCategories((prev) => prev.filter((item) => item.id !== id));
-
-    setExpandedCategories((prev) =>
-      prev.filter((categoryId) => categoryId !== id)
-    );
+    try {
+      await api.delete('/categories/' + id);
+      setCategories((prev) => prev.filter((item) => item.id !== id));
+      setExpandedCategories((prev) => prev.filter((categoryId) => categoryId !== id));
+    } catch (err) {
+      alert('Failed to delete category');
+    }
   };
 
   // =========================
@@ -215,7 +226,7 @@ export default function Categories() {
   // SAVE SUBCATEGORY
   // =========================
 
-  const saveSubcategory = () => {
+  const saveSubcategory = async () => {
     const trimmedName = subcategoryName.trim();
 
     if (!trimmedName) {
@@ -223,69 +234,55 @@ export default function Categories() {
       return;
     }
 
-    setCategories((prev) =>
-      prev.map((category) => {
-        if (category.id !== selectedCategoryId) {
-          return category;
-        }
+    const category = categories.find(c => c.id === selectedCategoryId);
+    if (!category) return;
 
-        const subcategories = [...category.subcategories];
+    const subcategories = [...(category.subcategories || [])];
+    if (editingSubcategoryIndex !== null) {
+      subcategories[editingSubcategoryIndex] = trimmedName;
+    } else {
+      subcategories.push(trimmedName);
+    }
 
-        if (editingSubcategoryIndex !== null) {
-          subcategories[editingSubcategoryIndex] = trimmedName;
-        } else {
-          subcategories.push(trimmedName);
-        }
-
-        return {
-          ...category,
-          subcategories
-        };
-      })
-    );
-
-    setExpandedCategories((prev) =>
-      prev.includes(selectedCategoryId)
-        ? prev
-        : [...prev, selectedCategoryId]
-    );
-
-    closeSubcategoryModal();
+    try {
+      await api.put('/categories/' + selectedCategoryId, { ...category, subcategories });
+      setCategories((prev) =>
+        prev.map((c) => (c.id === selectedCategoryId ? { ...c, subcategories } : c))
+      );
+      setExpandedCategories((prev) =>
+        prev.includes(selectedCategoryId) ? prev : [...prev, selectedCategoryId]
+      );
+      closeSubcategoryModal();
+    } catch (err) {
+      alert('Failed to save subcategory');
+    }
   };
 
   // =========================
   // DELETE SUBCATEGORY
   // =========================
 
-  const deleteSubcategory = (categoryId, index) => {
-    const category = categories.find(
-      (item) => item.id === categoryId
-    );
-
+  const deleteSubcategory = async (categoryId, index) => {
+    const category = categories.find((item) => item.id === categoryId);
     if (!category) return;
 
     const subcategory = category.subcategories[index];
-
-    const confirmed = window.confirm(
-      `Delete "${subcategory}" subcategory?`
-    );
-
+    const confirmed = window.confirm(`Delete "${subcategory}" subcategory?`);
     if (!confirmed) return;
 
-    setCategories((prev) =>
-      prev.map((item) => {
-        if (item.id !== categoryId) {
-          return item;
-        }
-
-        return {
-          ...item,
-          subcategories: item.subcategories.filter(
-            (_, subIndex) => subIndex !== index
-          )
-        };
-      })
-    );
+    const updatedSubcategories = category.subcategories.filter((_, subIndex) => subIndex !== index);
+    
+    try {
+      await api.put('/categories/' + categoryId, { ...category, subcategories: updatedSubcategories });
+      setCategories((prev) =>
+        prev.map((item) => {
+          if (item.id !== categoryId) return item;
+          return { ...item, subcategories: updatedSubcategories };
+        })
+      );
+    } catch (err) {
+      alert('Failed to delete subcategory');
+    }
   };
 
   // =========================

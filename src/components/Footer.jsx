@@ -89,6 +89,7 @@ export default function Footer() {
                 <div className="footer-benefits container">
                     {benefits.map((item, index) => (
                         <div className="footer-benefit" key={index}>
+
                             <div className="footer-benefit-icon">
                                 {item.icon}
                             </div>
@@ -97,12 +98,11 @@ export default function Footer() {
                                 <strong>{item.title}</strong>
                                 <small>{item.text}</small>
                             </div>
+
                         </div>
                     ))}
                 </div>
             </section>
-
-         
 
             {/* ================= MAIN FOOTER ================= */}
             <section className="footer-main-wrap">
@@ -112,9 +112,11 @@ export default function Footer() {
                     <div className="footer-brand-column">
 
                         <Link to="/" className="footer-brand-logo">
-                            <span>✦ SBV ✦</span>
-                            <strong> VASTRALAYA</strong>
-                            <small>TRADITION MEETS TREND</small>
+                            <img
+                                src="/assets/logo.png"
+                                alt="SBV Vastralaya"
+                                className="footer-logo-image"
+                            />
                         </Link>
 
                         <p className="footer-brand-description">
@@ -123,6 +125,7 @@ export default function Footer() {
                         </p>
 
                         <div className="footer-social">
+
                             <a href="#" aria-label="Facebook">
                                 <FiFacebook />
                             </a>
@@ -134,9 +137,9 @@ export default function Footer() {
                             <a href="#" aria-label="Youtube">
                                 <FiYoutube />
                             </a>
+
                         </div>
 
-                    
                     </div>
 
                     {/* SHOP */}
@@ -194,6 +197,7 @@ export default function Footer() {
 
                                 <div>
                                     <small>Customer Care</small>
+
                                     <a href="tel:+919876543210">
                                         +91 98765 43210
                                     </a>
@@ -207,6 +211,7 @@ export default function Footer() {
 
                                 <div>
                                     <small>Email</small>
+
                                     <a href="mailto:hello@sbvstore.in">
                                         hello@sbvstore.in
                                     </a>
@@ -220,7 +225,10 @@ export default function Footer() {
 
                                 <div>
                                     <small>Store Location</small>
-                                    <span>Rohtak, Haryana</span>
+
+                                    <span>
+                                        Rohtak, Haryana
+                                    </span>
                                 </div>
                             </div>
 
@@ -240,20 +248,32 @@ export default function Footer() {
                     </p>
 
                     <div className="footer-bottom-links">
-                        <Link to="/privacy-policy">Privacy</Link>
+                        <Link to="/privacy-policy">
+                            Privacy
+                        </Link>
+
                         <span>•</span>
-                        <Link to="/term-&-condition">Terms</Link>
+
+                        <Link to="/term-&-condition">
+                            Terms
+                        </Link>
+
                         <span>•</span>
-                        <Link to="/support">Support</Link>
+
+                        <Link to="/support">
+                            Support
+                        </Link>
                     </div>
 
-                    {/* <button
+                    {/* 
+                    <button
                         className="footer-top-btn"
                         onClick={scrollTop}
                         aria-label="Back to top"
                     >
                         <FiArrowUpRight />
-                    </button> */}
+                    </button>
+                    */}
 
                 </div>
             </section>

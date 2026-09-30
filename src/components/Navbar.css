@@ -7,21 +7,21 @@
     gap: 28px;
     padding: 0 28px;
     font-size: 14px;
-    color: #030303
+    color: #030303;
 }
 
 .top-strip span {
     display: flex;
     align-items: center;
-    gap: 6px
+    gap: 6px;
 }
 
 .top-strip svg {
-    color: #f34c69
+    color: #f34c69;
 }
 
 .top-right {
-    margin-left: auto
+    margin-left: auto;
 }
 
 .site-header {
@@ -35,39 +35,35 @@
     height: 82px;
     display: flex;
     align-items: center;
-    gap: 38px
+    gap: 38px;
 }
+
+/* =========================
+   BRAND / LOGO
+========================= */
 
 .brand {
     width: 185px;
-    text-align: center;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    line-height: 1
+    flex-shrink: 0;
 }
 
-.brand span {
-    font-family: Georgia, serif;
-    color: #ed4962;
-    font-size: 24px;
-    display: block
-}
-
-.brand small {
+.brand-logo {
+    width: 175px;
+    max-width: 100%;
+    height: auto;
+    max-height: 68px;
+    object-fit: contain;
     display: block;
-    font-size: 11px;
-    letter-spacing: 1.4px;
-    font-weight: 800;
-    margin-top: 4px
 }
 
-.brand em {
-    display: block;
-    font-size: 11px;
-    letter-spacing: 2px;
-    color: #9d8c8c;
-    font-style: normal;
-    margin-top: 5px
-}
+/* =========================
+   SEARCH
+========================= */
 
 .search-box {
     height: 44px;
@@ -79,7 +75,7 @@
     flex: 1;
     max-width: 620px;
     margin: auto;
-    border:1px solid #110d11;
+    border: 1px solid #110d11;
 }
 
 .search-box input {
@@ -90,13 +86,22 @@
     font-size: 17px;
 }
 
-.search-box svg {
-    color: #e74662
+.search-box input::placeholder {
+    color: #706969;
 }
+
+.search-box svg {
+    color: #e74662;
+    flex-shrink: 0;
+}
+
+/* =========================
+   HEADER ACTIONS
+========================= */
 
 .header-actions {
     display: flex;
-    gap: 18px
+    gap: 18px;
 }
 
 .header-actions button {
@@ -107,16 +112,17 @@
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    color: #332b2b
+    color: #332b2b;
+    cursor: pointer;
 }
 
 .header-actions svg {
     font-size: 24px;
-    color: #ec4c66
+    color: #ec4c66;
 }
 
 .header-actions small {
-    font-size: 14px
+    font-size: 14px;
 }
 
 .header-actions b {
@@ -130,20 +136,29 @@
     height: 16px;
     font-size: 9px;
     display: grid;
-    place-items: center
+    place-items: center;
 }
+
+/* =========================
+   MOBILE MENU
+========================= */
 
 .mobile-menu {
     display: none;
     border: 0;
     background: none;
-    font-size: 23px
+    font-size: 23px;
+    cursor: pointer;
 }
+
+/* =========================
+   NAVIGATION
+========================= */
 
 .main-nav {
     border-top: 1px solid #f1dfdb;
     border-bottom: 1px solid #efdeda;
-    background: #fff
+    background: #fff;
 }
 
 .nav-inner {
@@ -151,7 +166,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 30px
+    gap: 30px;
 }
 
 .nav-inner button {
@@ -162,74 +177,75 @@
     color: #110d0d;
     display: flex;
     align-items: center;
-    gap: 3px
+    gap: 3px;
+    cursor: pointer;
+    white-space: nowrap;
 }
 
 .nav-inner button svg {
-    font-size: 11px
+    font-size: 11px;
 }
 
 .nav-inner button:hover,
 .nav-inner button.active {
-    color: #ed4764
+    color: #ed4764;
 }
 
-@media(max-width:850px) {
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 850px) {
+
     .top-strip {
         gap: 12px;
         overflow: hidden;
         white-space: nowrap;
-        padding: 0 12px
+        padding: 0 12px;
     }
 
     .top-strip span:nth-child(n+3) {
-        display: none
+        display: none;
     }
 
     .header-main {
         height: 70px;
-        gap: 12px
+        gap: 12px;
     }
 
     .mobile-menu {
-        display: block
+        display: block;
     }
 
     .brand {
-        width: 150px
+        width: 145px;
+        height: 60px;
     }
 
-    .brand span {
-        font-size: 20px
-    }
-
-    .brand small {
-        font-size: 8px
-    }
-
-    .brand em {
-        font-size: 10px
+    .brand-logo {
+        width: 140px;
+        max-height: 55px;
     }
 
     .search-box {
-        display: none
+        display: none;
     }
 
     .header-actions {
         margin-left: auto;
-        gap: 10px
+        gap: 10px;
     }
 
     .header-actions small {
-        display: none
+        display: none;
     }
 
     .main-nav {
-        display: none
+        display: none;
     }
 
     .main-nav.open {
-        display: block
+        display: block;
     }
 
     .nav-inner {
@@ -237,11 +253,11 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         padding: 12px 15px;
-        gap: 5px
+        gap: 5px;
     }
 
     .nav-inner button {
         padding: 10px;
-        border-bottom: 1px solid #f2e6e4
+        border-bottom: 1px solid #f2e6e4;
     }
 }

@@ -1,8 +1,10 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
+import api from '../../lib/api';
 import {
   FiPlus,
   FiEdit2,
   FiTrash2,
+  FiEye,
   FiSearch,
   FiUpload,
   FiChevronLeft,
@@ -82,7 +84,14 @@ const initialForm = {
 export default function Products() {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(1);
-  const [products, setProducts] = useState(seed);
+  const [products, setProducts] = useState([]);
+  const [dbCategories, setDbCategories] = useState([]);
+  const [editingProductId, setEditingProductId] = useState(null);
+
+  useEffect(() => {
+    api.get('/products').then(res => res.success && setProducts(res.products));
+    api.get('/categories').then(res => res.success && setDbCategories(res.categories));
+  }, []);
   const [files, setFiles] = useState([]);
 
   const [form, setForm] = useState(initialForm);
@@ -339,6 +348,7 @@ export default function Products() {
 
     setFiles([]);
     setStep(1);
+    setEditingProductId(null);
     setOpen(true);
   };
 
@@ -346,38 +356,115 @@ export default function Products() {
   // SUBMIT
   // =========================================
 
-  const submit = () => {
+  
+  const handleEditProduct = (p) => {
+    setEditingProductId(p._id);
+    const orig = Number(p.originalPrice) || Number(p.price) || 0;
+    const curr = Number(p.price) || 0;
+    const disc = (orig > curr && orig > 0) ? Math.round(((orig - curr) / orig) * 100) : '';
+
+    setForm({
+      ...initialForm,
+      name: p.name || '',
+      category: p.category || '',
+      subcategory: p.subcategory || '',
+      status: p.inStock ? 'Active' : 'Inactive',
+      best: !!p.isTrending,
+      new: !!p.isNewArrival,
+      price: orig ? String(orig) : (curr ? String(curr) : ''),
+      discount: disc ? String(disc) : '',
+      seoDescription: p.description || '',
+      sizes: p.sizes || [],
+      highlights: p.highlights && p.highlights.length > 0 ? p.highlights : [''],
+      faqs: p.faqs && p.faqs.length > 0 ? p.faqs : [{ question: '', answer: '' }],
+      specifications: p.specifications && p.specifications.length > 0 ? p.specifications : [{ key: '', value: '' }]
+    });
+
+    setFiles(p.images || []);
+    setStep(1);
+    setOpen(true);
+  };
+
+  const submit = async () => {
     if (!form.name.trim()) {
       alert('Please enter product name.');
       setStep(1);
       return;
     }
-
     if (!form.category) {
       alert('Please select category.');
       setStep(1);
       return;
     }
 
-    const newProduct = [
-      'P-' + (1000 + products.length + 1),
-      form.name,
-      form.category,
-      '₹' +
-        Number(sellingPrice).toLocaleString('en-IN'),
-      form.status,
-      form.best ? 'Yes' : 'No',
-      form.new ? 'Yes' : 'No'
-    ];
+    try {
+      // 1. Upload new image files (skip URLs already uploaded)
+      const uploadedImages = [];
+      for (const file of files) {
+        if (typeof file === 'object' && file instanceof File) {
+          const res = await api.upload('/upload', file);
+          if (res.success) uploadedImages.push(res.imageUrl);
+        } else if (typeof file === 'string') {
+          uploadedImages.push(file);
+        }
+      }
 
-    setProducts((prev) => [
-      ...prev,
-      newProduct
-    ]);
+      // 2. Prepare payload
+      const payload = {
+        name: form.name.trim(),
+        description: form.seoDescription || 'Premium quality product',
+        price: Number(sellingPrice) || Number(form.price) || 0,
+        originalPrice: Number(form.price) || Number(sellingPrice) || 0,
+        category: form.category,
+        subcategory: form.subcategory,
+        images: uploadedImages,
+        isNewArrival: form.new,
+        isTrending: form.best,
+        inStock: form.status === 'Active'
+      };
 
-    setOpen(false);
-    setStep(1);
+      if (editingProductId) {
+        const res = await api.put('/products/' + editingProductId, payload);
+        if (res.success) {
+          setProducts(prev => prev.map(p => p._id === editingProductId ? res.product : p));
+          setOpen(false);
+          setStep(1);
+          setFiles([]);
+          setEditingProductId(null);
+          alert('Product updated successfully!');
+        } else {
+          alert(res.message || 'Failed to update product');
+        }
+      } else {
+        const res = await api.post('/products', payload);
+        if (res.success) {
+          setProducts(prev => [res.product, ...prev]);
+          setOpen(false);
+          setStep(1);
+          setFiles([]);
+          setEditingProductId(null);
+          alert('Product added successfully!');
+        } else {
+          alert(res.message || 'Failed to save product');
+        }
+      }
+    } catch (err) {
+      alert('Failed to save product');
+      console.error(err);
+    }
   };
+
+  const deleteProduct = async (id) => {
+    if (!window.confirm('Delete product?')) return;
+    try {
+      await api.delete('/products/' + id);
+      setProducts(prev => prev.filter(p => p._id !== id));
+      alert('Product deleted successfully');
+    } catch(err) {
+      alert('Error deleting product');
+    }
+  };
+
 
   return (
     <div className="products-page">
@@ -446,72 +533,69 @@ export default function Products() {
       <div className="admin-card product-table-card">
 
         <table className="admin-table">
-
           <thead>
             <tr>
-              <th>ID</th>
+              <th>Image</th>
               <th>Product</th>
               <th>Category</th>
+              <th>Subcategory</th>
               <th>Price</th>
               <th>Status</th>
-              <th>Best Seller</th>
+              <th>Trending</th>
               <th>New Arrival</th>
               <th>Actions</th>
             </tr>
           </thead>
-
           <tbody>
-
-            {products.map((row, index) => (
-              <tr key={row[0]}>
-
-                {row.map((cell, j) => (
-                  <td key={j}>
-
-                    {j === 4 ? (
-                      <span
-                        className={
-                          'admin-badge ' +
-                          (cell === 'Inactive'
-                            ? 'warn'
-                            : '')
-                        }
-                      >
-                        {cell}
-                      </span>
-                    ) : (
-                      cell
-                    )}
-
-                  </td>
-                ))}
-
+            {products.map((p, index) => (
+              <tr key={p._id || index}>
                 <td>
-
-                  <button className="icon-btn">
-                    <FiEdit2 />
-                  </button>
-
-                  <button
-                    className="icon-btn danger"
-                    onClick={() =>
-                      setProducts(
-                        products.filter(
-                          (_, i) => i !== index
-                        )
-                      )
-                    }
-                  >
-                    <FiTrash2 />
-                  </button>
-
+                  {p.images && p.images[0] ? (
+                    <img src={p.images[0]} style={{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'cover' }} alt="" />
+                  ) : '-'}
                 </td>
-
+                <td>{p.name}</td>
+                <td>{p.category}</td>
+                <td>{p.subcategory || '-'}</td>
+                <td>₹{Number(p.price || 0).toLocaleString('en-IN')}</td>
+                <td>
+                  <span className={'admin-badge ' + (!p.inStock ? 'warn' : '')}>
+                    {p.inStock ? 'Active' : 'Inactive'}
+                  </span>
+                </td>
+                <td>{p.isTrending ? 'Yes' : 'No'}</td>
+                <td>{p.isNewArrival ? 'Yes' : 'No'}</td>
+                <td>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <button
+                      type="button"
+                      className="icon-btn"
+                      title="View Product on Store"
+                      onClick={() => window.open('/product/' + (p._id || p.id), '_blank')}
+                    >
+                      <FiEye />
+                    </button>
+                    <button
+                      type="button"
+                      className="icon-btn"
+                      title="Edit Product"
+                      onClick={() => handleEditProduct(p)}
+                    >
+                      <FiEdit2 />
+                    </button>
+                    <button
+                      type="button"
+                      className="icon-btn danger"
+                      title="Delete Product"
+                      onClick={() => deleteProduct(p._id)}
+                    >
+                      <FiTrash2 />
+                    </button>
+                  </div>
+                </td>
               </tr>
             ))}
-
           </tbody>
-
         </table>
 
       </div>
@@ -531,7 +615,7 @@ export default function Products() {
             <div className="modal-head">
 
               <div>
-                <h3>Add Product</h3>
+                <h3>{editingProductId ? 'Edit Product' : 'Add Product'}</h3>
 
                 <p>
                   Step {step} of 4
@@ -617,27 +701,12 @@ export default function Products() {
                       Category
                     </label>
 
-                    <select
-                      value={form.category}
-                      onChange={(e) =>
-                        handleCategoryChange(
-                          e.target.value
-                        )
-                      }
-                    >
-
-                      {Object.keys(
-                        categoryData
-                      ).map((category) => (
-                        <option
-                          key={category}
-                          value={category}
-                        >
-                          {category}
-                        </option>
-                      ))}
-
-                    </select>
+                    <select value={form.category} onChange={e => {
+     setForm({...form, category: e.target.value, subcategory: ''});
+   }}>
+     <option value="">Select Category</option>
+     {dbCategories.map(c => <option key={c._id} value={c.name}>{c.name}</option>)}
+   </select>
 
                   </div>
 
@@ -649,34 +718,12 @@ export default function Products() {
                       Subcategory
                     </label>
 
-                    <select
-                      value={form.subcategory}
-                      onChange={(e) =>
-                        upd(
-                          'subcategory',
-                          e.target.value
-                        )
-                      }
-                    >
-
-                      <option value="">
-                        Select Subcategory
-                      </option>
-
-                      {(
-                        categoryData[
-                          form.category
-                        ] || []
-                      ).map((subcategory) => (
-                        <option
-                          key={subcategory}
-                          value={subcategory}
-                        >
-                          {subcategory}
-                        </option>
-                      ))}
-
-                    </select>
+                    <select value={form.subcategory} onChange={e => setForm({...form, subcategory: e.target.value})}>
+     <option value="">Select Subcategory</option>
+     {dbCategories.find(c => c.name === form.category)?.subcategories?.map(sc => (
+       <option key={sc} value={sc}>{sc}</option>
+     ))}
+   </select>
 
                     {!form.subcategory && (
                       <small className="field-hint">
@@ -1765,7 +1812,7 @@ export default function Products() {
                   className="btn btn-primary"
                   onClick={submit}
                 >
-                  Save Product
+                  {editingProductId ? 'Update Product' : 'Save Product'}
                 </button>
 
               )}

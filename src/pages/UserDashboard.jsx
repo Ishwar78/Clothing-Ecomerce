@@ -23,7 +23,10 @@ import Cart from "./Cart";
 
 export default function UserDashboard() {
   const nav = useNavigate();
-  const [tab, setTab] = useState("profile");
+  const [tab, setTab] = useState('profile');
+  const [user, setUser] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('userData')); } catch { return null; }
+  });
 
   const buttons = [
     ["profile", "Profile", FiUser],
@@ -69,7 +72,7 @@ export default function UserDashboard() {
             </div>
 
             <div>
-              <strong>SBV Customer</strong>
+              <strong>{user?.name || 'SBV Customer'}</strong>
               <span>Premium Member</span>
             </div>
           </div>
@@ -136,8 +139,8 @@ export default function UserDashboard() {
               </div>
 
               <div>
-                <strong>SBV Customer</strong>
-                <span>customer@example.com</span>
+                <strong>{user?.name || 'SBV Customer'}</strong>
+                <span>{user?.email || 'customer@example.com'}</span>
               </div>
             </div>
 
@@ -171,7 +174,7 @@ export default function UserDashboard() {
               <button
                 type="button"
                 className="logout-button"
-                onClick={() => nav("/")}
+                onClick={() => { localStorage.removeItem('userToken'); localStorage.removeItem('userData'); nav('/'); }}
               >
                 <span className="sidebar-icon">
                   <FiLogOut />
@@ -218,7 +221,7 @@ export default function UserDashboard() {
                   </div>
 
                   <div>
-                    <strong>SBV Customer</strong>
+                    <strong>{user?.name || 'SBV Customer'}</strong>
                     <span>Manage your personal information</span>
                   </div>
 
@@ -242,7 +245,7 @@ export default function UserDashboard() {
 
                     <input
                       type="text"
-                      defaultValue="SBV Customer"
+                      defaultValue={user?.name || "SBV Customer"}
                     />
                   </div>
 
@@ -254,7 +257,7 @@ export default function UserDashboard() {
 
                     <input
                       type="email"
-                      defaultValue="customer@example.com"
+                      defaultValue={user?.email || "customer@example.com"}
                     />
                   </div>
 
@@ -266,7 +269,7 @@ export default function UserDashboard() {
 
                     <input
                       type="tel"
-                      defaultValue="9876543210"
+                      defaultValue={user?.phone || "9876543210"}
                     />
                   </div>
 
