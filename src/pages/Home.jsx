@@ -599,11 +599,11 @@ export default function Home() {
                 )}
               </h2>
 
-              <p>
+              {/* <p>
                 Modern Essentials
                 <br />
                 For Every Occasion
-              </p>
+              </p> */}
 
               <button
                 className="home-outline-button"
@@ -631,11 +631,11 @@ export default function Home() {
                 )}
               </h2>
 
-              <p>
+              {/* <p>
                 Elegance In
                 <br />
                 Every Detail
-              </p>
+              </p> */}
 
               <button
                 className="home-outline-button"
