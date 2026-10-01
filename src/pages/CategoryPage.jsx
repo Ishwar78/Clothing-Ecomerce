@@ -378,7 +378,7 @@ export default function CategoryPage({ slug: propSlug }) {
           ))}
 
           {/* PRICE */}
-          <div className="filter-group">
+          {/* <div className="filter-group">
             <div className="filter-group-title">
               <h4>Price Range</h4>
               <FiChevronDown />
@@ -394,7 +394,7 @@ export default function CategoryPage({ slug: propSlug }) {
               <span>₹0</span>
               <span>₹5,000</span>
             </div>
-          </div>
+          </div> */}
 
           {/* SIZE */}
           <div className="filter-group">
@@ -413,7 +413,7 @@ export default function CategoryPage({ slug: propSlug }) {
           </div>
 
           {/* COLOR */}
-          <div className="filter-group">
+          {/* <div className="filter-group">
             <div className="filter-group-title">
               <h4>Color</h4>
               <FiChevronDown />
@@ -431,10 +431,10 @@ export default function CategoryPage({ slug: propSlug }) {
               <button className="color white"></button>
               <button className="color purple"></button>
             </div>
-          </div>
+          </div> */}
 
           {/* BRAND */}
-          <div className="filter-group">
+          {/* <div className="filter-group">
             <div className="filter-group-title">
               <h4>Brand</h4>
               <FiChevronDown />
@@ -460,7 +460,7 @@ export default function CategoryPage({ slug: propSlug }) {
                 <span>{brand}</span>
               </label>
             ))}
-          </div>
+          </div> */}
         </aside>
 
         {/* PRODUCT LISTING */}

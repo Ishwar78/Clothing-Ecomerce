@@ -82,4 +82,93 @@ router.get('/all', async (req, res) => {
     }
 });
 
+// Get saved addresses for a user
+router.get('/addresses', async (req, res) => {
+    try {
+        const { email, userId } = req.query;
+        if (!email && !userId) {
+            return res.json({ success: true, addresses: [] });
+        }
+
+        const query = userId ? { _id: userId } : { email: email.trim().toLowerCase() };
+        const user = await User.findOne(query);
+
+        if (!user) {
+            return res.json({ success: true, addresses: [] });
+        }
+
+        res.json({ success: true, addresses: user.savedAddresses || [] });
+    } catch (error) {
+        console.error('Fetch addresses error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Add a saved address
+router.post('/addresses', async (req, res) => {
+    try {
+        const { email, userId, address } = req.body;
+        if (!address || (!email && !userId)) {
+            return res.status(400).json({ success: false, message: 'User and Address are required' });
+        }
+
+        const query = userId ? { _id: userId } : { email: email.trim().toLowerCase() };
+        const user = await User.findOne(query);
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        if (!user.savedAddresses) user.savedAddresses = [];
+
+        // Check duplicate
+        const isDuplicate = user.savedAddresses.some(
+            a => a.address.trim().toLowerCase() === (address.address || '').trim().toLowerCase() &&
+                 a.pincode.trim() === (address.pincode || '').trim()
+        );
+
+        if (!isDuplicate) {
+            user.savedAddresses.push({
+                fullName: address.fullName,
+                phone: address.phone,
+                email: address.email || user.email,
+                address: address.address,
+                city: address.city,
+                state: address.state,
+                pincode: address.pincode,
+                isDefault: user.savedAddresses.length === 0
+            });
+            await user.save();
+        }
+
+        res.json({ success: true, addresses: user.savedAddresses, message: 'Address saved successfully' });
+    } catch (error) {
+        console.error('Save address error:', error);
+        res.status(500).json({ success: false, message: error.message || 'Server error' });
+    }
+});
+
+// Delete a saved address
+router.delete('/addresses/:addressId', async (req, res) => {
+    try {
+        const { email, userId } = req.query;
+        const { addressId } = req.params;
+
+        const query = userId ? { _id: userId } : { email: email?.trim().toLowerCase() };
+        const user = await User.findOne(query);
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        user.savedAddresses = user.savedAddresses.filter(a => a._id.toString() !== addressId);
+        await user.save();
+
+        res.json({ success: true, addresses: user.savedAddresses, message: 'Address removed successfully' });
+    } catch (error) {
+        console.error('Delete address error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
 module.exports = router;

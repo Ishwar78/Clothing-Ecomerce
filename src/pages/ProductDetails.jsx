@@ -1,4 +1,4 @@
-﻿import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { allProducts } from "../data/products";
 
@@ -143,7 +143,13 @@ export default function ProductDetails() {
   
   useEffect(() => {
     setImg(product.image);
-  }, [product.image]);
+    if (product.colors && product.colors.length > 0) {
+      setSelectedColor(product.colors[0]);
+    }
+    if (product.sizes && product.sizes.length > 0) {
+      setSize(product.sizes[0]);
+    }
+  }, [product.image, product.name]);
 
   const [selectedColor, setSelectedColor] = useState("");
   const [size, setSize] = useState("M");
@@ -168,21 +174,36 @@ export default function ProductDetails() {
       localStorage.getItem("sbv-cart") || "[]"
     );
 
+    const isCurrentProduct = (item._id || item.id) === (product._id || product.id);
+    const chosenSize = isCurrentProduct ? (size || product.sizes?.[0] || "M") : (item.size || item.sizes?.[0] || "M");
+    const chosenColor = isCurrentProduct 
+      ? (selectedColor || product.colors?.[0] || "") 
+      : (item.color || item.colors?.[0] || "");
+    const chosenImage = (isCurrentProduct && img) || item.image || item.images?.[0] || fallbackImage;
+    const chosenQuantity = isCurrentProduct ? Number(qty || 1) : 1;
+    const itemPrice = Number(item.price || productPrice || 0);
+
     const cartItem = {
       ...item,
-      quantity: item.id === product.id ? qty : 1,
-      size: item.id === product.id ? size : "M",
+      id: item._id || item.id,
+      productId: item._id || item.id,
+      name: item.name,
+      image: chosenImage,
+      price: itemPrice,
+      quantity: chosenQuantity,
+      size: chosenSize,
+      color: chosenColor,
     };
 
     const existingIndex = existingCart.findIndex(
-      (x) => x.id === item.id
+      (x) => (x.productId === cartItem.productId || x.id === cartItem.id) &&
+             x.size === cartItem.size &&
+             x.color === cartItem.color
     );
 
     let updatedCart;
-
     if (existingIndex !== -1) {
       updatedCart = [...existingCart];
-
       updatedCart[existingIndex] = {
         ...updatedCart[existingIndex],
         quantity:
@@ -194,8 +215,7 @@ export default function ProductDetails() {
     }
 
     localStorage.setItem("sbv-cart", JSON.stringify(updatedCart));
-
-    alert(`${item.name} added to cart`);
+    alert(`${item.name} (Size: ${chosenSize}${chosenColor ? ', Color: ' + chosenColor : ''}) added to cart`);
   };
 
   /* =========================
