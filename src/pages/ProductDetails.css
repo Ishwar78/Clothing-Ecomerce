@@ -1457,3 +1457,69 @@
     min-width: 175px;
   }
 }
+
+/* =========================================================
+   RICH DESCRIPTION & HTML FORMATTING
+========================================================= */
+
+.rich-description-render,
+.product-description-html {
+  line-height: 1.8;
+  color: #382e2c;
+  font-size: 14px;
+}
+
+.rich-description-render p,
+.product-description-html p {
+  margin: 0 0 10px;
+}
+
+.rich-description-render h2,
+.product-description-html h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 14px 0 8px;
+  color: #1f1817;
+}
+
+.rich-description-render h3,
+.product-description-html h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 12px 0 6px;
+  color: #2b2220;
+}
+
+.rich-description-render ul,
+.product-description-html ul {
+  list-style-type: disc !important;
+  padding-left: 24px !important;
+  margin: 8px 0 12px !important;
+}
+
+.rich-description-render ol,
+.product-description-html ol {
+  list-style-type: decimal !important;
+  padding-left: 24px !important;
+  margin: 8px 0 12px !important;
+}
+
+.rich-description-render li,
+.product-description-html li {
+  margin-bottom: 5px;
+  display: list-item !important;
+}
+
+.rich-description-render b,
+.rich-description-render strong,
+.product-description-html b,
+.product-description-html strong {
+  font-weight: 700;
+  color: #111;
+}
+
+.rich-description-render a,
+.product-description-html a {
+  color: #e11b22;
+  text-decoration: underline;
+}

@@ -924,12 +924,12 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
+  /* background: linear-gradient(
     90deg,
     rgba(255, 248, 245, 0.94),
     rgba(255, 248, 245, 0.4) 55%,
     transparent
-  );
+  ); */
 }
 
 .home-collection-content {
@@ -949,6 +949,7 @@
 .home-collection-content h2 {
   margin: 8px 0 12px;
   font-family: Georgia, "Times New Roman", serif;
+  color: #100b0f;
   font-size: 36px;
   line-height: 0.95;
 }

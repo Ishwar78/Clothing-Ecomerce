@@ -445,9 +445,12 @@ export default function ProductDetails() {
 
           <h1>{product.name}</h1>
 
-          <p className="product-description">
-            {product.description}
-          </p>
+          <div
+            className="product-description product-description-html"
+            dangerouslySetInnerHTML={{
+              __html: product.shortDescription || product.description
+            }}
+          />
 
           <div className="rating">
 
@@ -784,12 +787,19 @@ export default function ProductDetails() {
         {activeTab === "description" && (
           <div className="tab-content description-content">
             <div>
-              <p style={{ lineHeight: '1.8', whiteSpace: 'pre-line' }}>
-                {product.description || "Make a statement with this beautiful piece, crafted from premium fabric for a graceful and elegant look."}
-              </p>
+              <div
+                className="rich-description-render"
+                dangerouslySetInnerHTML={{
+                  __html: product.description || "Make a statement with this beautiful piece, crafted from premium fabric for a graceful and elegant look."
+                }}
+              />
               {product.shortDescription && (
-                <div style={{ marginTop: '16px', padding: '12px 16px', backgroundColor: '#fcfcfc', borderRadius: '8px', borderLeft: '4px solid #e11b22' }}>
-                  <b>Summary:</b> {product.shortDescription}
+                <div style={{ marginTop: '20px', padding: '14px 18px', backgroundColor: '#fdf8f7', borderRadius: '8px', borderLeft: '4px solid #e11b22' }}>
+                  <b style={{ display: 'block', marginBottom: '6px', color: '#222' }}>Quick Highlights / Summary:</b>
+                  <div
+                    className="product-description-html"
+                    dangerouslySetInnerHTML={{ __html: product.shortDescription }}
+                  />
                 </div>
               )}
             </div>

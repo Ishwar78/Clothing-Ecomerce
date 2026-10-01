@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import api from '../../lib/api';
 import {
   FiPlus,
@@ -11,6 +11,7 @@ import {
   FiChevronRight,
   FiX
 } from 'react-icons/fi';
+import RichTextEditor from '../components/RichTextEditor';
 import './Products.css';
 
 const seed = [
@@ -325,15 +326,29 @@ export default function Products() {
   };
 
   // =========================================
-  // IMAGE UPLOAD
+  // IMAGE UPLOAD & PREVIEW
   // =========================================
 
-  const handleFiles = (e) => {
-    const selectedFiles = Array.from(
-      e.target.files || []
-    ).slice(0, 7);
+  const getImageSource = (file) => {
+    if (typeof file === 'string') return file;
+    if (file && (file instanceof File || typeof file === 'object')) {
+      try {
+        return URL.createObjectURL(file);
+      } catch (err) {
+        return '';
+      }
+    }
+    return '';
+  };
 
-    setFiles(selectedFiles);
+  const handleFiles = (e) => {
+    const selectedFiles = Array.from(e.target.files || []);
+    if (!selectedFiles.length) return;
+    setFiles((prev) => {
+      const combined = [...prev, ...selectedFiles];
+      return combined.slice(0, 7);
+    });
+    e.target.value = '';
   };
 
   // =========================================
@@ -845,19 +860,15 @@ export default function Products() {
                   <div className="field full">
 
                     <label>
-                      Short Description
+                      Short Description (Summary & Key Points)
                     </label>
 
-                    <textarea
-                      rows="3"
+                    <RichTextEditor
+                      compact={true}
                       value={form.short}
-                      placeholder="Short product description..."
-                      onChange={(e) =>
-                        upd(
-                          'short',
-                          e.target.value
-                        )
-                      }
+                      onChange={(val) => upd('short', val)}
+                      placeholder="Write short product summary, quick bullets..."
+                      minHeight="95px"
                     />
 
                   </div>
@@ -867,23 +878,14 @@ export default function Products() {
                   <div className="field full">
 
                     <label>
-                      Long Description
+                      Long Description (Detailed Product Information & Care)
                     </label>
 
-                    <div className="rich-toolbar">
-                      <b>B</b>
-                      <i>I</i>
-                      <u>U</u>
-                      <span>• List</span>
-                      <span>H2</span>
-                    </div>
-
-                    <textarea
-                      className="rich-editor"
-                      style={{ width: '100%', minHeight: '120px', padding: '12px', border: '1px solid #ddd', borderRadius: '6px', fontFamily: 'inherit', resize: 'vertical' }}
+                    <RichTextEditor
                       value={form.long}
-                      placeholder="Write detailed product description here..."
-                      onChange={(e) => upd('long', e.target.value)}
+                      onChange={(val) => upd('long', val)}
+                      placeholder="Write detailed product description, fabric details, styling guide..."
+                      minHeight="190px"
                     />
 
                   </div>
@@ -1133,45 +1135,35 @@ export default function Products() {
                   </label>
 
                   {files.length > 0 && (
-
-                    <div className="file-preview">
-
-                      {files.map(
-                        (file, index) => (
-
-                          <div
-                            className="file-card"
-                            key={
-                              file.name +
-                              index
-                            }
-                          >
-
-                            <span>
-                              {file.name}
-                            </span>
-
+                    <div className="image-preview-grid">
+                      {files.map((file, index) => {
+                        const src = getImageSource(file);
+                        return (
+                          <div className="image-preview-card" key={index}>
+                            <img
+                              src={src}
+                              alt={`Product upload ${index + 1}`}
+                              onError={(e) => {
+                                e.currentTarget.src = 'https://images.unsplash.com/photo-1583391733956-6c78276477e2?auto=format&fit=crop&w=300&q=70';
+                              }}
+                            />
+                            {index === 0 && (
+                              <span className="image-main-tag">Cover</span>
+                            )}
                             <button
+                              type="button"
+                              className="image-remove-btn"
+                              title="Delete image"
                               onClick={() =>
-                                setFiles(
-                                  files.filter(
-                                    (_, i) =>
-                                      i !==
-                                      index
-                                  )
-                                )
+                                setFiles(files.filter((_, i) => i !== index))
                               }
                             >
                               <FiX />
                             </button>
-
                           </div>
-
-                        )
-                      )}
-
+                        );
+                      })}
                     </div>
-
                   )}
 
                 </div>
