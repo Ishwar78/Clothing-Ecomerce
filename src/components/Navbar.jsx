@@ -162,14 +162,14 @@ export default function Navbar() {
                             NEW ARRIVALS
                         </button>
 
-                        <button
+                        {/* <button
                             onClick={() => {
                                 navigate('/sale');
                                 setOpen(false);
                             }}
                         >
                             SALE
-                        </button>
+                        </button> */}
 
                     </div>
                 </nav>
