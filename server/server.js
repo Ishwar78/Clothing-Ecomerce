@@ -18,6 +18,7 @@ const userRoute = require('./routes/userRoute');
 const categoryRoute = require('./routes/categoryRoute');
 const productRoute = require('./routes/productRoute');
 const uploadRoute = require('./routes/uploadRoute');
+const bannerRoute = require('./routes/bannerRoute');
 const Admin = require('./models/Admin');
 const Category = require('./models/Category');
 
@@ -37,6 +38,7 @@ app.use('/api/auth', authRoute);
 app.use('/api/users', userRoute);
 app.use('/api/categories', categoryRoute);
 app.use('/api/products', productRoute);
+app.use('/api/banners', bannerRoute);
 app.use('/api/upload', uploadRoute);
 
 // MongoDB Connection

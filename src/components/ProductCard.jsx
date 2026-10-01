@@ -9,6 +9,7 @@ export default function ProductCard({ product }) {
     if (!product) return null;
 
     const productId = product._id || product.id;
+    const productSlug = product.slug || (product.name ? product.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') : productId);
     const priceVal = Number(product.price) || 0;
     const mrpVal = Number(product.originalPrice || product.mrp) || 0;
     const imgUrl = product.images?.[0] || product.image || '/assets/mencategory1.png';
@@ -21,12 +22,12 @@ export default function ProductCard({ product }) {
 
     const wish = () => {
         const w = JSON.parse(localStorage.getItem('sbv-wishlist') || '[]');
-        localStorage.setItem('sbv-wishlist', JSON.stringify([...w.filter(x => (x._id || x.id) !== productId), product]));
+        localStorage.setItem('sbv-wishlist', JSON.stringify([...w.filter(x => (x.slug || x._id || x.id) !== (product.slug || productId)), product]));
         alert('Added to wishlist');
     };
 
     return (
-        <article className="product-card" onClick={() => nav('/product/' + productId)} style={{ cursor: 'pointer' }}>
+        <article className="product-card" onClick={() => nav('/product/' + productSlug)} style={{ cursor: 'pointer' }}>
             <div className="product-image">
                 <img src={imgUrl} alt={product.name} onError={(e) => { e.target.src = '/assets/mencategory1.png'; }} />
                 {product.badge && <span className="product-badge">{product.badge}</span>}

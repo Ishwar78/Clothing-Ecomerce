@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+﻿import React, { useMemo, useState, useEffect } from 'react';
 import api from '../../lib/api';
 import {
   FiPlus,
@@ -31,6 +31,8 @@ const categoryData = {
   Sale: ['Men Sale', 'Women Sale', 'Kids Sale']
 };
 
+const availableColors = ['Black', 'White', 'Red', 'Blue', 'Green', 'Yellow', 'Pink', 'Purple', 'Orange', 'Grey', 'Navy', 'Brown', 'Beige', 'Maroon', 'Peach'];
+
 const availableSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
 const createDefaultSize = (size) => ({
@@ -59,6 +61,7 @@ const initialForm = {
   discountType: 'percentage',
 
   sizes: [],
+  colors: [],
 
   highlights: [''],
 
@@ -138,6 +141,16 @@ export default function Products() {
   // =========================================
   // SIZE
   // =========================================
+
+  const toggleColor = (color) => {
+    setForm((prev) => {
+      const cur = prev.colors || [];
+      return {
+        ...prev,
+        colors: cur.includes(color) ? cur.filter(c => c !== color) : [...cur, color]
+      };
+    });
+  };
 
   const toggleSize = (size) => {
     setForm((prev) => {
@@ -331,6 +344,7 @@ export default function Products() {
     setForm({
       ...initialForm,
       sizes: [],
+  colors: [],
       highlights: [''],
       faqs: [
         {
@@ -374,7 +388,10 @@ export default function Products() {
       price: orig ? String(orig) : (curr ? String(curr) : ''),
       discount: disc ? String(disc) : '',
       seoDescription: p.description || '',
-      sizes: p.sizes || [],
+      sizes: (p.sizes || []).map(s => typeof s === 'string' ? createDefaultSize(s) : s),
+      colors: p.colors || [],
+      short: p.shortDescription || p.name || '',
+      long: p.description || '',
       highlights: p.highlights && p.highlights.length > 0 ? p.highlights : [''],
       faqs: p.faqs && p.faqs.length > 0 ? p.faqs : [{ question: '', answer: '' }],
       specifications: p.specifications && p.specifications.length > 0 ? p.specifications : [{ key: '', value: '' }]
@@ -412,12 +429,19 @@ export default function Products() {
       // 2. Prepare payload
       const payload = {
         name: form.name.trim(),
-        description: form.seoDescription || 'Premium quality product',
+        slug: form.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''),
+        shortDescription: form.short || form.name.trim(),
+        description: form.long || form.seoDescription || form.short || 'Premium quality product',
         price: Number(sellingPrice) || Number(form.price) || 0,
         originalPrice: Number(form.price) || Number(sellingPrice) || 0,
         category: form.category,
         subcategory: form.subcategory,
         images: uploadedImages,
+        sizes: form.sizes.map(s => typeof s === 'string' ? s : s.size).filter(Boolean),
+        colors: form.colors || [],
+        highlights: (form.highlights || []).filter(h => h && h.trim()),
+        faqs: (form.faqs || []).filter(f => f && f.question && f.question.trim()),
+        specifications: (form.specifications || []).filter(s => s && s.key && s.key.trim()),
         isNewArrival: form.new,
         isTrending: form.best,
         inStock: form.status === 'Active'
@@ -571,7 +595,7 @@ export default function Products() {
                       type="button"
                       className="icon-btn"
                       title="View Product on Store"
-                      onClick={() => window.open('/product/' + (p._id || p.id), '_blank')}
+                      onClick={() => window.open('/product/' + (p.slug || (p.name ? p.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') : p._id)), '_blank')}
                     >
                       <FiEye />
                     </button>
@@ -854,14 +878,13 @@ export default function Products() {
                       <span>H2</span>
                     </div>
 
-                    <div
+                    <textarea
                       className="rich-editor"
-                      contentEditable
-                      suppressContentEditableWarning
-                    >
-                      {form.long ||
-                        'Write detailed product description here...'}
-                    </div>
+                      style={{ width: '100%', minHeight: '120px', padding: '12px', border: '1px solid #ddd', borderRadius: '6px', fontFamily: 'inherit', resize: 'vertical' }}
+                      value={form.long}
+                      placeholder="Write detailed product description here..."
+                      onChange={(e) => upd('long', e.target.value)}
+                    />
 
                   </div>
 
@@ -1201,6 +1224,26 @@ export default function Products() {
                       )
                     )}
 
+                  </div>
+
+                  <div className="section-heading" style={{ marginTop: '24px' }}>
+                    <div>
+                      <h4>Colors</h4>
+                      <p>Select available colors for this product.</p>
+                    </div>
+                  </div>
+
+                  <div className="size-pills" style={{ marginBottom: '20px' }}>
+                    {availableColors.map((color) => (
+                      <button
+                        type="button"
+                        key={color}
+                        className={(form.colors || []).includes(color) ? 'selected' : ''}
+                        onClick={() => toggleColor(color)}
+                      >
+                        {color}
+                      </button>
+                    ))}
                   </div>
 
                   {/* SIZE TABLE */}

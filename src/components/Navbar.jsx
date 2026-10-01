@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
     FiHeart,
@@ -27,6 +27,21 @@ export const categories = [
 
 export default function Navbar() {
     const [open, setOpen] = useState(false);
+    const [dbCategories, setDbCategories] = useState([]);
+
+    React.useEffect(() => {
+        import('../lib/api').then(({ default: api }) => {
+            api.get('/categories').then(res => {
+                if (res.success && res.categories.length > 0) {
+                    setDbCategories(res.categories);
+                }
+            });
+        });
+    }, []);
+
+    const navLinks = dbCategories.length > 0
+        ? dbCategories.map(c => [c.name, c.path || ('/' + c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'))])
+        : categories;
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -120,7 +135,7 @@ export default function Navbar() {
                 <nav className={open ? 'main-nav open' : 'main-nav'}>
                     <div className="container nav-inner">
 
-                        {categories.map(([n, p]) => (
+                        {navLinks.map(([n, p]) => (
                             <button
                                 key={p}
                                 className={

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import api from "../lib/api";
 import {
   FiArrowRight,
@@ -283,70 +283,76 @@ function SectionHeading({ title, subtitle }) {
 export default function Home() {
   const [categories, setCategories] = useState(initialCategories);
   const [dbProducts, setDbProducts] = useState([]);
-  
-  useEffect(() => {
-    api.get('/categories').then(res => {
-      if (res.success && res.categories.length > 0) {
-        setCategories(res.categories);
-      }
-    });
-  }, []);
+  const [banners, setBanners] = useState([]);
   const navigate = useNavigate();
 
   const [slide, setSlide] = useState(0);
   const [activeTab, setActiveTab] = useState("All");
   const [email, setEmail] = useState("");
 
+  useEffect(() => {
+    api.get('/products').then(res => { if (res.success) setDbProducts(res.products || []); });
+    api.get('/categories').then(res => {
+      if (res.success && res.categories.length > 0) {
+        setCategories(res.categories);
+      }
+    });
+    api.get('/banners').then(res => {
+      if (res.success && res.banners.length > 0) {
+        setBanners(res.banners.filter(b => b.isActive !== false));
+      }
+    });
+  }, []);
+
+  const heroBanners = banners.filter(b => (!b.position || b.position === 'hero'));
+  const activeSlides = heroBanners.length > 0 ? heroBanners.map(b => ({
+    eyebrow: b.subtitle || "FEATURED COLLECTION +",
+    title: b.title || "Fashion for Every You",
+    text: "Shop the best styles online",
+    image: b.image,
+    link: b.link || "/shop"
+  })) : slides;
+
+  const preTrending1 = banners.find(b => b.position === 'pre-trending-1');
+  const preTrending2 = banners.find(b => b.position === 'pre-trending-2');
+  const postInfluencer1 = banners.find(b => b.position === 'post-influencer-1');
+  const postInfluencer2 = banners.find(b => b.position === 'post-influencer-2');
+  const saleBanner = banners.find(b => b.position === 'sale');
+
   /* =========================
      HERO AUTO SLIDER
      ========================= */
 
   useEffect(() => {
+    if (activeSlides.length <= 1) return;
     const timer = setInterval(() => {
-      setSlide((prev) => (prev + 1) % slides.length);
+      setSlide((prev) => (prev + 1) % activeSlides.length);
     }, 5000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [activeSlides.length]);
 
   const nextSlide = () => {
-    setSlide((prev) => (prev + 1) % slides.length);
+    setSlide((prev) => (prev + 1) % activeSlides.length);
   };
 
   const previousSlide = () => {
-    setSlide((prev) => (prev - 1 + slides.length) % slides.length);
+    setSlide((prev) => (prev - 1 + activeSlides.length) % activeSlides.length);
   };
 
   /* =========================
-     TRENDING FILTER
+     TRENDING & NEW ARRIVALS
      ========================= */
 
-  const filteredTrending =
-    activeTab === "All"
-      ? trendingProducts
-      : trendingProducts.filter((product) => {
-          if (activeTab === "Men") {
-            return product.category === "Men's Collection";
-          }
+  const trendingList = dbProducts.filter((product) => {
+    if (!product.isTrending) return false;
+    if (activeTab === "All") return true;
+    const cat = (product.category || "").toLowerCase();
+    const tab = activeTab.toLowerCase();
+    return cat.includes(tab);
+  });
 
-          if (activeTab === "Women") {
-            return product.category === "Women's Collection";
-          }
-
-          if (activeTab === "Boys") {
-            return product.category === "Boys Collection";
-          }
-
-          if (activeTab === "Girls") {
-            return product.category === "Girls Collection";
-          }
-
-          if (activeTab === "Ethnic Wear") {
-            return product.category === "Ethnic Wear";
-          }
-
-          return true;
-        });
+  const newArrivalsList = dbProducts.filter((p) => p.isNewArrival);
 
   const subscribe = (e) => {
     e.preventDefault();
@@ -367,7 +373,7 @@ export default function Home() {
 
       <section className="home-hero">
         <div className="home-hero-image-wrap">
-          {slides.map((item, index) => (
+          {activeSlides.map((item, index) => (
             <img
               key={item.title}
               src={item.image}
@@ -382,13 +388,13 @@ export default function Home() {
         <div className="home-hero-overlay">
           <div className="home-hero-content">
             <span className="home-hero-eyebrow">
-              {slides[slide].eyebrow}
+              {activeSlides[slide]?.eyebrow}
             </span>
 
-            <h1>{slides[slide].title}</h1>
+            <h1>{activeSlides[slide]?.title}</h1>
 
             <p>
-              {slides[slide].text}
+              {activeSlides[slide]?.text}
               <br />
               Premium Styles for Every Occasion
             </p>
@@ -432,7 +438,7 @@ export default function Home() {
         </button>
 
         <div className="home-hero-dots">
-          {slides.map((item, index) => (
+          {activeSlides.map((item, index) => (
             <button
               type="button"
               key={item.title}
@@ -554,9 +560,19 @@ export default function Home() {
           />
 
           <div className="home-products-grid">
-            {(dbProducts.length > 0 ? dbProducts.filter(p => p.isNewArrival) : products).map((product) => (
-              <ProductCard key={product._id || product.id} product={product} />
-            ))}
+            {newArrivalsList.length > 0 ? (
+              newArrivalsList.map((product) => (
+                <ProductCard key={product._id || product.id} product={product} />
+              ))
+            ) : dbProducts.length > 0 ? (
+              dbProducts.slice(0, 10).map((product) => (
+                <ProductCard key={product._id || product.id} product={product} />
+              ))
+            ) : (
+              <p style={{ padding: '30px', textAlign: 'center', width: '100%', color: '#888' }}>
+                No new arrival products yet. Add products from the Admin Panel.
+              </p>
+            )}
           </div>
         </div>
       </section>
@@ -570,16 +586,17 @@ export default function Home() {
           <div
             className="home-collection-card home-men-card"
             style={{
-              backgroundImage:
-                "url('https://images.unsplash.com/photo-1617137968427-85924c800a22?auto=format&fit=crop&w=1200&q=90')",
+              backgroundImage: `url('${preTrending1?.image || "https://images.unsplash.com/photo-1617137968427-85924c800a22?auto=format&fit=crop&w=1200&q=90"}')`,
             }}
           >
             <div className="home-collection-content">
-              <span>PREMIUM EDIT</span>
+              <span>{preTrending1?.subtitle || "PREMIUM EDIT"}</span>
               <h2>
-                Men's
-                <br />
-                Collection
+                {preTrending1?.title ? (
+                  preTrending1.title
+                ) : (
+                  <>Men's<br />Collection</>
+                )}
               </h2>
 
               <p>
@@ -590,7 +607,7 @@ export default function Home() {
 
               <button
                 className="home-outline-button"
-                onClick={() => navigate("/men")}
+                onClick={() => navigate(preTrending1?.link || "/men")}
               >
                 SHOP MEN
                 <FiArrowRight />
@@ -601,16 +618,17 @@ export default function Home() {
           <div
             className="home-collection-card home-women-card"
             style={{
-              backgroundImage:
-                "url('https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1200&q=90')",
+              backgroundImage: `url('${preTrending2?.image || "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1200&q=90"}')`,
             }}
           >
             <div className="home-collection-content">
-              <span>THE WOMEN EDIT</span>
+              <span>{preTrending2?.subtitle || "THE WOMEN EDIT"}</span>
               <h2>
-                Women's
-                <br />
-                Collection
+                {preTrending2?.title ? (
+                  preTrending2.title
+                ) : (
+                  <>Women's<br />Collection</>
+                )}
               </h2>
 
               <p>
@@ -621,7 +639,7 @@ export default function Home() {
 
               <button
                 className="home-outline-button"
-                onClick={() => navigate("/women")}
+                onClick={() => navigate(preTrending2?.link || "/women")}
               >
                 SHOP WOMEN
                 <FiArrowRight />
@@ -663,9 +681,15 @@ export default function Home() {
           </div>
 
           <div className="home-products-grid">
-            {(dbProducts.length > 0 ? dbProducts.filter(p => p.isTrending) : filteredTrending).map((product) => (
-              <ProductCard key={product._id || product.id} product={product} />
-            ))}
+            {trendingList.length > 0 ? (
+              trendingList.map((product) => (
+                <ProductCard key={product._id || product.id} product={product} />
+              ))
+            ) : (
+              <p style={{ padding: '30px', textAlign: 'center', width: '100%', color: '#888' }}>
+                No trending products found.
+              </p>
+            )}
           </div>
         </div>
       </section>
@@ -722,17 +746,16 @@ export default function Home() {
             <div
               className="home-kids-card boys"
               style={{
-                backgroundImage:
-                  "url('https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=1200&q=90')",
+                backgroundImage: `url('${postInfluencer1?.image || "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=1200&q=90"}')`,
               }}
             >
               <div>
-                <h3>Boys Collection</h3>
-                <p>Stylish & Comfortable</p>
+                <h3>{postInfluencer1?.title || "Boys Collection"}</h3>
+                <p>{postInfluencer1?.subtitle || "Stylish & Comfortable"}</p>
 
                 <button
                   className="home-btn home-btn-primary"
-                  onClick={() => navigate("/boys")}
+                  onClick={() => navigate(postInfluencer1?.link || "/boys")}
                 >
                   SHOP BOYS
                   <FiArrowRight />
@@ -743,17 +766,16 @@ export default function Home() {
             <div
               className="home-kids-card girls"
               style={{
-                backgroundImage:
-                  "url('https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=1200&q=90')",
+                backgroundImage: `url('${postInfluencer2?.image || "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=1200&q=90"}')`,
               }}
             >
               <div>
-                <h3>Girls Collection</h3>
-                <p>Cute. Stylish. Confident.</p>
+                <h3>{postInfluencer2?.title || "Girls Collection"}</h3>
+                <p>{postInfluencer2?.subtitle || "Cute. Stylish. Confident."}</p>
 
                 <button
                   className="home-btn home-btn-primary"
-                  onClick={() => navigate("/girls")}
+                  onClick={() => navigate(postInfluencer2?.link || "/girls")}
                 >
                   SHOP GIRLS
                   <FiArrowRight />
@@ -771,19 +793,18 @@ export default function Home() {
       <section
         className="home-sale-banner"
         style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1800&q=90')",
+          backgroundImage: `url('${saleBanner?.image || "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1800&q=90"}')`,
         }}
       >
         <div className="home-sale-content">
-          <span>LIMITED TIME OFFER</span>
-          <h2>THE STYLE SALE</h2>
+          <span>{saleBanner?.subtitle || "LIMITED TIME OFFER"}</span>
+          <h2>{saleBanner?.title || "THE STYLE SALE"}</h2>
           <strong>UP TO 50% OFF</strong>
           <p>On Selected Fashion Styles</p>
 
           <button
             className="home-btn home-btn-primary"
-            onClick={() => navigate("/sale")}
+            onClick={() => navigate(saleBanner?.link || "/sale")}
           >
             SHOP SALE
             <FiArrowRight />

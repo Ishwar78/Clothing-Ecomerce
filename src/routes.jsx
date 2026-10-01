@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './main';
 import Home from './pages/Home';
@@ -38,6 +38,7 @@ import AdminLogin from './admin/pages/AdminLogin';
 import Overview from './admin/pages/Overview';
 import Categories from './admin/pages/Categories';
 import Products from './admin/pages/Products';
+import Banners from './admin/pages/Banners';
 import Orders from './admin/pages/Orders';
 import Users from './admin/pages/Users';
 import Coupons from './admin/pages/Coupons';
@@ -84,6 +85,7 @@ export default function AppRoutes() {
         <Route path="/admin" element={<AdminLayout><Overview /></AdminLayout>} />
         <Route path="/admin/categories" element={<AdminLayout><Categories /></AdminLayout>} />
         <Route path="/admin/products" element={<AdminLayout><Products /></AdminLayout>} />
+        <Route path="/admin/banners" element={<AdminLayout><Banners /></AdminLayout>} />
         <Route path="/admin/orders" element={<AdminLayout><Orders /></AdminLayout>} />
         <Route path="/admin/users" element={<AdminLayout><Users /></AdminLayout>} />
         <Route path="/admin/coupons" element={<AdminLayout><Coupons /></AdminLayout>} />
@@ -91,6 +93,8 @@ export default function AppRoutes() {
         <Route path="/admin/returns" element={<AdminLayout><Returns /></AdminLayout>} />
         <Route path="/admin/contact" element={<AdminLayout><Contact /></AdminLayout>} />
         <Route path="/admin/inquiries" element={<AdminLayout><Inquiries /></AdminLayout>} />
+        <Route path="/category/:slug" element={<Layout><CategoryPage /></Layout>} />
+        <Route path="/:slug" element={<Layout><CategoryPage /></Layout>} />
         <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
 }

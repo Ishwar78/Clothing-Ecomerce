@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+﻿import React, { useRef, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { allProducts } from "../data/products";
 
@@ -94,18 +94,29 @@ export default function ProductDetails() {
   
   const [dbProduct, setDbProduct] = useState(null);
   const [dbRelated, setDbRelated] = useState([]);
+  const slugify = (text) => text ? text.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') : '';
+
   useEffect(() => {
     import('../lib/api').then(({default: api}) => {
       api.get('/products').then(res => {
         if(res.success) {
-           const p = res.products.find(x => x._id === id || String(x.id) === String(id));
+           const p = res.products.find(x => 
+             x.slug === id || 
+             slugify(x.name) === id || 
+             x._id === id || 
+             String(x.id) === String(id)
+           );
            if (p) setDbProduct(p);
-           setDbRelated(res.products.filter(x => x._id !== id).slice(0, 4));
+           setDbRelated(res.products.filter(x => (x.slug || x._id) !== id).slice(0, 4));
         }
       });
     });
   }, [id]);
-  const foundProduct = dbProduct || allProducts.find(p => String(p._id || p.id) === String(id));
+  const foundProduct = dbProduct || allProducts.find(p => 
+    p.slug === id || 
+    slugify(p.name) === id || 
+    String(p._id || p.id) === String(id)
+  );
 
   const mainImage = foundProduct?.images?.[0] || foundProduct?.image || defaultProduct.image;
   const productThumbs = foundProduct?.images && foundProduct.images.length > 0
@@ -134,6 +145,7 @@ export default function ProductDetails() {
     setImg(product.image);
   }, [product.image]);
 
+  const [selectedColor, setSelectedColor] = useState("");
   const [size, setSize] = useState("M");
   const [qty, setQty] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
@@ -446,73 +458,72 @@ export default function ProductDetails() {
           </small>
 
           {/* COLOR */}
-
-          <div className="option">
-
-            <strong>
-              Color: <span>Peach Pink</span>
-            </strong>
-
-            <div className="swatches">
-
-              <button
-                type="button"
-                className="selected peach"
-              />
-
-              <button
-                type="button"
-                className="cream"
-              />
-
-              <button
-                type="button"
-                className="purple"
-              />
-
-              <button
-                type="button"
-                className="green"
-              />
-
-            </div>
-          </div>
-
-          {/* SIZE */}
-
-          <div className="option">
-
-            <div className="size-heading">
-
+          {product.colors && product.colors.length > 0 && (
+            <div className="option">
               <strong>
-                Size:
+                Color: <span>{selectedColor || product.colors[0]}</span>
               </strong>
 
-              <button type="button">
-                Size Guide
-              </button>
+              <div className="swatches" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '6px' }}>
+                {product.colors.map((c) => {
+                  const isSelected = (selectedColor || product.colors[0]) === c;
+                  return (
+                    <button
+                      type="button"
+                      key={c}
+                      style={{
+                        padding: '6px 14px',
+                        borderRadius: '20px',
+                        border: isSelected ? '2px solid #e11b22' : '1px solid #ddd',
+                        backgroundColor: isSelected ? '#fff5f5' : '#fff',
+                        color: isSelected ? '#e11b22' : '#333',
+                        fontWeight: isSelected ? '600' : '400',
+                        fontSize: '13px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                      onClick={() => setSelectedColor(c)}
+                    >
+                      <span
+                        style={{
+                          width: '12px',
+                          height: '12px',
+                          borderRadius: '50%',
+                          backgroundColor: c.toLowerCase(),
+                          border: '1px solid #ccc',
+                          display: 'inline-block'
+                        }}
+                      />
+                      {c}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
+          {/* SIZE */}
+          <div className="option">
+            <div className="size-heading">
+              <strong>Size: {size}</strong>
+              <button type="button">Size Guide</button>
             </div>
 
             <div className="sizes">
-
-              {["XS", "S", "M", "L", "XL", "XXL"].map(
+              {(product.sizes && product.sizes.length > 0 ? product.sizes : ["XS", "S", "M", "L", "XL"]).map(
                 (item) => (
                   <button
                     type="button"
                     key={item}
-                    className={
-                      size === item
-                        ? "selected"
-                        : ""
-                    }
+                    className={size === item ? "selected" : ""}
                     onClick={() => setSize(item)}
                   >
                     {item}
                   </button>
                 )
               )}
-
             </div>
           </div>
 
@@ -700,176 +711,158 @@ export default function ProductDetails() {
       <section className="detail-container product-tabs">
 
         <div className="tab-head">
-
           <button
             type="button"
-            className={
-              activeTab === "description"
-                ? "active"
-                : ""
-            }
-            onClick={() =>
-              setActiveTab("description")
-            }
+            className={activeTab === "description" ? "active" : ""}
+            onClick={() => setActiveTab("description")}
           >
             DESCRIPTION
           </button>
 
           <button
             type="button"
-            className={
-              activeTab === "specifications"
-                ? "active"
-                : ""
-            }
-            onClick={() =>
-              setActiveTab("specifications")
-            }
+            className={activeTab === "highlights" ? "active" : ""}
+            onClick={() => setActiveTab("highlights")}
+          >
+            HIGHLIGHTS
+          </button>
+
+          <button
+            type="button"
+            className={activeTab === "specifications" ? "active" : ""}
+            onClick={() => setActiveTab("specifications")}
           >
             SPECIFICATIONS
           </button>
 
           <button
             type="button"
-            className={
-              activeTab === "shipping"
-                ? "active"
-                : ""
-            }
-            onClick={() =>
-              setActiveTab("shipping")
-            }
+            className={activeTab === "faq" ? "active" : ""}
+            onClick={() => setActiveTab("faq")}
+          >
+            FAQ
+          </button>
+
+          <button
+            type="button"
+            className={activeTab === "shipping" ? "active" : ""}
+            onClick={() => setActiveTab("shipping")}
           >
             SHIPPING & RETURNS
           </button>
 
           <button
             type="button"
-            className={
-              activeTab === "reviews"
-                ? "active"
-                : ""
-            }
-            onClick={() =>
-              setActiveTab("reviews")
-            }
+            className={activeTab === "reviews" ? "active" : ""}
+            onClick={() => setActiveTab("reviews")}
           >
-            REVIEWS (128)
+            REVIEWS ({product.reviews || 128})
           </button>
-
         </div>
 
-        {/* DESCRIPTION */}
-
+                {/* DESCRIPTION */}
         {activeTab === "description" && (
           <div className="tab-content description-content">
-
             <div>
-
-              <p>
-                Make a statement with this beautiful
-                embroidered Anarkali suit set, crafted
-                from premium fabric for a graceful and
-                elegant look. Intricate embroidery,
-                flowing silhouette and matching dupatta
-                make it perfect for weddings, festive
-                occasions and special celebrations.
+              <p style={{ lineHeight: '1.8', whiteSpace: 'pre-line' }}>
+                {product.description || "Make a statement with this beautiful piece, crafted from premium fabric for a graceful and elegant look."}
               </p>
-
-              <ul>
-                <li>Premium quality fabric</li>
-                <li>Beautiful embroidery work</li>
-                <li>Comfortable & breathable</li>
-                <li>Comes with matching dupatta</li>
-                <li>Perfect for festive & wedding occasions</li>
-                <li>Available in multiple sizes</li>
-              </ul>
-
+              {product.shortDescription && (
+                <div style={{ marginTop: '16px', padding: '12px 16px', backgroundColor: '#fcfcfc', borderRadius: '8px', borderLeft: '4px solid #e11b22' }}>
+                  <b>Summary:</b> {product.shortDescription}
+                </div>
+              )}
             </div>
 
-            <div className="spec-card">
+            {product.highlights && product.highlights.length > 0 && (
+              <div className="spec-card">
+                <h4 style={{ marginBottom: '12px' }}>Highlights</h4>
+                <ul style={{ paddingLeft: '18px', lineHeight: '1.8' }}>
+                  {product.highlights.map((h, i) => (
+                    <li key={i}>{h}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
 
-              <p>
-                <b>Fabric</b>
-                <span>Georgette</span>
-              </p>
-
-              <p>
-                <b>Work</b>
-                <span>Embroidery</span>
-              </p>
-
-              <p>
-                <b>Set Includes</b>
-                <span>Anarkali, Dupatta, Bottom</span>
-              </p>
-
-              <p>
-                <b>Occasion</b>
-                <span>Wedding, Festive, Party</span>
-              </p>
-
-              <p>
-                <b>Care</b>
-                <span>Dry Clean Only</span>
-              </p>
-
-              <p>
-                <b>Fit</b>
-                <span>Regular Fit</span>
-              </p>
-
+        {/* HIGHLIGHTS */}
+        {activeTab === "highlights" && (
+          <div className="tab-content single-tab">
+            <div className="large-spec-card">
+              <h3>Product Highlights</h3>
+              {product.highlights && product.highlights.length > 0 ? (
+                <ul style={{ paddingLeft: '24px', lineHeight: '2.2', fontSize: '15px' }}>
+                  {product.highlights.map((h, i) => (
+                    <li key={i}><strong>{h}</strong></li>
+                  ))}
+                </ul>
+              ) : (
+                <p style={{ color: '#666' }}>No specific highlights added for this product.</p>
+              )}
             </div>
-
           </div>
         )}
 
         {/* SPECIFICATIONS */}
-
         {activeTab === "specifications" && (
           <div className="tab-content single-tab">
-
             <div className="large-spec-card">
-
               <h3>Product Specifications</h3>
-
-              <div className="spec-row">
-                <b>Product Type</b>
-                <span>Anarkali Suit Set</span>
-              </div>
-
-              <div className="spec-row">
-                <b>Fabric</b>
-                <span>Georgette</span>
-              </div>
-
-              <div className="spec-row">
-                <b>Work</b>
-                <span>Embroidery</span>
-              </div>
-
-              <div className="spec-row">
-                <b>Set Includes</b>
-                <span>Anarkali, Dupatta, Bottom</span>
-              </div>
-
-              <div className="spec-row">
-                <b>Occasion</b>
-                <span>Wedding, Festive, Party</span>
-              </div>
-
-              <div className="spec-row">
-                <b>Fit</b>
-                <span>Regular Fit</span>
-              </div>
-
-              <div className="spec-row">
-                <b>Care</b>
-                <span>Dry Clean Only</span>
-              </div>
-
+              {product.specifications && product.specifications.length > 0 ? (
+                product.specifications.map((spec, i) => (
+                  <div className="spec-row" key={i}>
+                    <b>{spec.key}</b>
+                    <span>{spec.value}</span>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <div className="spec-row">
+                    <b>Category</b>
+                    <span>{product.category || 'Apparel'}</span>
+                  </div>
+                  {product.subcategory && (
+                    <div className="spec-row">
+                      <b>Subcategory</b>
+                      <span>{product.subcategory}</span>
+                    </div>
+                  )}
+                  {product.sizes && product.sizes.length > 0 && (
+                    <div className="spec-row">
+                      <b>Sizes</b>
+                      <span>{product.sizes.join(', ')}</span>
+                    </div>
+                  )}
+                  {product.colors && product.colors.length > 0 && (
+                    <div className="spec-row">
+                      <b>Colors</b>
+                      <span>{product.colors.join(', ')}</span>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
+          </div>
+        )}
 
+        {/* FAQ */}
+        {activeTab === "faq" && (
+          <div className="tab-content single-tab">
+            <div className="large-spec-card">
+              <h3>Frequently Asked Questions</h3>
+              {product.faqs && product.faqs.length > 0 ? (
+                product.faqs.map((faq, i) => (
+                  <div key={i} style={{ marginBottom: '18px', paddingBottom: '14px', borderBottom: '1px solid #eee' }}>
+                    <h4 style={{ margin: '0 0 6px 0', color: '#111' }}>Q: {faq.question}</h4>
+                    <p style={{ margin: 0, color: '#555', lineHeight: '1.6' }}>A: {faq.answer}</p>
+                  </div>
+                ))
+              ) : (
+                <p style={{ color: '#666' }}>No FAQs added for this product yet.</p>
+              )}
+            </div>
           </div>
         )}
 

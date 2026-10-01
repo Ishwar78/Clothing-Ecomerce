@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
     FiGrid,
     FiTag,
     FiPackage,
+    FiImage,
     FiShoppingBag,
     FiUsers,
     FiPercent,
@@ -18,6 +19,7 @@ import './AdminLayout.css';
 const links = [['/admin', 'Overview', FiGrid],
 ['/admin/categories', 'Categories', FiTag],
 ['/admin/products', 'Products', FiPackage],
+['/admin/banners', 'Home Banner', FiImage],
 ['/admin/orders', 'Orders', FiShoppingBag],
 ['/admin/users', 'Users', FiUsers],
 ['/admin/coupons', 'Coupon Codes', FiPercent],

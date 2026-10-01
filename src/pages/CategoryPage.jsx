@@ -165,12 +165,8 @@ export default function CategoryPage({ slug: propSlug }) {
   const normalize = (str) => (str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
   const products = useMemo(() => {
-    // Combine dbProducts and mock allProducts (prioritize dbProducts)
-    const combined = [
-      ...dbProducts,
-      ...allProducts.filter(ap => !dbProducts.some(dp => dp.name?.toLowerCase().trim() === ap.name?.toLowerCase().trim()))
-    ];
-    let result = combined;
+    // Only show real dynamic products from database
+    let result = [...dbProducts];
 
     if (slug) {
       const cleanSlug = normalize(slug);
@@ -303,7 +299,7 @@ export default function CategoryPage({ slug: propSlug }) {
       {/* ================= CATEGORY STRIP ================= */}
       <section className="category-circle-section">
         <div className="category-circle-container">
-          {(categoriesData.length > 0 ? categoriesData : categories).map((category, index) => (
+          {categoriesData.map((category, index) => (
             <button
               type="button"
               key={category.path}
@@ -517,11 +513,18 @@ export default function CategoryPage({ slug: propSlug }) {
 
           {/* PRODUCT GRID */}
           <div className="category-product-grid">
+            {products.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '60px 20px', gridColumn: '1 / -1', color: '#666', width: '100%' }}>
+                <FiShoppingBag size={48} style={{ opacity: 0.3, marginBottom: '12px' }} />
+                <h3>No Products Found</h3>
+                <p>No products have been added to this category yet.</p>
+              </div>
+            )}
             {products.map((product) => (
               <article
                 className="category-product-card"
                 key={product._id || product.id}
-                onClick={() => navigate('/product/' + (product._id || product.id))}
+                onClick={() => { const slug = product.slug || (product.name ? product.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') : (product._id || product.id)); navigate('/product/' + slug); }}
                 style={{ cursor: 'pointer' }}
               >
                 <div className="category-product-image">
