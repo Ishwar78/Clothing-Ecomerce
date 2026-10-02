@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import api from "../lib/api";
 import {
   FiArrowRight,
@@ -372,10 +372,18 @@ export default function Home() {
           ===================================================== */}
 
       <section className="home-hero">
-        <div className="home-hero-image-wrap">
+        <div
+          className="home-hero-image-wrap"
+          style={{ cursor: activeSlides[slide]?.link ? 'pointer' : 'default' }}
+          onClick={() => {
+            if (activeSlides[slide]?.link) {
+              navigate(activeSlides[slide].link);
+            }
+          }}
+        >
           {activeSlides.map((item, index) => (
             <img
-              key={item.title}
+              key={index}
               src={item.image}
               alt={item.title}
               className={`home-hero-image ${
@@ -386,7 +394,7 @@ export default function Home() {
         </div>
 
         <div className="home-hero-overlay">
-          <div className="home-hero-content">
+          {/* <div className="home-hero-content">
             <span className="home-hero-eyebrow">
               {activeSlides[slide]?.eyebrow}
             </span>
@@ -416,7 +424,7 @@ export default function Home() {
                 <FiArrowRight />
               </button>
             </div>
-          </div>
+          </div> */}
         </div>
 
         <button

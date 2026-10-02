@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './main';
 import Home from './pages/Home';
@@ -46,6 +46,7 @@ import Tickets from './admin/pages/Tickets';
 import Returns from './admin/pages/Returns';
 import Contact from './admin/pages/Contact';
 import Inquiries from './admin/pages/Inquiries';
+import Reviews from './admin/pages/Reviews';
 import { FaQ } from 'react-icons/fa6';
 export default function AppRoutes() {
     return <Routes>
@@ -93,6 +94,7 @@ export default function AppRoutes() {
         <Route path="/admin/returns" element={<AdminLayout><Returns /></AdminLayout>} />
         <Route path="/admin/contact" element={<AdminLayout><Contact /></AdminLayout>} />
         <Route path="/admin/inquiries" element={<AdminLayout><Inquiries /></AdminLayout>} />
+        <Route path="/admin/reviews" element={<AdminLayout><Reviews /></AdminLayout>} />
         <Route path="/category/:slug" element={<Layout><CategoryPage /></Layout>} />
         <Route path="/:slug" element={<Layout><CategoryPage /></Layout>} />
         <Route path="*" element={<Navigate to="/" replace />} />

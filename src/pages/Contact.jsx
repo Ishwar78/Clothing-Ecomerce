@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FiMapPin,
   FiPhone,
@@ -9,10 +9,28 @@ import {
   FiInstagram,
   FiFacebook,
   FiYoutube,
+  FiCheckCircle
 } from "react-icons/fi";
+import api from "../lib/api";
 import "./Contact.css";
 
 export default function Contact() {
+  const [contactInfo, setContactInfo] = useState({
+    phone: "+91 98765 43210",
+    alternatePhone: "+91 98765 43211",
+    email: "support@shreebalaji.com",
+    alternateEmail: "info@shreebalaji.com",
+    address: "Shree Balaji Vastraalaya, Main Market",
+    city: "Rohtak",
+    state: "Haryana",
+    pincode: "124001",
+    workingHours: "Monday - Saturday, 10:00 AM - 8:00 PM",
+    mapUrl: "",
+    instagramUrl: "",
+    facebookUrl: "",
+    youtubeUrl: ""
+  });
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -21,6 +39,18 @@ export default function Contact() {
     message: "",
   });
 
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    api.get("/contact").then((res) => {
+      if (res.success && res.contact) {
+        setContactInfo((prev) => ({ ...prev, ...res.contact }));
+      }
+    }).catch((err) => console.error("Error loading contact:", err));
+  }, []);
+
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -28,18 +58,35 @@ export default function Contact() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!form.name || !form.email || !form.message) {
+      setErrorMsg("Please fill in all required fields.");
+      return;
+    }
 
-    alert("Thank you! Your message has been submitted.");
-
-    setForm({
-      name: "",
-      email: "",
-      phone: "",
-      subject: "",
-      message: "",
-    });
+    try {
+      setSubmitting(true);
+      setErrorMsg("");
+      const res = await api.post("/inquiries", form);
+      if (res.success) {
+        setSubmitted(true);
+        setForm({
+          name: "",
+          email: "",
+          phone: "",
+          subject: "",
+          message: "",
+        });
+      } else {
+        setErrorMsg(res.message || "Failed to submit message. Please try again.");
+      }
+    } catch (err) {
+      console.error("Submit inquiry error:", err);
+      setErrorMsg("Something went wrong while sending your inquiry. Please try again later.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -95,13 +142,19 @@ export default function Contact() {
               <div>
                 <h3>Visit Us</h3>
                 <p>
-                  Shree Balaji Vastraalaya
+                  {contactInfo.address}
                   <br />
-                  India
+                  {[contactInfo.city, contactInfo.state, contactInfo.pincode].filter(Boolean).join(", ") || "India"}
                 </p>
-                <span className="contact-card-link">
-                  Get Directions <FiArrowRight />
-                </span>
+                {contactInfo.mapUrl ? (
+                  <a href={contactInfo.mapUrl} target="_blank" rel="noreferrer" className="contact-card-link">
+                    Get Directions <FiArrowRight />
+                  </a>
+                ) : (
+                  <span className="contact-card-link">
+                    Visit Our Store <FiArrowRight />
+                  </span>
+                )}
               </div>
             </div>
 
@@ -113,13 +166,17 @@ export default function Contact() {
               <div>
                 <h3>Call Us</h3>
                 <p>
-                  +91 98765 43210
-                  <br />
-                  +91 98765 43211
+                  {contactInfo.phone}
+                  {contactInfo.alternatePhone && (
+                    <>
+                      <br />
+                      {contactInfo.alternatePhone}
+                    </>
+                  )}
                 </p>
-                <span className="contact-card-link">
+                <a href={`tel:${contactInfo.phone}`} className="contact-card-link">
                   Call Now <FiArrowRight />
-                </span>
+                </a>
               </div>
             </div>
 
@@ -131,13 +188,17 @@ export default function Contact() {
               <div>
                 <h3>Email Us</h3>
                 <p>
-                  support@shreebalaji.com
-                  <br />
-                  info@shreebalaji.com
+                  {contactInfo.email}
+                  {contactInfo.alternateEmail && (
+                    <>
+                      <br />
+                      {contactInfo.alternateEmail}
+                    </>
+                  )}
                 </p>
-                <span className="contact-card-link">
+                <a href={`mailto:${contactInfo.email}`} className="contact-card-link">
                   Send Email <FiArrowRight />
-                </span>
+                </a>
               </div>
             </div>
 
@@ -149,9 +210,7 @@ export default function Contact() {
               <div>
                 <h3>Working Hours</h3>
                 <p>
-                  Monday - Saturday
-                  <br />
-                  10:00 AM - 8:00 PM
+                  {contactInfo.workingHours || "Monday - Saturday, 10:00 AM - 8:00 PM"}
                 </p>
                 <span className="contact-card-link">
                   We're Available <FiArrowRight />
@@ -184,6 +243,36 @@ export default function Contact() {
                 Fill out the form below and our support team will get
                 back to you as soon as possible.
               </p>
+
+              {submitted && (
+                <div style={{
+                  padding: "14px 18px",
+                  marginBottom: "20px",
+                  borderRadius: "8px",
+                  backgroundColor: "#def7ec",
+                  color: "#03543f",
+                  fontWeight: "600",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px"
+                }}>
+                  <FiCheckCircle size={22} style={{ flexShrink: 0 }} />
+                  <span>Thank you! Your message has been sent successfully. Our team will reach out to you shortly.</span>
+                </div>
+              )}
+
+              {errorMsg && (
+                <div style={{
+                  padding: "12px 16px",
+                  marginBottom: "20px",
+                  borderRadius: "8px",
+                  backgroundColor: "#fde8e8",
+                  color: "#9b1c1c",
+                  fontWeight: "600"
+                }}>
+                  {errorMsg}
+                </div>
+              )}
 
               <form onSubmit={handleSubmit} className="contact-form">
 
@@ -262,8 +351,9 @@ export default function Contact() {
                 <button
                   type="submit"
                   className="contact-submit-btn"
+                  disabled={submitting}
                 >
-                  Send Message
+                  {submitting ? "Sending Message..." : "Send Message"}
                   <FiSend />
                 </button>
 
@@ -302,17 +392,29 @@ export default function Contact() {
                 </div>
 
                 <div className="contact-socials">
-                  <a href="#" aria-label="Instagram">
-                    <FiInstagram />
-                  </a>
+                  {contactInfo.instagramUrl ? (
+                    <a href={contactInfo.instagramUrl} target="_blank" rel="noreferrer" aria-label="Instagram">
+                      <FiInstagram />
+                    </a>
+                  ) : (
+                    <a href="#" aria-label="Instagram"><FiInstagram /></a>
+                  )}
 
-                  <a href="#" aria-label="Facebook">
-                    <FiFacebook />
-                  </a>
+                  {contactInfo.facebookUrl ? (
+                    <a href={contactInfo.facebookUrl} target="_blank" rel="noreferrer" aria-label="Facebook">
+                      <FiFacebook />
+                    </a>
+                  ) : (
+                    <a href="#" aria-label="Facebook"><FiFacebook /></a>
+                  )}
 
-                  <a href="#" aria-label="Youtube">
-                    <FiYoutube />
-                  </a>
+                  {contactInfo.youtubeUrl ? (
+                    <a href={contactInfo.youtubeUrl} target="_blank" rel="noreferrer" aria-label="Youtube">
+                      <FiYoutube />
+                    </a>
+                  ) : (
+                    <a href="#" aria-label="Youtube"><FiYoutube /></a>
+                  )}
                 </div>
               </div>
 

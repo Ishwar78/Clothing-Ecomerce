@@ -1,5 +1,5 @@
-﻿import React, { useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useMemo, useState } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   FiChevronDown,
   FiChevronLeft,
@@ -145,6 +145,8 @@ export default function CategoryPage({ slug: propSlug }) {
     return filters;
   }, [categoriesData, propSlug]);
   const params = useParams();
+  const [searchParams] = useSearchParams();
+  const urlSearch = searchParams.get('search') || '';
   const slug = propSlug || params.slug;
   const navigate = useNavigate();
 
@@ -159,7 +161,9 @@ export default function CategoryPage({ slug: propSlug }) {
     });
   }, []);
 
-  const title = categoryMap[slug]?.[0] || "Shop All";
+  const title = urlSearch.trim()
+    ? `Search: "${urlSearch}"`
+    : (categoryMap[slug]?.[0] || "Shop All");
   const totalProducts = categoryMap[slug]?.[1] || "412";
 
   const normalize = (str) => (str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -167,6 +171,16 @@ export default function CategoryPage({ slug: propSlug }) {
   const products = useMemo(() => {
     // Only show real dynamic products from database
     let result = [...dbProducts];
+
+    if (urlSearch.trim()) {
+      const q = normalize(urlSearch);
+      result = result.filter(item => {
+        return normalize(item.name).includes(q) ||
+               normalize(item.category).includes(q) ||
+               normalize(item.subcategory).includes(q) ||
+               normalize(item.description).includes(q);
+      });
+    }
 
     if (slug) {
       const cleanSlug = normalize(slug);
@@ -397,7 +411,7 @@ export default function CategoryPage({ slug: propSlug }) {
           </div> */}
 
           {/* SIZE */}
-          <div className="filter-group">
+          {/* <div className="filter-group">
             <div className="filter-group-title">
               <h4>Size</h4>
               <FiChevronDown />
@@ -410,7 +424,7 @@ export default function CategoryPage({ slug: propSlug }) {
                 </button>
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* COLOR */}
           {/* <div className="filter-group">
@@ -566,12 +580,12 @@ export default function CategoryPage({ slug: propSlug }) {
 
                   <div className="product-price">
                     <strong>
-                      ₹{Number(product.price || 0).toLocaleString("en-IN")}
+                      ₹{Math.round(Number(product.price || 0)).toLocaleString("en-IN")}
                     </strong>
 
-                    {Number(product.originalPrice || product.mrp || 0) > Number(product.price || 0) && (
+                    {Math.round(Number(product.originalPrice || product.mrp || 0)) > Math.round(Number(product.price || 0)) && (
                       <del>
-                        ₹{Number(product.originalPrice || product.mrp).toLocaleString("en-IN")}
+                        ₹{Math.round(Number(product.originalPrice || product.mrp)).toLocaleString("en-IN")}
                       </del>
                     )}
                   </div>

@@ -79,7 +79,7 @@
     top: 15px
 }
 
-.review-item {
+.checkout-review-item {
     display: grid;
     grid-template-columns: 55px 1fr auto;
     gap: 10px;
@@ -88,20 +88,20 @@
     border-bottom: 1px solid #eee1de
 }
 
-.review-item img {
+.checkout-review-item img {
     width: 55px;
     height: 65px;
     object-fit: cover;
     border-radius: 6px
 }
 
-.review-item strong,
-.review-item small {
+.checkout-review-item strong,
+.checkout-review-item small {
     display: block;
     font-size: 12px
 }
 
-.review-item small {
+.checkout-review-item small {
     color: #837171;
     margin-top: 5px
 }

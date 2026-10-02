@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { allProducts } from "../data/products";
 
@@ -17,6 +17,8 @@ import {
   FiArrowUp,
   FiCheckCircle,
   FiPlay,
+  FiStar,
+  FiEdit3,
 } from "react-icons/fi";
 
 import "./ProductDetails.css";
@@ -88,18 +90,82 @@ const completeLookProducts = [
 const fallbackImage =
   "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=80";
 
+const getColorHex = (name) => {
+  if (!name) return '#ccc';
+  const clean = String(name).trim().toLowerCase();
+  const map = {
+    white: '#ffffff',
+    black: '#1a1a1a',
+    red: '#e53e3e',
+    blue: '#3182ce',
+    green: '#38a169',
+    yellow: '#ecc94b',
+    pink: '#ed64a6',
+    purple: '#805ad5',
+    orange: '#dd6b20',
+    grey: '#718096',
+    gray: '#718096',
+    navy: '#1a365d',
+    maroon: '#742a2a',
+    beige: '#f5f5dc',
+    cream: '#fffdd0',
+    brown: '#7b341e',
+    peach: '#ffdab9',
+    teal: '#319795',
+    olive: '#808000',
+    gold: '#ffd700',
+    silver: '#c0c0c0',
+    mustard: '#ffdb58',
+    rust: '#b7410e',
+    wine: '#722f37',
+    lavender: '#e6e6fa',
+    cyan: '#00ffff',
+    magenta: '#ff00ff'
+  };
+  return map[clean] || (clean.startsWith('#') ? clean : clean);
+};
+
+const initialMockReviews = [
+  {
+    _id: "mock-1",
+    userName: "Priya Sharma",
+    rating: 5,
+    createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
+    comment: "Beautiful embroidery and very comfortable fabric! The fitting is true to size and looks exactly like the pictures.",
+    isVerified: true
+  },
+  {
+    _id: "mock-2",
+    userName: "Neha Rajput",
+    rating: 5,
+    createdAt: new Date(Date.now() - 5 * 86400000).toISOString(),
+    comment: "Loved the rich colour and quality. Perfect for festive occasions and family functions. Highly recommend!",
+    isVerified: true
+  },
+  {
+    _id: "mock-3",
+    userName: "Anjali Kapoor",
+    rating: 4,
+    createdAt: new Date(Date.now() - 10 * 86400000).toISOString(),
+    comment: "Good quality material, fast delivery, and very elegant design. Very satisfied with the purchase.",
+    isVerified: true
+  }
+];
+
 export default function ProductDetails() {
   const { id } = useParams();
   const nav = useNavigate();
   
   const [dbProduct, setDbProduct] = useState(null);
-  const [dbRelated, setDbRelated] = useState([]);
+  const [allDbProducts, setAllDbProducts] = useState([]);
   const slugify = (text) => text ? text.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') : '';
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     import('../lib/api').then(({default: api}) => {
       api.get('/products').then(res => {
-        if(res.success) {
+        if(res.success && Array.isArray(res.products)) {
+           setAllDbProducts(res.products);
            const p = res.products.find(x => 
              x.slug === id || 
              slugify(x.name) === id || 
@@ -107,7 +173,6 @@ export default function ProductDetails() {
              String(x.id) === String(id)
            );
            if (p) setDbProduct(p);
-           setDbRelated(res.products.filter(x => (x.slug || x._id) !== id).slice(0, 4));
         }
       });
     });
@@ -123,8 +188,8 @@ export default function ProductDetails() {
     ? foundProduct.images
     : (foundProduct?.image ? [foundProduct.image, ...defaultProduct.thumbs.slice(1)] : defaultProduct.thumbs);
 
-  const productPrice = Number(foundProduct?.price || defaultProduct.price);
-  const productMrp = Number(foundProduct?.originalPrice || foundProduct?.mrp || defaultProduct.mrp);
+  const productPrice = Math.round(Number(foundProduct?.price || defaultProduct.price));
+  const productMrp = Math.round(Number(foundProduct?.originalPrice || foundProduct?.mrp || defaultProduct.mrp));
   const discountStr = productMrp > productPrice
     ? Math.round(((productMrp - productPrice) / productMrp) * 100) + "% OFF"
     : "Special Price";
@@ -138,6 +203,47 @@ export default function ProductDetails() {
     mrp: productMrp,
     discount: discountStr
   } : defaultProduct;
+
+  const displayRelatedProducts = useMemo(() => {
+    const normalize = (str) => (str || '').toLowerCase().trim().replace(/[^a-z0-9]/g, '');
+
+    const currentId = String(foundProduct?._id || foundProduct?.id || id || '');
+    const currentSlug = foundProduct?.slug || slugify(foundProduct?.name) || id;
+    const currentCat = normalize(foundProduct?.category);
+    const currentSub = normalize(foundProduct?.subcategory);
+
+    const pool = (allDbProducts && allDbProducts.length > 0) ? allDbProducts : allProducts;
+
+    // Filter out current product
+    const otherProducts = pool.filter(p => {
+      const pId = String(p._id || p.id || '');
+      const pSlug = p.slug || slugify(p.name);
+      return pId !== currentId && pSlug !== currentSlug;
+    });
+
+    if (otherProducts.length === 0) {
+      return completeLookProducts;
+    }
+
+    // 1. Same Category and Same Subcategory
+    const sameSub = currentSub
+      ? otherProducts.filter(p => normalize(p.category) === currentCat && normalize(p.subcategory) === currentSub)
+      : [];
+
+    // 2. Same Category (other subcategories)
+    const sameCat = currentCat
+      ? otherProducts.filter(p => normalize(p.category) === currentCat && !sameSub.some(s => String(s._id || s.id) === String(p._id || p.id)))
+      : [];
+
+    // 3. Other Products from DB/store
+    const others = otherProducts.filter(p => 
+      !sameSub.some(s => String(s._id || s.id) === String(p._id || p.id)) &&
+      !sameCat.some(s => String(s._id || s.id) === String(p._id || p.id))
+    );
+
+    const combined = [...sameSub, ...sameCat, ...others];
+    return combined.slice(0, 10);
+  }, [allDbProducts, foundProduct, id]);
 
   const [img, setImg] = useState(product.image);
   
@@ -155,7 +261,91 @@ export default function ProductDetails() {
   const [size, setSize] = useState("M");
   const [qty, setQty] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
-  const [liked, setLiked] = useState(false);
+
+  const currentProdId = String(foundProduct?._id || foundProduct?.id || id || '');
+  const currentProdSlug = foundProduct?.slug || slugify(foundProduct?.name) || id;
+
+  const [reviewsList, setReviewsList] = useState([]);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [newReview, setNewReview] = useState({
+    name: "",
+    email: "",
+    rating: 5,
+    comment: ""
+  });
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [reviewSuccessMsg, setReviewSuccessMsg] = useState("");
+
+  useEffect(() => {
+    if (!currentProdId && !currentProdSlug) return;
+    import('../lib/api').then(({ default: api }) => {
+      api.get(`/reviews?productId=${currentProdId}`).then(res => {
+        if (res.success && Array.isArray(res.reviews) && res.reviews.length > 0) {
+          setReviewsList(res.reviews);
+        }
+      });
+    });
+  }, [currentProdId, currentProdSlug]);
+
+  const displayedReviews = reviewsList.length > 0 ? reviewsList : initialMockReviews;
+  const avgScore = (
+    displayedReviews.reduce((sum, r) => sum + Number(r.rating || 5), 0) /
+    displayedReviews.length
+  ).toFixed(1);
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!newReview.name.trim() || !newReview.comment.trim()) {
+      alert("Please enter your name and review message.");
+      return;
+    }
+
+    try {
+      setSubmittingReview(true);
+      const { default: api } = await import('../lib/api');
+      const payload = {
+        productId: currentProdId,
+        productSlug: currentProdSlug,
+        productName: product.name,
+        productImage: product.image,
+        userName: newReview.name.trim(),
+        userEmail: newReview.email.trim(),
+        rating: Number(newReview.rating) || 5,
+        comment: newReview.comment.trim()
+      };
+
+      const res = await api.post('/reviews', payload);
+      if (res.success && res.review) {
+        setReviewsList(prev => [res.review, ...prev]);
+        setNewReview({ name: "", email: "", rating: 5, comment: "" });
+        setShowReviewForm(false);
+        setReviewSuccessMsg("Thank you! Your review has been submitted successfully.");
+        setTimeout(() => setReviewSuccessMsg(""), 5000);
+      } else {
+        alert(res.message || "Failed to submit review.");
+      }
+    } catch (err) {
+      console.error("Submit review error:", err);
+      alert("Error submitting review. Please try again.");
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
+  const renderStars = (rating) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <FiStar
+          key={i}
+          fill={i <= rating ? "currentColor" : "none"}
+          color={i <= rating ? "#f59e0b" : "#d1d5db"}
+        />
+      );
+    }
+    return stars;
+  };
 
   const lookRef = useRef(null);
 
@@ -181,7 +371,7 @@ export default function ProductDetails() {
       : (item.color || item.colors?.[0] || "");
     const chosenImage = (isCurrentProduct && img) || item.image || item.images?.[0] || fallbackImage;
     const chosenQuantity = isCurrentProduct ? Number(qty || 1) : 1;
-    const itemPrice = Number(item.price || productPrice || 0);
+    const itemPrice = Math.round(Number(item.price || productPrice || 0));
 
     const cartItem = {
       ...item,
@@ -231,25 +421,58 @@ export default function ProductDetails() {
      WISHLIST
   ========================= */
 
-  const toggleWishlist = () => {
-    const wishlist = JSON.parse(
-      localStorage.getItem("sbv-wishlist") || "[]"
-    );
-
-    const exists = wishlist.some((item) => item.id === product.id);
-
-    let updated;
-
-    if (exists) {
-      updated = wishlist.filter((item) => item.id !== product.id);
-      setLiked(false);
-    } else {
-      updated = [...wishlist, product];
-      setLiked(true);
+  const [wishlist, setWishlist] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("sbv-wishlist") || "[]");
+    } catch {
+      return [];
     }
+  });
 
+  const isItemInWishlist = (item) => {
+    if (!item) return false;
+    const itemId = String(item._id || item.id || '');
+    const itemSlug = item.slug || slugify(item.name);
+    return wishlist.some(x => {
+      const xId = String(x._id || x.id || '');
+      const xSlug = x.slug || slugify(x.name);
+      return (itemId && xId && itemId === xId) || (itemSlug && xSlug && itemSlug === xSlug);
+    });
+  };
+
+  const toggleWishlistItem = (item) => {
+    if (!item) return;
+    const itemId = String(item._id || item.id || '');
+    const itemSlug = item.slug || slugify(item.name);
+    const exists = isItemInWishlist(item);
+    let updated;
+    if (exists) {
+      updated = wishlist.filter(x => {
+        const xId = String(x._id || x.id || '');
+        const xSlug = x.slug || slugify(x.name);
+        return !( (itemId && xId && itemId === xId) || (itemSlug && xSlug && itemSlug === xSlug) );
+      });
+      alert(`${item.name} removed from wishlist`);
+    } else {
+      const cleanItem = {
+        ...item,
+        id: item._id || item.id,
+        image: item.images?.[0] || item.image || fallbackImage,
+        price: Number(item.price || 0),
+        originalPrice: Number(item.originalPrice || item.mrp || 0),
+      };
+      updated = [...wishlist, cleanItem];
+      alert(`${item.name} added to wishlist`);
+    }
+    setWishlist(updated);
     localStorage.setItem("sbv-wishlist", JSON.stringify(updated));
   };
+
+  const toggleWishlist = () => {
+    toggleWishlistItem(product);
+  };
+
+  const liked = isItemInWishlist(product);
 
   /* =========================
      SHARE
@@ -483,43 +706,29 @@ export default function ProductDetails() {
           {/* COLOR */}
           {product.colors && product.colors.length > 0 && (
             <div className="option">
-              <strong>
-                Color: <span>{selectedColor || product.colors[0]}</span>
-              </strong>
+              <div className="size-heading">
+                <strong>
+                  Color: <span style={{ color: '#e83f5d', fontWeight: '700', marginLeft: '6px' }}>{selectedColor || product.colors[0]}</span>
+                </strong>
+              </div>
 
-              <div className="swatches" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '6px' }}>
+              <div className="color-boxes">
                 {product.colors.map((c) => {
                   const isSelected = (selectedColor || product.colors[0]) === c;
                   return (
                     <button
                       type="button"
                       key={c}
-                      style={{
-                        padding: '6px 14px',
-                        borderRadius: '20px',
-                        border: isSelected ? '2px solid #e11b22' : '1px solid #ddd',
-                        backgroundColor: isSelected ? '#fff5f5' : '#fff',
-                        color: isSelected ? '#e11b22' : '#333',
-                        fontWeight: isSelected ? '600' : '400',
-                        fontSize: '13px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px'
-                      }}
+                      className={`color-box-btn ${isSelected ? "selected" : ""}`}
                       onClick={() => setSelectedColor(c)}
                     >
                       <span
+                        className="color-dot"
                         style={{
-                          width: '12px',
-                          height: '12px',
-                          borderRadius: '50%',
-                          backgroundColor: c.toLowerCase(),
-                          border: '1px solid #ccc',
-                          display: 'inline-block'
+                          backgroundColor: getColorHex(c)
                         }}
                       />
-                      {c}
+                      <span>{c}</span>
                     </button>
                   );
                 })}
@@ -779,7 +988,7 @@ export default function ProductDetails() {
             className={activeTab === "reviews" ? "active" : ""}
             onClick={() => setActiveTab("reviews")}
           >
-            REVIEWS ({product.reviews || 128})
+            REVIEWS ({displayedReviews.length})
           </button>
         </div>
 
@@ -953,62 +1162,169 @@ export default function ProductDetails() {
         )}
 
         {/* REVIEWS */}
-
         {activeTab === "reviews" && (
           <div className="tab-content reviews-content">
 
-            <div className="review-summary">
-
-              <strong>4.6</strong>
-
-              <div>
-                <div className="review-stars">
-                  ★★★★★
+            {/* LEFT: SUMMARY & WRITE BUTTON */}
+            <div className="review-summary-sidebar">
+              <div className="review-summary-card">
+                <div className="review-big-score">{avgScore}</div>
+                <div className="review-summary-stars">
+                  {renderStars(Math.round(Number(avgScore)))}
                 </div>
-
-                <span>
-                  Based on 128 verified reviews
+                <span className="review-count-label">
+                  Based on {displayedReviews.length} verified reviews
                 </span>
               </div>
 
+              <button
+                type="button"
+                className="write-review-btn"
+                onClick={() => setShowReviewForm(!showReviewForm)}
+              >
+                <FiEdit3 />
+                {showReviewForm ? "Cancel Review" : "Write a Review"}
+              </button>
             </div>
 
-            <div className="review-list">
+            {/* RIGHT: FORM & REVIEWS LIST */}
+            <div className="review-right-panel">
 
-              <div className="review-item">
-                <div>
-                  <b>Priya S.</b>
-                  <span>★★★★★</span>
+              {reviewSuccessMsg && (
+                <div style={{
+                  padding: "12px 18px",
+                  borderRadius: "8px",
+                  backgroundColor: "#def7ec",
+                  color: "#03543f",
+                  fontWeight: "600",
+                  fontSize: "14px",
+                  marginBottom: "20px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px"
+                }}>
+                  <FiCheckCircle size={18} />
+                  <span>{reviewSuccessMsg}</span>
                 </div>
+              )}
 
-                <p>
-                  Beautiful embroidery and very
-                  comfortable fabric. Looks exactly as
-                  shown.
-                </p>
-              </div>
+              {/* WRITE REVIEW FORM */}
+              {showReviewForm && (
+                <form onSubmit={handleReviewSubmit} className="review-form-box">
+                  <h3>Share Your Experience</h3>
 
-              <div className="review-item">
-                <div>
-                  <b>Neha R.</b>
-                  <span>★★★★★</span>
-                </div>
+                  <div className="rating-select-row">
+                    <span style={{ fontSize: "13px", fontWeight: "600", color: "#554848" }}>Rating:</span>
+                    <div className="star-rating-picker">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <FiStar
+                          key={star}
+                          onClick={() => setNewReview({ ...newReview, rating: star })}
+                          onMouseEnter={() => setHoverRating(star)}
+                          onMouseLeave={() => setHoverRating(0)}
+                          fill={(hoverRating || newReview.rating) >= star ? "#f59e0b" : "none"}
+                          color={(hoverRating || newReview.rating) >= star ? "#f59e0b" : "#d1d5db"}
+                        />
+                      ))}
+                    </div>
+                    <span className="star-label-text">
+                      {["", "Poor", "Fair", "Good", "Very Good", "Excellent"][hoverRating || newReview.rating]}
+                    </span>
+                  </div>
 
-                <p>
-                  Loved the colour and fitting. Perfect
-                  for festive occasions.
-                </p>
-              </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                    <div className="review-input-group">
+                      <label>Your Name *</label>
+                      <input
+                        type="text"
+                        value={newReview.name}
+                        onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
+                        placeholder="e.g. Priya Sharma"
+                        required
+                      />
+                    </div>
+                    <div className="review-input-group">
+                      <label>Your Email (Optional)</label>
+                      <input
+                        type="email"
+                        value={newReview.email}
+                        onChange={(e) => setNewReview({ ...newReview, email: e.target.value })}
+                        placeholder="e.g. priya@example.com"
+                      />
+                    </div>
+                  </div>
 
-              <div className="review-item">
-                <div>
-                  <b>Anjali K.</b>
-                  <span>★★★★☆</span>
-                </div>
+                  <div className="review-input-group">
+                    <label>Review Description *</label>
+                    <textarea
+                      rows="4"
+                      value={newReview.comment}
+                      onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                      placeholder="Tell us what you liked or disliked about this product..."
+                      required
+                    />
+                  </div>
 
-                <p>
-                  Good quality and beautiful design.
-                </p>
+                  <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+                    <button
+                      type="button"
+                      className="btn btn-outline"
+                      style={{ padding: "8px 18px", fontSize: "13px" }}
+                      onClick={() => setShowReviewForm(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      disabled={submittingReview}
+                      style={{ padding: "8px 24px", fontSize: "13px" }}
+                    >
+                      {submittingReview ? "Submitting..." : "Submit Review"}
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {/* REVIEWS LIST */}
+              <div className="product-reviews-list">
+                {displayedReviews.map((rev, idx) => {
+                  const initial = (rev.userName || "C").charAt(0).toUpperCase();
+                  const dateStr = rev.createdAt
+                    ? new Date(rev.createdAt).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric"
+                      })
+                    : "Verified Purchase";
+
+                  return (
+                    <div key={rev._id || idx} className="product-review-card">
+                      <div className="review-card-top">
+                        <div className="review-author-wrap">
+                          <div className="review-avatar">{initial}</div>
+                          <div className="review-author-meta">
+                            <h4>
+                              {rev.userName}
+                              {rev.isVerified !== false && (
+                                <span className="verified-badge">
+                                  <FiCheckCircle size={11} /> Verified Buyer
+                                </span>
+                              )}
+                            </h4>
+                            <div className="review-stars-row">
+                              {renderStars(Number(rev.rating) || 5)}
+                            </div>
+                          </div>
+                        </div>
+
+                        <span className="review-date">{dateStr}</span>
+                      </div>
+
+                      <p className="review-card-body">{rev.comment}</p>
+                    </div>
+                  );
+                })}
               </div>
 
             </div>
@@ -1059,50 +1375,81 @@ export default function ProductDetails() {
           ref={lookRef}
         >
 
-          {completeLookProducts.map((item) => (
-            <div
-              className="mini-product"
-              key={item.id}
-            >
+          {displayRelatedProducts.map((item) => {
+            const itemId = item._id || item.id;
+            const itemSlug = item.slug || slugify(item.name) || itemId;
+            const itemImg = item.images?.[0] || item.image || fallbackImage;
+            const itemPrice = Math.round(Number(item.price) || 0);
+            const itemMrp = Math.round(Number(item.originalPrice || item.mrp) || 0);
+            const inWish = isItemInWishlist(item);
 
-              <div className="mini-image">
+            return (
+              <div
+                className="mini-product"
+                key={itemId}
+              >
+                <div 
+                  className="mini-image"
+                  onClick={() => {
+                    nav(`/product/${itemSlug}`);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <img
+                    src={itemImg}
+                    alt={item.name}
+                    onError={handleImageError}
+                  />
 
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  onError={handleImageError}
-                />
+                  <button
+                    type="button"
+                    className={`mini-heart ${inWish ? "active" : ""}`}
+                    title={inWish ? "Remove from wishlist" : "Add to wishlist"}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleWishlistItem(item);
+                    }}
+                    style={{
+                      color: inWish ? "#ef4444" : "#f04464"
+                    }}
+                  >
+                    <FiHeart fill={inWish ? "#ef4444" : "none"} />
+                  </button>
+                </div>
+
+                <h3
+                  onClick={() => {
+                    nav(`/product/${itemSlug}`);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  style={{ cursor: 'pointer' }}
+                  title={item.name}
+                >
+                  {item.name}
+                </h3>
+
+                <div className="mini-price">
+                  ₹{itemPrice.toLocaleString("en-IN")}
+
+                  {itemMrp > itemPrice && (
+                    <del>
+                      ₹{itemMrp.toLocaleString("en-IN")}
+                    </del>
+                  )}
+                </div>
 
                 <button
                   type="button"
-                  className="mini-heart"
+                  className="mini-cart"
+                  onClick={() => addToCart(item)}
                 >
-                  <FiHeart />
+                  <FiShoppingBag />
+                  Add to Cart
                 </button>
-
               </div>
-
-              <h3>{item.name}</h3>
-
-              <div className="mini-price">
-                ₹{item.price.toLocaleString("en-IN")}
-
-                <del>
-                  ₹{item.mrp.toLocaleString("en-IN")}
-                </del>
-              </div>
-
-              <button
-                type="button"
-                className="mini-cart"
-                onClick={() => addToCart(item)}
-              >
-                <FiShoppingBag />
-                Add to Cart
-              </button>
-
-            </div>
-          ))}
+            );
+          })}
 
         </div>
 

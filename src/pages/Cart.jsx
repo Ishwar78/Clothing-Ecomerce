@@ -34,9 +34,9 @@ export default function Cart({ inDashboard = false }) {
     saveItems(updated);
   };
 
-  const subtotal = items.reduce((s, p) => s + (Number(p.price) || 0) * (Number(p.quantity) || 1), 0);
+  const subtotal = Math.round(items.reduce((s, p) => s + (Math.round(Number(p.price) || 0)) * (Number(p.quantity) || 1), 0));
   const shippingFee = subtotal >= 999 ? 0 : (subtotal > 0 ? 99 : 0);
-  const total = subtotal + shippingFee;
+  const total = Math.round(subtotal + shippingFee);
 
   return (
     <div className={`cart-page container ${inDashboard ? 'in-dashboard' : ''}`} style={inDashboard ? { padding: '20px' } : {}}>
@@ -71,7 +71,7 @@ export default function Cart({ inDashboard = false }) {
                     <span>Size: <b>{p.size || 'M'}</b></span>
                     {p.color && <span style={{ marginLeft: '12px' }}>Color: <b>{p.color}</b></span>}
                   </div>
-                  <strong style={{ color: '#e11b22', fontSize: '15px' }}>₹{Number(p.price || 0).toLocaleString()}</strong>
+                  <strong style={{ color: '#e11b22', fontSize: '15px' }}>₹{Math.round(Number(p.price || 0)).toLocaleString()}</strong>
                 </div>
 
                 <div className="qty" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

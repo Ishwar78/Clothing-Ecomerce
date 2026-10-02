@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
     FiHeart,
@@ -28,6 +28,11 @@ export const categories = [
 export default function Navbar() {
     const [open, setOpen] = useState(false);
     const [dbCategories, setDbCategories] = useState([]);
+    const [dbProducts, setDbProducts] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const searchRef = React.useRef(null);
+    const mobileSearchRef = React.useRef(null);
 
     React.useEffect(() => {
         import('../lib/api').then(({ default: api }) => {
@@ -36,7 +41,22 @@ export default function Navbar() {
                     setDbCategories(res.categories);
                 }
             });
+            api.get('/products').then(res => {
+                if (res.success && Array.isArray(res.products)) {
+                    setDbProducts(res.products);
+                }
+            });
         });
+    }, []);
+
+    React.useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (searchRef.current && !searchRef.current.contains(e.target)) {
+                setIsSearchOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
     const navLinks = dbCategories.length > 0
@@ -47,6 +67,26 @@ export default function Navbar() {
 
     const cart = JSON.parse(localStorage.getItem('sbv-cart') || '[]');
     const wishlist = JSON.parse(localStorage.getItem('sbv-wishlist') || '[]');
+
+    const searchResults = searchQuery.trim().length > 0
+        ? dbProducts.filter(p => {
+            const q = searchQuery.toLowerCase().trim();
+            const name = (p.name || '').toLowerCase();
+            const cat = (p.category || '').toLowerCase();
+            const sub = (p.subcategory || '').toLowerCase();
+            return name.includes(q) || cat.includes(q) || sub.includes(q);
+        }).slice(0, 8)
+        : [];
+
+    const handleSearchSubmit = (e) => {
+        if (e) e.preventDefault();
+        const q = searchQuery.trim();
+        if (q) {
+            setIsSearchOpen(false);
+            setOpen(false);
+            navigate(`/shop?search=${encodeURIComponent(q)}`);
+        }
+    };
 
     return (
         <>
@@ -95,11 +135,87 @@ export default function Navbar() {
                     </div>
 
                     {/* SEARCH */}
-                    <div className="search-box">
-                        <input
-                            placeholder="Search for products, categories, brands..."
-                        />
-                        <FiSearch />
+                    <div className="search-box" ref={searchRef}>
+                        <form onSubmit={handleSearchSubmit} style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => {
+                                    setSearchQuery(e.target.value);
+                                    setIsSearchOpen(true);
+                                }}
+                                onFocus={() => setIsSearchOpen(true)}
+                                placeholder="Search for products, categories, styles..."
+                            />
+                            {searchQuery && (
+                                <button
+                                    type="button"
+                                    className="search-clear-btn"
+                                    onClick={() => {
+                                        setSearchQuery('');
+                                        setIsSearchOpen(false);
+                                    }}
+                                    title="Clear"
+                                >
+                                    <FiX />
+                                </button>
+                            )}
+                            <button type="submit" className="search-btn" title="Search">
+                                <FiSearch />
+                            </button>
+                        </form>
+
+                        {/* LIVE SEARCH DROPDOWN */}
+                        {isSearchOpen && searchQuery.trim().length > 0 && (
+                            <div className="search-dropdown">
+                                {searchResults.length > 0 ? (
+                                    <>
+                                        {searchResults.map((p) => {
+                                            const pSlug = p.slug || (p.name ? p.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') : (p._id || p.id));
+                                            const pImg = p.images?.[0] || p.image || '/assets/mencategory1.png';
+                                            const pPrice = Math.round(Number(p.price) || 0);
+                                            const pMrp = Math.round(Number(p.originalPrice || p.mrp) || 0);
+
+                                            return (
+                                                <div
+                                                    key={p._id || p.id}
+                                                    className="search-result-item"
+                                                    onClick={() => {
+                                                        navigate(`/product/${pSlug}`);
+                                                        setSearchQuery('');
+                                                        setIsSearchOpen(false);
+                                                    }}
+                                                >
+                                                    <img
+                                                        src={pImg}
+                                                        alt={p.name}
+                                                        onError={(e) => { e.target.src = '/assets/mencategory1.png'; }}
+                                                    />
+                                                    <div className="search-item-info">
+                                                        <h4>{p.name}</h4>
+                                                        <small>{p.category} {p.subcategory ? `• ${p.subcategory}` : ''}</small>
+                                                    </div>
+                                                    <div className="search-item-price">
+                                                        <span>₹{pPrice.toLocaleString('en-IN')}</span>
+                                                        {pMrp > pPrice && <del>₹{pMrp.toLocaleString('en-IN')}</del>}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                        <div
+                                            className="search-view-all"
+                                            onClick={() => handleSearchSubmit()}
+                                        >
+                                            View all results for "{searchQuery}" →
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="search-no-results">
+                                        No products found for "{searchQuery}"
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     {/* HEADER ACTIONS */}

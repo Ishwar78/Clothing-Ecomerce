@@ -129,14 +129,14 @@ export default function Products() {
 
     if (!price) return 0;
 
-    if (!discount) return price;
+    if (!discount) return Math.round(price);
 
     if (form.discountType === 'percentage') {
       const discountAmount = (price * discount) / 100;
-      return Math.max(0, price - discountAmount);
+      return Math.round(Math.max(0, price - discountAmount));
     }
 
-    return Math.max(0, price - discount);
+    return Math.round(Math.max(0, price - discount));
   }, [form.price, form.discount, form.discountType]);
 
   // =========================================
@@ -388,8 +388,8 @@ export default function Products() {
   
   const handleEditProduct = (p) => {
     setEditingProductId(p._id);
-    const orig = Number(p.originalPrice) || Number(p.price) || 0;
-    const curr = Number(p.price) || 0;
+    const orig = Math.round(Number(p.originalPrice) || Number(p.price) || 0);
+    const curr = Math.round(Number(p.price) || 0);
     const disc = (orig > curr && orig > 0) ? Math.round(((orig - curr) / orig) * 100) : '';
 
     setForm({
@@ -447,8 +447,8 @@ export default function Products() {
         slug: form.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''),
         shortDescription: form.short || form.name.trim(),
         description: form.long || form.seoDescription || form.short || 'Premium quality product',
-        price: Number(sellingPrice) || Number(form.price) || 0,
-        originalPrice: Number(form.price) || Number(sellingPrice) || 0,
+        price: Math.round(Number(sellingPrice) || Number(form.price) || 0),
+        originalPrice: Math.round(Number(form.price) || Number(sellingPrice) || 0),
         category: form.category,
         subcategory: form.subcategory,
         images: uploadedImages,

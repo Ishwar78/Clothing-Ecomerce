@@ -1415,7 +1415,7 @@
   }
 
   .category-circle-name {
-    font-size: 10px;
+    font-size: 14px;
   }
 
   .category-sale-badge {
@@ -1610,7 +1610,7 @@
   }
 
   .category-kicker {
-    font-size: 9px;
+    font-size: 12px;
   }
 
   .category-hero h1 {
@@ -1618,7 +1618,7 @@
   }
 
   .category-hero-content > p {
-    font-size: 10px;
+    font-size: 14px;
   }
 
   .category-product-image {
@@ -1643,19 +1643,19 @@
   }
 
   .category-product-info h3 {
-    font-size: 10px;
+    font-size: 16px;
   }
 
   .category-product-info > p {
-    font-size: 8px;
+    font-size: 14px;
   }
 
   .product-rating span {
-    font-size: 8px;
+    font-size: 18px;
   }
 
   .product-rating small {
-    font-size: 7px;
+    font-size: 12px;
   }
 
   .product-price {
@@ -1663,15 +1663,15 @@
   }
 
   .product-price strong {
-    font-size: 12px;
+    font-size: 17px;
   }
 
   .product-price del {
-    font-size: 8px;
+    font-size: 13px;
   }
 
   .category-add-cart {
-    font-size: 8px;
+    font-size: 10px;
   }
 
   .category-pagination {

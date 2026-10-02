@@ -21,6 +21,11 @@ const uploadRoute = require('./routes/uploadRoute');
 const bannerRoute = require('./routes/bannerRoute');
 const orderRoute = require('./routes/orderRoute');
 const couponRoute = require('./routes/couponRoute');
+const ticketRoute = require('./routes/ticketRoute');
+const returnRoute = require('./routes/returnRoute');
+const contactRoute = require('./routes/contactRoute');
+const inquiryRoute = require('./routes/inquiryRoute');
+const reviewRoute = require('./routes/reviewRoute');
 const Admin = require('./models/Admin');
 const Category = require('./models/Category');
 
@@ -44,6 +49,11 @@ app.use('/api/banners', bannerRoute);
 app.use('/api/upload', uploadRoute);
 app.use('/api/orders', orderRoute);
 app.use('/api/coupons', couponRoute);
+app.use('/api/tickets', ticketRoute);
+app.use('/api/returns', returnRoute);
+app.use('/api/contact', contactRoute);
+app.use('/api/inquiries', inquiryRoute);
+app.use('/api/reviews', reviewRoute);
 
 // MongoDB Connection
 async function connectDB() {

@@ -10,13 +10,14 @@ export default function ProductCard({ product }) {
 
     const productId = product._id || product.id;
     const productSlug = product.slug || (product.name ? product.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') : productId);
-    const priceVal = Number(product.price) || 0;
-    const mrpVal = Number(product.originalPrice || product.mrp) || 0;
+    const priceVal = Math.round(Number(product.price) || 0);
+    const mrpVal = Math.round(Number(product.originalPrice || product.mrp) || 0);
     const imgUrl = product.images?.[0] || product.image || '/assets/mencategory1.png';
 
     const add = () => {
         const c = JSON.parse(localStorage.getItem('sbv-cart') || '[]');
-        localStorage.setItem('sbv-cart', JSON.stringify([...c, product]));
+        const safeProduct = { ...product, price: priceVal, mrp: mrpVal };
+        localStorage.setItem('sbv-cart', JSON.stringify([...c, safeProduct]));
         alert(`${product.name} added to cart`);
     };
 

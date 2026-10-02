@@ -10,11 +10,23 @@ const slugify = (text) => text ? text.toLowerCase().trim().replace(/[^a-z0-9]+/g
 router.get('/', async (req, res) => {
     try {
         const products = await Product.find().sort({ createdAt: -1 });
-        // Backfill slugs in background if missing
+        // Backfill slugs and round any existing decimal prices in background
         products.forEach(p => {
+            let changed = false;
             if (!p.slug && p.name) {
                 p.slug = slugify(p.name);
-                p.save().catch(err => console.error('Backfill slug error:', err));
+                changed = true;
+            }
+            if (p.price !== undefined && p.price !== null && p.price !== Math.round(Number(p.price) || 0)) {
+                p.price = Math.round(Number(p.price) || 0);
+                changed = true;
+            }
+            if (p.originalPrice !== undefined && p.originalPrice !== null && p.originalPrice !== Math.round(Number(p.originalPrice) || 0)) {
+                p.originalPrice = Math.round(Number(p.originalPrice) || 0);
+                changed = true;
+            }
+            if (changed) {
+                p.save().catch(err => console.error('Backfill product price/slug error:', err));
             }
         });
         res.json({ success: true, products });
@@ -57,10 +69,10 @@ router.get('/:idOrSlug', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const slug = req.body.slug || slugify(req.body.name);
-        const product = new Product({
-            ...req.body,
-            slug
-        });
+        const data = { ...req.body, slug };
+        if (data.price !== undefined) data.price = Math.round(Number(data.price) || 0);
+        if (data.originalPrice !== undefined) data.originalPrice = Math.round(Number(data.originalPrice) || 0);
+        const product = new Product(data);
         await product.save();
         res.status(201).json({ success: true, product });
     } catch (error) {
@@ -75,6 +87,12 @@ router.put('/:id', async (req, res) => {
         const updateData = { ...req.body };
         if (req.body.name && !req.body.slug) {
             updateData.slug = slugify(req.body.name);
+        }
+        if (updateData.price !== undefined) {
+            updateData.price = Math.round(Number(updateData.price) || 0);
+        }
+        if (updateData.originalPrice !== undefined) {
+            updateData.originalPrice = Math.round(Number(updateData.originalPrice) || 0);
         }
         const product = await Product.findByIdAndUpdate(req.params.id, updateData, { new: true });
         if (!product) {

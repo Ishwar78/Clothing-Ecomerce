@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
     FiGrid,
@@ -13,20 +13,24 @@ import {
     FiPhone,
     FiHelpCircle,
     FiMenu, FiX,
-    FiLogOut
+    FiLogOut,
+    FiStar
 } from 'react-icons/fi';
 import './AdminLayout.css';
-const links = [['/admin', 'Overview', FiGrid],
-['/admin/categories', 'Categories', FiTag],
-['/admin/products', 'Products', FiPackage],
-['/admin/banners', 'Home Banner', FiImage],
-['/admin/orders', 'Orders', FiShoppingBag],
-['/admin/users', 'Users', FiUsers],
-['/admin/coupons', 'Coupon Codes', FiPercent],
-['/admin/tickets', 'Support Tickets', FiMessageSquare],
-['/admin/returns', 'Return Requests', FiRotateCcw],
-['/admin/contact', 'Contact', FiPhone],
-['/admin/inquiries', 'Inquiries', FiHelpCircle]];
+const links = [
+    ['/admin', 'Overview', FiGrid],
+    ['/admin/categories', 'Categories', FiTag],
+    ['/admin/products', 'Products', FiPackage],
+    ['/admin/banners', 'Home Banner', FiImage],
+    ['/admin/orders', 'Orders', FiShoppingBag],
+    ['/admin/users', 'Users', FiUsers],
+    ['/admin/coupons', 'Coupon Codes', FiPercent],
+    ['/admin/tickets', 'Support Tickets', FiMessageSquare],
+    ['/admin/returns', 'Return Requests', FiRotateCcw],
+    ['/admin/contact', 'Contact', FiPhone],
+    ['/admin/inquiries', 'Inquiries', FiHelpCircle],
+    ['/admin/reviews', 'Reviews', FiStar]
+];
 export function AdminLayout({ children }) {
     const nav = useNavigate(), loc = useLocation();
     const [open, setOpen] = useState(false);

@@ -132,9 +132,9 @@ export default function Checkout() {
     }));
   };
 
-  const subtotal = items.reduce((s, p) => s + (Number(p.price) || 0) * (Number(p.quantity) || 1), 0);
+  const subtotal = Math.round(items.reduce((s, p) => s + (Math.round(Number(p.price) || 0)) * (Number(p.quantity) || 1), 0));
   const shippingFee = subtotal >= 999 || subtotal === 0 ? 0 : 99;
-  const total = Math.max(0, subtotal + shippingFee - discount);
+  const total = Math.round(Math.max(0, subtotal + shippingFee - Math.round(discount || 0)));
 
   // Validate and Apply Coupon
   const applyCoupon = async (codeToApply) => {
@@ -563,7 +563,7 @@ export default function Checkout() {
           <div style={{ maxHeight: '250px', overflowY: 'auto', marginBottom: '15px' }}>
             {items.length ? (
               items.map((p, i) => (
-                <div className="review-item" key={i}>
+                <div className="checkout-review-item" key={i}>
                   <img
                     src={p.image || 'https://images.unsplash.com/photo-1583391733956-6c78276477e2?auto=format&fit=crop&w=150&q=70'}
                     alt={p.name}
@@ -573,7 +573,7 @@ export default function Checkout() {
                     <strong>{p.name}</strong>
                     <small>Qty {p.quantity || 1} • Size {p.size || 'M'} {p.color ? `• Color ${p.color}` : ''}</small>
                   </div>
-                  <b>₹{((Number(p.price) || 0) * (Number(p.quantity) || 1)).toLocaleString()}</b>
+                  <b>₹{((Math.round(Number(p.price) || 0)) * (Number(p.quantity) || 1)).toLocaleString()}</b>
                 </div>
               ))
             ) : (
