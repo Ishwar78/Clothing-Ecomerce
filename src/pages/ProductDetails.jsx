@@ -276,17 +276,54 @@ export default function ProductDetails() {
   });
   const [submittingReview, setSubmittingReview] = useState(false);
   const [reviewSuccessMsg, setReviewSuccessMsg] = useState("");
+  const [reviewEligibility, setReviewEligibility] = useState({ checked: false, canReview: false, message: '' });
+
+  const loggedInUser = useMemo(() => {
+    try {
+      const data = localStorage.getItem('userData');
+      return data ? JSON.parse(data) : null;
+    } catch (e) {
+      return null;
+    }
+  }, []);
 
   useEffect(() => {
     if (!currentProdId && !currentProdSlug) return;
     import('../lib/api').then(({ default: api }) => {
+      // Fetch reviews
       api.get(`/reviews?productId=${currentProdId}`).then(res => {
         if (res.success && Array.isArray(res.reviews) && res.reviews.length > 0) {
           setReviewsList(res.reviews);
         }
       });
+
+      // Check review eligibility if user is logged in
+      if (loggedInUser && (loggedInUser.email || loggedInUser.id || loggedInUser._id)) {
+        const emailParam = encodeURIComponent(loggedInUser.email || '');
+        const idParam = encodeURIComponent(loggedInUser.id || loggedInUser._id || '');
+        const nameParam = encodeURIComponent(product?.name || '');
+        api.get(`/reviews/can-review?productId=${currentProdId}&productName=${nameParam}&email=${emailParam}&userId=${idParam}`)
+          .then(res => {
+            if (res.success) {
+              setReviewEligibility({
+                checked: true,
+                canReview: res.canReview,
+                message: res.message || ''
+              });
+            }
+          })
+          .catch(() => {
+            setReviewEligibility({ checked: true, canReview: false, message: '' });
+          });
+      } else {
+        setReviewEligibility({
+          checked: true,
+          canReview: false,
+          message: 'Please login to write a review.'
+        });
+      }
     });
-  }, [currentProdId, currentProdSlug]);
+  }, [currentProdId, currentProdSlug, loggedInUser, product?.name]);
 
   const displayedReviews = reviewsList.length > 0 ? reviewsList : initialMockReviews;
   const avgScore = (
@@ -309,8 +346,9 @@ export default function ProductDetails() {
         productSlug: currentProdSlug,
         productName: product.name,
         productImage: product.image,
-        userName: newReview.name.trim(),
-        userEmail: newReview.email.trim(),
+        userName: newReview.name.trim() || loggedInUser?.name || 'Customer',
+        userEmail: loggedInUser?.email || newReview.email.trim(),
+        userId: loggedInUser?.id || loggedInUser?._id,
         rating: Number(newReview.rating) || 5,
         comment: newReview.comment.trim()
       };
@@ -320,14 +358,14 @@ export default function ProductDetails() {
         setReviewsList(prev => [res.review, ...prev]);
         setNewReview({ name: "", email: "", rating: 5, comment: "" });
         setShowReviewForm(false);
-        setReviewSuccessMsg("Thank you! Your review has been submitted successfully.");
+        setReviewSuccessMsg("Thank you! Your verified review has been submitted successfully.");
         setTimeout(() => setReviewSuccessMsg(""), 5000);
       } else {
         alert(res.message || "Failed to submit review.");
       }
     } catch (err) {
       console.error("Submit review error:", err);
-      alert("Error submitting review. Please try again.");
+      alert(err.message || "Error submitting review. Only verified buyers can submit a review.");
     } finally {
       setSubmittingReview(false);
     }
@@ -466,6 +504,8 @@ export default function ProductDetails() {
     }
     setWishlist(updated);
     localStorage.setItem("sbv-wishlist", JSON.stringify(updated));
+    window.dispatchEvent(new CustomEvent('sbv-wishlist-updated', { detail: { list: updated } }));
+    window.dispatchEvent(new Event('storage'));
   };
 
   const toggleWishlist = () => {
@@ -1177,14 +1217,60 @@ export default function ProductDetails() {
                 </span>
               </div>
 
-              <button
-                type="button"
-                className="write-review-btn"
-                onClick={() => setShowReviewForm(!showReviewForm)}
-              >
-                <FiEdit3 />
-                {showReviewForm ? "Cancel Review" : "Write a Review"}
-              </button>
+              {!loggedInUser ? (
+                <div>
+                  <button
+                    type="button"
+                    className="write-review-btn"
+                    onClick={() => nav('/login')}
+                  >
+                    <FiEdit3 />
+                    Login to Review
+                  </button>
+                  <div style={{ fontSize: "11px", color: "#8c7b6d", marginTop: "8px", textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
+                    <FiShield size={12} /> Only verified buyers can submit reviews
+                  </div>
+                </div>
+              ) : reviewEligibility.checked && !reviewEligibility.canReview ? (
+                <div style={{
+                  padding: "12px 14px",
+                  background: "#fffbeb",
+                  border: "1px solid #fde68a",
+                  color: "#92400e",
+                  borderRadius: "8px",
+                  fontSize: "12px",
+                  lineHeight: "1.5",
+                  textAlign: "center"
+                }}>
+                  <div style={{ fontWeight: "700", marginBottom: "4px", display: "flex", alignItems: "center", justifyContent: "center", gap: "5px" }}>
+                    <FiShield size={14} color="#d97706" /> Verified Buyer Only
+                  </div>
+                  <span>Only customers who have purchased this product can leave a review.</span>
+                </div>
+              ) : (
+                <div>
+                  <button
+                    type="button"
+                    className="write-review-btn"
+                    onClick={() => {
+                      if (!showReviewForm) {
+                        setNewReview(prev => ({
+                          ...prev,
+                          name: prev.name || loggedInUser.name || '',
+                          email: prev.email || loggedInUser.email || ''
+                        }));
+                      }
+                      setShowReviewForm(!showReviewForm);
+                    }}
+                  >
+                    <FiEdit3 />
+                    {showReviewForm ? "Cancel Review" : "Write a Review"}
+                  </button>
+                  <div style={{ fontSize: "11px", color: "#059669", marginTop: "8px", textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px", fontWeight: "600" }}>
+                    <FiCheckCircle size={13} /> Verified Buyer Eligible
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* RIGHT: FORM & REVIEWS LIST */}

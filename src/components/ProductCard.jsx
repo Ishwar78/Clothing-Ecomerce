@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiHeart, FiShoppingBag, FiStar } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import { isInWishlist, toggleWishlist, subscribeWishlist } from '../lib/wishlist';
 import './ProductCard.css';
 
 export default function ProductCard({ product }) {
@@ -14,17 +15,28 @@ export default function ProductCard({ product }) {
     const mrpVal = Math.round(Number(product.originalPrice || product.mrp) || 0);
     const imgUrl = product.images?.[0] || product.image || '/assets/mencategory1.png';
 
+    const [isWish, setIsWish] = useState(() => isInWishlist(product));
+
+    useEffect(() => {
+        setIsWish(isInWishlist(product));
+        return subscribeWishlist(() => {
+            setIsWish(isInWishlist(product));
+        });
+    }, [product]);
+
     const add = () => {
         const c = JSON.parse(localStorage.getItem('sbv-cart') || '[]');
         const safeProduct = { ...product, price: priceVal, mrp: mrpVal };
         localStorage.setItem('sbv-cart', JSON.stringify([...c, safeProduct]));
+        window.dispatchEvent(new Event('sbv-cart-updated'));
+        window.dispatchEvent(new Event('storage'));
         alert(`${product.name} added to cart`);
     };
 
-    const wish = () => {
-        const w = JSON.parse(localStorage.getItem('sbv-wishlist') || '[]');
-        localStorage.setItem('sbv-wishlist', JSON.stringify([...w.filter(x => (x.slug || x._id || x.id) !== (product.slug || productId)), product]));
-        alert('Added to wishlist');
+    const handleWish = (e) => {
+        e.stopPropagation();
+        const added = toggleWishlist(product);
+        setIsWish(added);
     };
 
     return (
@@ -32,8 +44,13 @@ export default function ProductCard({ product }) {
             <div className="product-image">
                 <img src={imgUrl} alt={product.name} onError={(e) => { e.target.src = '/assets/mencategory1.png'; }} />
                 {product.badge && <span className="product-badge">{product.badge}</span>}
-                <button className="wish" onClick={e => { e.stopPropagation(); wish(); }}>
-                    <FiHeart />
+                <button 
+                    className={`wish ${isWish ? 'active' : ''}`} 
+                    onClick={handleWish}
+                    title={isWish ? "Remove from wishlist" : "Add to wishlist"}
+                    type="button"
+                >
+                    <FiHeart fill={isWish ? "#ed4765" : "none"} color={isWish ? "#ed4765" : "currentColor"} />
                 </button>
             </div>
             <div className="product-info">

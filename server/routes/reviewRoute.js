@@ -1,6 +1,7 @@
 const express = require('express');
 const Review = require('../models/Review');
 const Product = require('../models/Product');
+const Order = require('../models/Order');
 
 const router = express.Router();
 
@@ -24,6 +25,66 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Check if user is eligible to review (Must have purchased the product)
+router.get('/can-review', async (req, res) => {
+    try {
+        const { productId, productName, email, userId } = req.query;
+        if (!email && !userId) {
+            return res.json({
+                success: true,
+                canReview: false,
+                reason: 'login_required',
+                message: 'Please login to write a review.'
+            });
+        }
+
+        if (!productId && !productName) {
+            return res.status(400).json({ success: false, message: 'Product is required.' });
+        }
+
+        const orConditions = [];
+        if (email) {
+            const cleanEmail = email.trim();
+            orConditions.push({ 'user.email': { $regex: new RegExp(`^${cleanEmail}$`, 'i') } });
+            orConditions.push({ 'shippingAddress.email': { $regex: new RegExp(`^${cleanEmail}$`, 'i') } });
+        }
+        if (userId) {
+            orConditions.push({ 'user.userId': userId });
+        }
+
+        const orders = await Order.find({
+            $or: orConditions,
+            orderStatus: { $ne: 'Cancelled' }
+        });
+
+        const hasPurchased = orders.some(order => 
+            order.items && order.items.some(item => {
+                const matchId = productId && item.productId && String(item.productId) === String(productId);
+                const matchName = productName && item.name && item.name.trim().toLowerCase() === productName.trim().toLowerCase();
+                return matchId || matchName;
+            })
+        );
+
+        if (hasPurchased) {
+            return res.json({
+                success: true,
+                canReview: true,
+                message: 'Verified buyer. You can review this product.'
+            });
+        } else {
+            return res.json({
+                success: true,
+                canReview: false,
+                reason: 'not_purchased',
+                message: 'Only verified buyers who purchased this product can leave a review.'
+            });
+        }
+    } catch (error) {
+        console.error('Check review eligibility error:', error);
+        res.status(500).json({ success: false, message: 'Server error checking eligibility' });
+    }
+});
+
 // 2. Submit a review (Product detail page)
 router.post('/', async (req, res) => {
     try {
@@ -34,8 +95,10 @@ router.post('/', async (req, res) => {
             productImage,
             userName,
             userEmail,
+            userId,
             rating,
-            comment
+            comment,
+            isAdminCreated
         } = req.body;
 
         if (!productId || !userName || !rating || !comment) {
@@ -43,6 +106,46 @@ router.post('/', async (req, res) => {
                 success: false,
                 message: 'Product, your name, rating, and review text are required.'
             });
+        }
+
+        // Verify buyer if not created manually by admin
+        if (!isAdminCreated) {
+            if (!userEmail && !userId) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Please login to submit a review.'
+                });
+            }
+
+            const orConditions = [];
+            if (userEmail) {
+                const cleanEmail = userEmail.trim();
+                orConditions.push({ 'user.email': { $regex: new RegExp(`^${cleanEmail}$`, 'i') } });
+                orConditions.push({ 'shippingAddress.email': { $regex: new RegExp(`^${cleanEmail}$`, 'i') } });
+            }
+            if (userId) {
+                orConditions.push({ 'user.userId': userId });
+            }
+
+            const orders = await Order.find({
+                $or: orConditions,
+                orderStatus: { $ne: 'Cancelled' }
+            });
+
+            const hasPurchased = orders.some(order => 
+                order.items && order.items.some(item => {
+                    const matchId = productId && item.productId && String(item.productId) === String(productId);
+                    const matchName = productName && item.name && item.name.trim().toLowerCase() === productName.trim().toLowerCase();
+                    return matchId || matchName;
+                })
+            );
+
+            if (!hasPurchased) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Only verified buyers who have purchased this product can submit a review.'
+                });
+            }
         }
 
         const numRating = Math.max(1, Math.min(5, Math.round(Number(rating) || 5)));

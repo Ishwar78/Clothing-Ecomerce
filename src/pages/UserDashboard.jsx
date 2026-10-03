@@ -28,13 +28,15 @@ import {
   FiDollarSign,
   FiCornerUpLeft,
   FiSend,
-  FiMaximize2
+  FiMaximize2,
+  FiFileText
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import "./UserDashboard.css";
 import Wishlist from "./Wishlist";
 import Cart from "./Cart";
 import api from "../lib/api";
+import InvoiceModal from "../components/InvoiceModal";
 
 export default function UserDashboard() {
   const nav = useNavigate();
@@ -47,6 +49,7 @@ export default function UserDashboard() {
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [trackingOrder, setTrackingOrder] = useState(null);
+  const [invoiceOrder, setInvoiceOrder] = useState(null);
 
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [addressesLoading, setAddressesLoading] = useState(false);
@@ -747,6 +750,15 @@ export default function UserDashboard() {
                             >
                               Details
                             </button>
+                            <button
+                              type="button"
+                              className="order-view-btn"
+                              onClick={() => setInvoiceOrder(order)}
+                              title="View / Print Tax Bill"
+                              style={{ background: '#fdf2f4', color: '#e11b22', borderColor: '#fed7de', fontWeight: '700' }}
+                            >
+                              <FiFileText size={12} /> Bill
+                            </button>
                           </div>
                         </div>
                       );
@@ -1355,6 +1367,15 @@ export default function UserDashboard() {
                   style={{ padding: '6px 12px' }}
                 >
                   <FiTruck /> Track Order
+                </button>
+                <button
+                  type="button"
+                  className="order-track-btn"
+                  onClick={() => setInvoiceOrder(selectedOrder)}
+                  style={{ padding: '6px 12px', background: '#fdf2f4', color: '#e11b22', borderColor: '#fed7de' }}
+                  title="View / Print Tax Invoice"
+                >
+                  <FiFileText /> View Bill
                 </button>
                 {selectedOrder.orderStatus === 'Delivered' && (
                   <button
@@ -2021,6 +2042,14 @@ export default function UserDashboard() {
             />
           </div>
         </div>
+      )}
+
+      {/* TAX BILL / INVOICE MODAL */}
+      {invoiceOrder && (
+        <InvoiceModal
+          order={invoiceOrder}
+          onClose={() => setInvoiceOrder(null)}
+        />
       )}
     </div>
   );

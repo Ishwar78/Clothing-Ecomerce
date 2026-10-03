@@ -1,19 +1,46 @@
 import React, { useState, useEffect } from 'react';
-import { FiStar, FiTrash2, FiSearch, FiCheckCircle, FiClock, FiFilter, FiExternalLink } from 'react-icons/fi';
+import { FiStar, FiTrash2, FiSearch, FiCheckCircle, FiClock, FiFilter, FiExternalLink, FiPlus, FiX, FiCheck } from 'react-icons/fi';
 import api from '../../lib/api';
 import './DataPages.css';
 import './Reviews.css';
 
 export default function Reviews() {
   const [reviews, setReviews] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [ratingFilter, setRatingFilter] = useState('All');
   const [selected, setSelected] = useState(null);
 
+  // Create review modal states
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const initialCreateForm = {
+    productId: '',
+    userName: '',
+    userEmail: '',
+    rating: 5,
+    comment: '',
+    isVerified: true,
+    status: 'Approved'
+  };
+  const [createForm, setCreateForm] = useState(initialCreateForm);
+
   useEffect(() => {
     fetchReviews();
+    fetchProducts();
   }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const res = await api.get('/products');
+      if (res.success && Array.isArray(res.products)) {
+        setProducts(res.products);
+      }
+    } catch (err) {
+      console.error('Fetch products error:', err);
+    }
+  };
 
   const fetchReviews = async () => {
     try {
@@ -58,6 +85,55 @@ export default function Reviews() {
     }
   };
 
+  const handleCreateReview = async (e) => {
+    e.preventDefault();
+    if (!createForm.productId) {
+      alert('Please select a product for the review.');
+      return;
+    }
+    if (!createForm.userName.trim() || !createForm.comment.trim()) {
+      alert('Please enter reviewer name and comment.');
+      return;
+    }
+
+    const prod = products.find(p => String(p._id || p.id) === String(createForm.productId));
+    if (!prod) {
+      alert('Selected product not found.');
+      return;
+    }
+
+    const payload = {
+      productId: String(prod._id || prod.id),
+      productName: prod.name,
+      productSlug: prod.slug || (prod.name ? prod.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') : String(prod._id || prod.id)),
+      productImage: prod.images?.[0] || prod.image || '',
+      userName: createForm.userName.trim(),
+      userEmail: createForm.userEmail ? createForm.userEmail.trim() : 'customer@example.com',
+      rating: Number(createForm.rating) || 5,
+      comment: createForm.comment.trim(),
+      isVerified: Boolean(createForm.isVerified),
+      status: createForm.status || 'Approved'
+    };
+
+    try {
+      setSubmitting(true);
+      const res = await api.post('/reviews', payload);
+      if (res.success && res.review) {
+        setReviews(prev => [res.review, ...prev]);
+        setIsCreateOpen(false);
+        setCreateForm(initialCreateForm);
+        alert('Review created successfully!');
+      } else {
+        alert(res.message || 'Failed to create review.');
+      }
+    } catch (err) {
+      console.error('Create review error:', err);
+      alert('Error creating review');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const filtered = reviews.filter(item => {
     const s = search.toLowerCase();
     const matchesSearch =
@@ -99,6 +175,14 @@ export default function Reviews() {
           <h2>Product Customer Reviews</h2>
           <p>View, moderate, and manage all customer product ratings and reviews.</p>
         </div>
+        <button
+          type="button"
+          className="admin-btn admin-btn-primary"
+          onClick={() => setIsCreateOpen(true)}
+          style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+        >
+          <FiPlus /> Create Review
+        </button>
       </div>
 
       {/* STAT CARDS */}
@@ -298,6 +382,181 @@ export default function Reviews() {
           </table>
         )}
       </div>
+
+      {/* CREATE REVIEW MODAL */}
+      {isCreateOpen && (
+        <div className="admin-modal-overlay" onClick={() => setIsCreateOpen(false)}>
+          <div className="admin-modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '540px' }}>
+            <div className="admin-modal-header">
+              <h3>Create Product Review</h3>
+              <button type="button" className="close-btn" onClick={() => setIsCreateOpen(false)}>
+                <FiX />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateReview} className="admin-modal-body">
+              <div className="form-group" style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '13px' }}>
+                  Select Product *
+                </label>
+                <select
+                  required
+                  value={createForm.productId}
+                  onChange={e => setCreateForm({ ...createForm, productId: e.target.value })}
+                  style={{ width: '100%', padding: '10px 12px', border: '1px solid #ddd', borderRadius: '6px', fontSize: '14px' }}
+                >
+                  <option value="">-- Choose a Product --</option>
+                  {products.map(p => (
+                    <option key={p._id || p.id} value={p._id || p.id}>
+                      {p.name} {p.category ? `(${p.category})` : ''}
+                    </option>
+                  ))}
+                </select>
+
+                {createForm.productId && (() => {
+                  const sel = products.find(p => String(p._id || p.id) === String(createForm.productId));
+                  if (!sel) return null;
+                  const thumb = sel.images?.[0] || sel.image || '/assets/mencategory1.png';
+                  return (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '10px', padding: '8px 12px', background: '#fdf8f7', borderRadius: '6px', border: '1px solid #f2deda' }}>
+                      <img src={thumb} alt={sel.name} style={{ width: '38px', height: '38px', objectFit: 'cover', borderRadius: '4px' }} onError={(e) => { e.target.src = '/assets/mencategory1.png'; }} />
+                      <div>
+                        <strong style={{ fontSize: '13px', display: 'block' }}>{sel.name}</strong>
+                        <small style={{ color: '#666' }}>₹{Math.round(Number(sel.price) || 0).toLocaleString('en-IN')}</small>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '16px' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '13px' }}>
+                    Customer / Reviewer Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Pooja Sharma"
+                    value={createForm.userName}
+                    onChange={e => setCreateForm({ ...createForm, userName: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', border: '1px solid #ddd', borderRadius: '6px' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '13px' }}>
+                    Customer Email (Optional)
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="customer@example.com"
+                    value={createForm.userEmail}
+                    onChange={e => setCreateForm({ ...createForm, userEmail: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', border: '1px solid #ddd', borderRadius: '6px' }}
+                  />
+                </div>
+              </div>
+
+              {/* RATING */}
+              <div className="form-group" style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '13px' }}>
+                  Star Rating (1 to 5) *
+                </label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setCreateForm({ ...createForm, rating: star })}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '4px',
+                        display: 'grid',
+                        placeItems: 'center'
+                      }}
+                      title={`${star} Star${star > 1 ? 's' : ''}`}
+                    >
+                      <FiStar
+                        size={26}
+                        fill={star <= createForm.rating ? '#f59e0b' : 'none'}
+                        color={star <= createForm.rating ? '#f59e0b' : '#d1d5db'}
+                      />
+                    </button>
+                  ))}
+                  <span style={{ marginLeft: '10px', fontWeight: '700', color: '#d97706', fontSize: '14px' }}>
+                    {createForm.rating} of 5 Stars
+                  </span>
+                </div>
+              </div>
+
+              {/* COMMENT */}
+              <div className="form-group" style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '13px' }}>
+                  Review Comment *
+                </label>
+                <textarea
+                  required
+                  rows={4}
+                  placeholder="Write the customer review here (e.g. Excellent fabric quality, fitting is great!)..."
+                  value={createForm.comment}
+                  onChange={e => setCreateForm({ ...createForm, comment: e.target.value })}
+                  style={{ width: '100%', padding: '10px 12px', border: '1px solid #ddd', borderRadius: '6px', resize: 'vertical' }}
+                />
+              </div>
+
+              {/* VERIFIED & STATUS */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', alignItems: 'center', marginBottom: '22px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingTop: '8px' }}>
+                  <input
+                    type="checkbox"
+                    id="isVerifiedReview"
+                    checked={createForm.isVerified}
+                    onChange={e => setCreateForm({ ...createForm, isVerified: e.target.checked })}
+                    style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                  />
+                  <label htmlFor="isVerifiedReview" style={{ cursor: 'pointer', fontWeight: '600', fontSize: '13px' }}>
+                    Verified Buyer Badge
+                  </label>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', fontSize: '13px' }}>
+                    Moderation Status
+                  </label>
+                  <select
+                    value={createForm.status}
+                    onChange={e => setCreateForm({ ...createForm, status: e.target.value })}
+                    style={{ width: '100%', padding: '8px 12px', border: '1px solid #ddd', borderRadius: '6px' }}
+                  >
+                    <option value="Approved">Approved (Publicly Visible)</option>
+                    <option value="Pending">Pending</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', borderTop: '1px solid #eee', paddingTop: '15px' }}>
+                <button
+                  type="button"
+                  className="admin-btn admin-btn-secondary"
+                  onClick={() => setIsCreateOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="admin-btn admin-btn-primary"
+                  disabled={submitting}
+                >
+                  {submitting ? 'Creating...' : 'Submit Review'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

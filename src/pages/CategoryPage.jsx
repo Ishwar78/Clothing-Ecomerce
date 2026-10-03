@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   FiChevronDown,
@@ -15,6 +15,7 @@ import {
   FiHeart as FiLove,
   FiShoppingBag,
 } from "react-icons/fi";
+import { isInWishlist, toggleWishlist, subscribeWishlist } from "../lib/wishlist";
 import "./CategoryPage.css";
 
 import { allProducts } from "../data/products";
@@ -155,7 +156,15 @@ export default function CategoryPage({ slug: propSlug }) {
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [page, setPage] = useState(1);
   const [dbProducts, setDbProducts] = useState([]);
-  React.useEffect(() => {
+  const [wishlistVersion, setWishlistVersion] = useState(0);
+
+  useEffect(() => {
+    return subscribeWishlist(() => {
+      setWishlistVersion(v => v + 1);
+    });
+  }, []);
+
+  useEffect(() => {
     import('../lib/api').then(({ default: api }) => {
       api.get('/products').then(res => res.success && setDbProducts(res.products));
     });
@@ -558,11 +567,18 @@ export default function CategoryPage({ slug: propSlug }) {
                   </span>
 
                   <button
-                    className="product-heart"
+                    className={`product-heart ${isInWishlist(product) ? "active" : ""}`}
                     type="button"
-                    onClick={(e) => e.stopPropagation()}
+                    title={isInWishlist(product) ? "Remove from wishlist" : "Add to wishlist"}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleWishlist(product);
+                    }}
                   >
-                    <FiHeart />
+                    <FiHeart
+                      fill={isInWishlist(product) ? "#ed4765" : "none"}
+                      color={isInWishlist(product) ? "#ed4765" : "currentColor"}
+                    />
                   </button>
                 </div>
 

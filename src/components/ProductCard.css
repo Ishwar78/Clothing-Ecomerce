@@ -41,15 +41,29 @@
     position: absolute;
     right: 10px;
     top: 10px;
-    width: 42px;
-    height: 42px;
+    width: 38px;
+    height: 38px;
     border: 0;
     background: #fff;
     border-radius: 50%;
     display: grid;
     place-items: center;
-    color: #ef4d68;
-    box-shadow: 0 4px 10px #0001
+    color: #777;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 2;
+}
+
+.wish:hover {
+    transform: scale(1.1);
+    color: #ed4765;
+}
+
+.wish.active {
+    color: #ed4765;
+    background: #fff0f3;
+    box-shadow: 0 4px 12px rgba(237, 71, 101, 0.25);
 }
 
 .product-info {

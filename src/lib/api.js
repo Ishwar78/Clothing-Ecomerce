@@ -55,6 +55,17 @@ export const api = {
       throw new Error(`API upload failed: ${res.status}`);
     }
     return res.json();
+  },
+
+  postFormData: async (path, formData) => {
+    const res = await fetch(`${API_URL}${path}`, {
+      method: 'POST',
+      body: formData
+    });
+    if (!res.ok) {
+      throw new Error(`API upload failed: ${res.status}`);
+    }
+    return res.json();
   }
 };
 

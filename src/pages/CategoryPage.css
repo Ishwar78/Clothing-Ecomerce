@@ -797,8 +797,8 @@
   display: grid;
   place-items: center;
 
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
 
   border: 0;
   border-radius: 50%;
@@ -809,12 +809,24 @@
 
   cursor: pointer;
 
-  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.07);
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  z-index: 2;
+}
+
+.product-heart:hover {
+  transform: scale(1.15);
+}
+
+.product-heart.active {
+  background: #fff0f3;
+  box-shadow: 0 3px 10px rgba(237, 71, 101, 0.3);
 }
 
 .product-heart svg {
   width: 15px;
   height: 15px;
+  transition: transform 0.2s ease;
 }
 
 .category-product-info {

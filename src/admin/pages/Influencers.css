@@ -1,0 +1,160 @@
+.influencers-admin-wrap {
+  width: 100%;
+}
+
+.influencer-admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.influencer-admin-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #ebd8d4;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.influencer-admin-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.influencer-thumb-wrap {
+  position: relative;
+  width: 100%;
+  height: 270px;
+  background: #fbf3f0;
+}
+
+.influencer-thumb-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.insta-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e1306c;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 3px 8px rgba(225, 48, 108, 0.4);
+}
+
+.status-pill {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-pill.active {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-pill.inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.influencer-card-body {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.influencer-card-body h4 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  color: #222;
+  font-weight: 700;
+}
+
+.followers-text {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #666;
+}
+
+.influencer-link {
+  font-size: 12px;
+  color: #ed4765;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.influencer-link:hover {
+  text-decoration: underline;
+}
+
+.influencer-actions {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid #f4eae7;
+  padding-top: 10px;
+}
+
+.toggle-status-btn {
+  flex: 1;
+  background: #fdf3f2;
+  border: 1px solid #eed6d2;
+  color: #444;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.toggle-status-btn:hover {
+  background: #fce7e4;
+  color: #ed4765;
+}
+
+.icon-action {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.icon-action.edit:hover {
+  color: #2563eb;
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.icon-action.delete:hover {
+  color: #dc2626;
+  border-color: #dc2626;
+  background: #fef2f2;
+}

@@ -767,26 +767,36 @@
 
 .large-spec-card {
   max-width: 900px;
-  padding: 25px;
-  border: 1px solid #f0ddd9;
-  border-radius: 12px;
-  background: #fff6f3;
+  padding: 28px 30px;
+  border: 1px solid #ebd8d4;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 20px rgba(177, 93, 91, 0.05);
 }
 
 .large-spec-card h3 {
-  margin: 0 0 15px;
+  margin: 0 0 20px;
   color: #292121;
   font-family: Georgia, serif;
   font-size: 22px;
-  font-weight: 500;
+  font-weight: 600;
+  border-bottom: 2px solid #f7dfdb;
+  padding-bottom: 12px;
 }
 
 .spec-row {
   display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 20px;
-  padding: 14px 0;
-  border-bottom: 1px dashed #e5d5d1;
+  grid-template-columns: minmax(130px, 220px) minmax(0, 1fr);
+  gap: 24px;
+  padding: 13px 14px;
+  border-bottom: 1px solid #f5e9e6;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+  align-items: flex-start;
+}
+
+.spec-row:nth-child(even) {
+  background: #fdf9f8;
 }
 
 .spec-row:last-child {
@@ -794,11 +804,24 @@
 }
 
 .spec-row b {
-  color: #312828;
+  color: #2b2121;
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+  line-height: 1.5;
 }
 
 .spec-row span {
-  color: #756666;
+  color: #5d4f4f;
+  font-size: 14px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+  line-height: 1.6;
 }
 
 /* =========================================================
@@ -1571,12 +1594,19 @@
   }
 
   .spec-row {
-    grid-template-columns: 130px 1fr;
-    font-size: 12px;
+    grid-template-columns: minmax(100px, 130px) minmax(0, 1fr);
+    gap: 12px;
+    padding: 10px 10px;
+    font-size: 13px;
+  }
+
+  .spec-row b,
+  .spec-row span {
+    font-size: 13px;
   }
 
   .large-spec-card {
-    padding: 17px;
+    padding: 18px 16px;
   }
 
   .shipping-card {

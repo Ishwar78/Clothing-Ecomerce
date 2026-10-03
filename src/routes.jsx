@@ -47,6 +47,9 @@ import Returns from './admin/pages/Returns';
 import Contact from './admin/pages/Contact';
 import Inquiries from './admin/pages/Inquiries';
 import Reviews from './admin/pages/Reviews';
+import Influencers from './admin/pages/Influencers';
+import StyleShare from './admin/pages/StyleShare';
+import CompanySettings from './admin/pages/CompanySettings';
 import { FaQ } from 'react-icons/fa6';
 export default function AppRoutes() {
     return <Routes>
@@ -87,6 +90,8 @@ export default function AppRoutes() {
         <Route path="/admin/categories" element={<AdminLayout><Categories /></AdminLayout>} />
         <Route path="/admin/products" element={<AdminLayout><Products /></AdminLayout>} />
         <Route path="/admin/banners" element={<AdminLayout><Banners /></AdminLayout>} />
+        <Route path="/admin/influencers" element={<AdminLayout><Influencers /></AdminLayout>} />
+        <Route path="/admin/style-share" element={<AdminLayout><StyleShare /></AdminLayout>} />
         <Route path="/admin/orders" element={<AdminLayout><Orders /></AdminLayout>} />
         <Route path="/admin/users" element={<AdminLayout><Users /></AdminLayout>} />
         <Route path="/admin/coupons" element={<AdminLayout><Coupons /></AdminLayout>} />
@@ -95,6 +100,7 @@ export default function AppRoutes() {
         <Route path="/admin/contact" element={<AdminLayout><Contact /></AdminLayout>} />
         <Route path="/admin/inquiries" element={<AdminLayout><Inquiries /></AdminLayout>} />
         <Route path="/admin/reviews" element={<AdminLayout><Reviews /></AdminLayout>} />
+        <Route path="/admin/company" element={<AdminLayout><CompanySettings /></AdminLayout>} />
         <Route path="/category/:slug" element={<Layout><CategoryPage /></Layout>} />
         <Route path="/:slug" element={<Layout><CategoryPage /></Layout>} />
         <Route path="*" element={<Navigate to="/" replace />} />

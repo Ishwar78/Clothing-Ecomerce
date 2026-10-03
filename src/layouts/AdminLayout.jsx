@@ -14,7 +14,10 @@ import {
     FiHelpCircle,
     FiMenu, FiX,
     FiLogOut,
-    FiStar
+    FiStar,
+    FiInstagram,
+    FiFileText,
+    FiCamera
 } from 'react-icons/fi';
 import './AdminLayout.css';
 const links = [
@@ -22,6 +25,8 @@ const links = [
     ['/admin/categories', 'Categories', FiTag],
     ['/admin/products', 'Products', FiPackage],
     ['/admin/banners', 'Home Banner', FiImage],
+    ['/admin/influencers', 'Fashion Influencer', FiInstagram],
+    ['/admin/style-share', 'Style It & Share It', FiCamera],
     ['/admin/orders', 'Orders', FiShoppingBag],
     ['/admin/users', 'Users', FiUsers],
     ['/admin/coupons', 'Coupon Codes', FiPercent],
@@ -29,7 +34,8 @@ const links = [
     ['/admin/returns', 'Return Requests', FiRotateCcw],
     ['/admin/contact', 'Contact', FiPhone],
     ['/admin/inquiries', 'Inquiries', FiHelpCircle],
-    ['/admin/reviews', 'Reviews', FiStar]
+    ['/admin/reviews', 'Reviews', FiStar],
+    ['/admin/company', 'Company & Bill', FiFileText]
 ];
 export function AdminLayout({ children }) {
     const nav = useNavigate(), loc = useLocation();

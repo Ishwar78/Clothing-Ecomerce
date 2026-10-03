@@ -284,6 +284,8 @@ export default function Home() {
   const [categories, setCategories] = useState(initialCategories);
   const [dbProducts, setDbProducts] = useState([]);
   const [banners, setBanners] = useState([]);
+  const [dbInfluencers, setDbInfluencers] = useState([]);
+  const [dbStyleShares, setDbStyleShares] = useState([]);
   const navigate = useNavigate();
 
   const [slide, setSlide] = useState(0);
@@ -302,6 +304,16 @@ export default function Home() {
         setBanners(res.banners.filter(b => b.isActive !== false));
       }
     });
+    api.get('/influencers').then(res => {
+      if (res.success && Array.isArray(res.influencers) && res.influencers.length > 0) {
+        setDbInfluencers(res.influencers.filter(i => i.isActive !== false));
+      }
+    }).catch(err => console.error('Error fetching influencers:', err));
+    api.get('/style-share').then(res => {
+      if (res.success && Array.isArray(res.items) && res.items.length > 0) {
+        setDbStyleShares(res.items.filter(i => i.isActive !== false));
+      }
+    }).catch(err => console.error('Error fetching style share:', err));
   }, []);
 
   const heroBanners = banners.filter(b => (!b.position || b.position === 'hero'));
@@ -714,16 +726,23 @@ export default function Home() {
           />
 
           <div className="home-influencer-grid">
-            {influencers.map((influencer) => (
+            {(dbInfluencers.length > 0 ? dbInfluencers : influencers).map((influencer, idx) => (
               <div
                 className="home-influencer-card"
-                key={influencer.name}
+                key={influencer._id || influencer.name || idx}
+                onClick={() => {
+                  if (influencer.link) {
+                    window.open(influencer.link, '_blank');
+                  }
+                }}
+                style={{ cursor: influencer.link ? 'pointer' : 'default' }}
               >
                 <div className="home-influencer-image">
                   <img
                     src={influencer.image}
                     alt={influencer.name}
                     loading="lazy"
+                    onError={(e) => { e.target.src = '/assets/mencategory1.png'; }}
                   />
 
                   <span className="home-instagram-icon">
@@ -887,19 +906,35 @@ export default function Home() {
           />
 
           <div className="home-social-grid">
-            {instagramImages.map((image, index) => (
-              <div className="home-social-card" key={image}>
-                <img
-                  src={image}
-                  alt={`SBV style ${index + 1}`}
-                  loading="lazy"
-                />
+            {(dbStyleShares.length > 0 ? dbStyleShares : instagramImages.map((img, i) => ({ _id: i, image: img, title: `SBV style ${i + 1}`, link: 'https://instagram.com' }))).map((item, index) => {
+              const imgSrc = typeof item === 'string' ? item : item.image;
+              const link = typeof item === 'object' && item.link ? item.link : 'https://instagram.com';
+              const title = typeof item === 'object' && item.title ? item.title : `SBV style ${index + 1}`;
+              return (
+                <div
+                  className="home-social-card"
+                  key={item._id || index}
+                  style={{ cursor: link ? 'pointer' : 'default' }}
+                  onClick={() => {
+                    if (link) {
+                      window.open(link, '_blank', 'noopener,noreferrer');
+                    }
+                  }}
+                  title={title}
+                >
+                  <img
+                    src={imgSrc}
+                    alt={title}
+                    loading="lazy"
+                    onError={(e) => { e.currentTarget.src = '/assets/women.png'; }}
+                  />
 
-                <div>
-                  <FiInstagram />
+                  <div>
+                    <FiInstagram />
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

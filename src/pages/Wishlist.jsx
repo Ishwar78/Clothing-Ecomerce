@@ -7,54 +7,41 @@ import {
   FiArrowRight,
 } from "react-icons/fi";
 import ProductCard from "../components/ProductCard";
+import { getWishlist, subscribeWishlist } from "../lib/wishlist";
 import "./SimplePage.css";
 import "./Wishlist.css";
 
 export default function Wishlist() {
   const nav = useNavigate();
 
-  const [items, setItems] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("sbv-wishlist") || "[]");
-    } catch {
-      return [];
-    }
-  });
+  const [items, setItems] = useState(() => getWishlist());
 
   const removeItem = (id) => {
     const updated = items.filter((item, index) => {
-      if (item.id !== undefined) {
-        return item.id !== id;
+      const itemId = item._id || item.id;
+      if (itemId !== undefined) {
+        return itemId !== id;
       }
-
       return index !== id;
     });
 
     setItems(updated);
     localStorage.setItem("sbv-wishlist", JSON.stringify(updated));
+    window.dispatchEvent(new CustomEvent('sbv-wishlist-updated', { detail: { list: updated } }));
+    window.dispatchEvent(new Event('storage'));
   };
 
   const clearWishlist = () => {
     setItems([]);
     localStorage.setItem("sbv-wishlist", "[]");
+    window.dispatchEvent(new CustomEvent('sbv-wishlist-updated', { detail: { list: [] } }));
+    window.dispatchEvent(new Event('storage'));
   };
 
   useEffect(() => {
-    const syncWishlist = () => {
-      try {
-        setItems(
-          JSON.parse(localStorage.getItem("sbv-wishlist") || "[]")
-        );
-      } catch {
-        setItems([]);
-      }
-    };
-
-    window.addEventListener("storage", syncWishlist);
-
-    return () => {
-      window.removeEventListener("storage", syncWishlist);
-    };
+    return subscribeWishlist((list) => {
+      setItems(list);
+    });
   }, []);
 
   return (

@@ -12,6 +12,7 @@ import {
     FiShield
 } from 'react-icons/fi';
 import './Navbar.css';
+import { getWishlist, subscribeWishlist } from '../lib/wishlist';
 
 export const categories = [
     // ['Home', '/'],
@@ -31,8 +32,36 @@ export default function Navbar() {
     const [dbProducts, setDbProducts] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [wishlistCount, setWishlistCount] = useState(() => getWishlist().length);
+    const [cartCount, setCartCount] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem('sbv-cart') || '[]').length;
+        } catch {
+            return 0;
+        }
+    });
     const searchRef = React.useRef(null);
     const mobileSearchRef = React.useRef(null);
+
+    React.useEffect(() => {
+        const updateCart = () => {
+            try {
+                setCartCount(JSON.parse(localStorage.getItem('sbv-cart') || '[]').length);
+            } catch {
+                setCartCount(0);
+            }
+        };
+        const unsubWish = subscribeWishlist((list) => {
+            setWishlistCount(list.length);
+        });
+        window.addEventListener('sbv-cart-updated', updateCart);
+        window.addEventListener('storage', updateCart);
+        return () => {
+            unsubWish();
+            window.removeEventListener('sbv-cart-updated', updateCart);
+            window.removeEventListener('storage', updateCart);
+        };
+    }, []);
 
     React.useEffect(() => {
         import('../lib/api').then(({ default: api }) => {
@@ -64,9 +93,6 @@ export default function Navbar() {
         : categories;
     const location = useLocation();
     const navigate = useNavigate();
-
-    const cart = JSON.parse(localStorage.getItem('sbv-cart') || '[]');
-    const wishlist = JSON.parse(localStorage.getItem('sbv-wishlist') || '[]');
 
     const searchResults = searchQuery.trim().length > 0
         ? dbProducts.filter(p => {
@@ -224,7 +250,7 @@ export default function Navbar() {
                         <button onClick={() => navigate('/wishlist')}>
                             <FiHeart />
                             <small>Wishlist</small>
-                            <b>{wishlist.length}</b>
+                            <b>{wishlistCount}</b>
                         </button>
 
                         <button onClick={() => {
@@ -241,7 +267,7 @@ export default function Navbar() {
                         <button onClick={() => navigate('/cart')}>
                             <FiShoppingBag />
                             <small>Cart</small>
-                            <b>{cart.length}</b>
+                            <b>{cartCount}</b>
                         </button>
 
                     </div>

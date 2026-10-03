@@ -27,7 +27,8 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        required: false,
+        default: ''
     },
     savedAddresses: [addressSchema]
 }, { timestamps: true });

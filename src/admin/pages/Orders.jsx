@@ -13,9 +13,12 @@ import {
   FiMapPin,
   FiUser,
   FiPhone,
-  FiMail
+  FiMail,
+  FiFileText,
+  FiPrinter
 } from 'react-icons/fi';
 import api from '../../lib/api';
+import InvoiceModal from '../../components/InvoiceModal';
 import './DataPages.css';
 import './Orders.css';
 
@@ -25,6 +28,7 @@ export default function Orders() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [invoiceOrder, setInvoiceOrder] = useState(null);
 
   // Status edit state for modal
   const [editOrderStatus, setEditOrderStatus] = useState('');
@@ -334,7 +338,7 @@ export default function Orders() {
                       </span>
                     </td>
 
-                    <td style={{ padding: '12px 10px', textAlign: 'center' }}>
+                    <td style={{ padding: '12px 10px', textAlign: 'center', whiteSpace: 'nowrap' }}>
                       <button
                         className="icon-btn"
                         onClick={() => openOrderModal(order)}
@@ -342,6 +346,14 @@ export default function Orders() {
                         style={{ cursor: 'pointer' }}
                       >
                         <FiEye size={16} />
+                      </button>
+                      <button
+                        className="icon-btn"
+                        onClick={() => setInvoiceOrder(order)}
+                        title="View & Print Bill / Invoice"
+                        style={{ cursor: 'pointer', color: '#e11b22', marginLeft: '6px' }}
+                      >
+                        <FiFileText size={16} />
                       </button>
                     </td>
                   </tr>
@@ -368,24 +380,45 @@ export default function Orders() {
                   Placed on {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleString('en-IN') : 'N/A'}
                 </small>
               </div>
-              <button
-                type="button"
-                onClick={() => setSelectedOrder(null)}
-                style={{
-                  background: '#f5f5f5',
-                  border: 'none',
-                  borderRadius: '50%',
-                  width: '32px',
-                  height: '32px',
-                  fontSize: '18px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                ×
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <button
+                  type="button"
+                  onClick={() => setInvoiceOrder(selectedOrder)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    background: '#fff1f2',
+                    color: '#e11b22',
+                    border: '1px solid #fecdd3',
+                    padding: '7px 14px',
+                    borderRadius: '6px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    fontSize: '13px'
+                  }}
+                >
+                  <FiPrinter /> Print Bill / Invoice
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedOrder(null)}
+                  style={{
+                    background: '#f5f5f5',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '32px',
+                    height: '32px',
+                    fontSize: '18px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  ×
+                </button>
+              </div>
             </div>
 
             {/* STATUS UPDATE CONTROLS */}
@@ -572,6 +605,14 @@ export default function Orders() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* PRINTABLE BILL / INVOICE MODAL */}
+      {invoiceOrder && (
+        <InvoiceModal
+          order={invoiceOrder}
+          onClose={() => setInvoiceOrder(null)}
+        />
       )}
     </div>
   );

@@ -9,13 +9,30 @@
     width: 245px;
     background: #241b1d;
     color: #fff;
-    min-height: 100vh;
-    padding: 22px 12px;
+    height: 100vh;
+    padding: 22px 12px 40px;
     position: fixed;
     left: 0;
     top: 0;
     bottom: 0;
-    z-index: 50
+    z-index: 50;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #ff5b72 #1a1315;
+}
+
+.admin-side::-webkit-scrollbar {
+    width: 5px;
+}
+
+.admin-side::-webkit-scrollbar-track {
+    background: #1a1315;
+}
+
+.admin-side::-webkit-scrollbar-thumb {
+    background: #ff5b72;
+    border-radius: 4px;
 }
 
 .admin-logo {

@@ -1,2 +1,8 @@
-.category-dedicated-new-arrivals{width:100%;min-height:100%;}
-.category-dedicated-new-arrivals .category-page{width:100%;}
+.category-dedicated-new-arrivals {
+    width: 100%;
+    min-height: 100%;
+}
+
+.category-dedicated-new-arrivals .category-page {
+    width: 100%;
+}

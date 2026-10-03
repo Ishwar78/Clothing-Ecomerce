@@ -1,45 +1,97 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
     FiArrowRight,
-    FiEye,
-    FiEyeOff,
-    FiLock,
+    FiArrowLeft,
     FiMail,
-    FiShield
+    FiShield,
+    FiKey,
+    FiCheckCircle,
+    FiRefreshCw
 } from 'react-icons/fi';
+import api from '../lib/api';
 import './Login.css';
 
 export default function Login() {
     const nav = useNavigate();
 
-    const [showPassword, setShowPassword] = useState(false);
+    const [step, setStep] = useState('email'); // 'email' | 'otp'
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [otp, setOtp] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [infoMsg, setInfoMsg] = useState('');
+    const [countdown, setCountdown] = useState(0);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    // Resend countdown timer
+    useEffect(() => {
+        let timer;
+        if (countdown > 0) {
+            timer = setInterval(() => {
+                setCountdown((prev) => prev - 1);
+            }, 1000);
+        }
+        return () => clearInterval(timer);
+    }, [countdown]);
 
-        if (!email || !password) return;
+    // Send OTP handler
+    const handleSendOtp = async (e) => {
+        if (e) e.preventDefault();
+        const cleanEmail = email.trim().toLowerCase();
+        if (!cleanEmail) {
+            setError('Please enter your email address.');
+            return;
+        }
 
         setLoading(true);
         setError('');
-        
+        setInfoMsg('');
+
         try {
-            const api = (await import('../lib/api')).default;
-            const res = await api.post('/users/login', { email, password });
-            
+            const res = await api.post('/users/send-login-otp', { email: cleanEmail });
             if (res.success) {
+                setStep('otp');
+                setCountdown(60);
+                setInfoMsg(res.message || `Verification code sent to ${cleanEmail}`);
+            } else {
+                setError(res.message || 'Failed to send verification code.');
+            }
+        } catch (err) {
+            setError(err.message || 'An error occurred while sending OTP.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Verify OTP & Login
+    const handleVerifyOtp = async (e) => {
+        e.preventDefault();
+        const cleanEmail = email.trim().toLowerCase();
+        const cleanOtp = otp.trim();
+
+        if (!cleanOtp || cleanOtp.length < 6) {
+            setError('Please enter the 6-digit verification code.');
+            return;
+        }
+
+        setLoading(true);
+        setError('');
+
+        try {
+            const res = await api.post('/users/verify-login-otp', {
+                email: cleanEmail,
+                otp: cleanOtp
+            });
+
+            if (res.success && res.token) {
                 localStorage.setItem('userToken', res.token);
                 localStorage.setItem('userData', JSON.stringify(res.user));
                 nav('/dashboard');
             } else {
-                setError(res.message || 'Login failed');
+                setError(res.message || 'Invalid or expired verification code.');
             }
         } catch (err) {
-            setError(err.message || 'An error occurred during login');
+            setError(err.message || 'An error occurred during verification.');
         } finally {
             setLoading(false);
         }
@@ -101,124 +153,177 @@ export default function Login() {
                         </div>
 
                         <div className="login-heading">
-                            <span className="pill">WELCOME BACK</span>
+                            <span className="pill">
+                                {step === 'email' ? 'WELCOME BACK' : 'EMAIL VERIFICATION'}
+                            </span>
 
-                            <h2>Login to your account</h2>
+                            <h2>
+                                {step === 'email' ? 'Login with OTP' : 'Enter Verification Code'}
+                            </h2>
 
                             <p>
-                                Enter your details below to continue your
-                                shopping journey.
+                                {step === 'email'
+                                    ? 'Enter your registered email to receive a secure login code.'
+                                    : `We sent a 6-digit code to ${email}`}
                             </p>
                         </div>
 
-                        {error && <div style={{color:'red', fontSize:'13px', marginBottom:'15px'}}>{error}</div>}
-                        <form
-                            className="auth-form login-form"
-                            onSubmit={handleSubmit}
-                        >
-
-                            {/* EMAIL */}
-                            <div className="field login-field">
-                                <label htmlFor="login-email">
-                                    Email Address
-                                </label>
-
-                                <div className="login-input-wrap">
-                                    <FiMail />
-
-                                    <input
-                                        id="login-email"
-                                        type="email"
-                                        value={email}
-                                        onChange={(e) =>
-                                            setEmail(e.target.value)
-                                        }
-                                        required
-                                        autoComplete="email"
-                                        placeholder="you@example.com"
-                                    />
-                                </div>
+                        {/* STATUS ALERTS */}
+                        {error && (
+                            <div style={{
+                                padding: '10px 14px',
+                                background: '#fef2f2',
+                                border: '1px solid #fecaca',
+                                borderRadius: '8px',
+                                color: '#b91c1c',
+                                fontSize: '13px',
+                                marginBottom: '18px',
+                                lineHeight: '1.5'
+                            }}>
+                                {error}
                             </div>
+                        )}
 
-                            {/* PASSWORD */}
-                            <div className="field login-field">
-                                <div className="password-label-row">
-                                    <label htmlFor="login-password">
-                                        Password
+                        {infoMsg && step === 'otp' && (
+                            <div style={{
+                                padding: '10px 14px',
+                                background: '#f0fdf4',
+                                border: '1px solid #bbf7d0',
+                                borderRadius: '8px',
+                                color: '#166534',
+                                fontSize: '13px',
+                                marginBottom: '18px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}>
+                                <FiCheckCircle size={16} />
+                                <span>{infoMsg}</span>
+                            </div>
+                        )}
+
+                        {/* STEP 1: ENTER EMAIL */}
+                        {step === 'email' && (
+                            <form className="auth-form login-form" onSubmit={handleSendOtp}>
+                                <div className="field login-field">
+                                    <label htmlFor="login-email">
+                                        Email Address
                                     </label>
 
-                                    <a
-                                        href="#forgot-password"
-                                        onClick={(e) => e.preventDefault()}
-                                    >
-                                        Forgot password?
-                                    </a>
+                                    <div className="login-input-wrap">
+                                        <FiMail />
+                                        <input
+                                            id="login-email"
+                                            type="email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            required
+                                            autoComplete="email"
+                                            placeholder="you@example.com"
+                                            autoFocus
+                                        />
+                                    </div>
                                 </div>
 
-                                <div className="login-input-wrap">
-                                    <FiLock />
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary submit login-submit"
+                                    disabled={loading}
+                                >
+                                    <span>{loading ? 'SENDING CODE...' : 'SEND LOGIN CODE'}</span>
+                                    <FiArrowRight />
+                                </button>
+                            </form>
+                        )}
 
-                                    <input
-                                        id="login-password"
-                                        type={
-                                            showPassword
-                                                ? 'text'
-                                                : 'password'
-                                        }
-                                        value={password}
-                                        onChange={(e) =>
-                                            setPassword(e.target.value)
-                                        }
-                                        required
-                                        autoComplete="current-password"
-                                        placeholder="Enter your password"
-                                    />
+                        {/* STEP 2: ENTER OTP */}
+                        {step === 'otp' && (
+                            <form className="auth-form login-form" onSubmit={handleVerifyOtp}>
+                                <div className="field login-field">
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                        <label htmlFor="login-otp" style={{ margin: 0 }}>
+                                            6-Digit OTP Code
+                                        </label>
+                                        <button
+                                            type="button"
+                                            onClick={() => { setStep('email'); setError(''); }}
+                                            style={{
+                                                background: 'none',
+                                                border: 'none',
+                                                color: '#e84965',
+                                                fontSize: '12px',
+                                                fontWeight: '600',
+                                                cursor: 'pointer',
+                                                padding: 0
+                                            }}
+                                        >
+                                            Change Email
+                                        </button>
+                                    </div>
 
+                                    <div className="login-input-wrap">
+                                        <FiKey />
+                                        <input
+                                            id="login-otp"
+                                            type="text"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            maxLength={6}
+                                            value={otp}
+                                            onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                                            required
+                                            placeholder="• • • • • •"
+                                            autoFocus
+                                            style={{
+                                                letterSpacing: '8px',
+                                                fontSize: '20px',
+                                                fontWeight: '700'
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
+                                    <span style={{ color: '#888' }}>Didn't receive code?</span>
                                     <button
                                         type="button"
-                                        className="password-toggle"
-                                        onClick={() =>
-                                            setShowPassword(!showPassword)
-                                        }
-                                        aria-label={
-                                            showPassword
-                                                ? 'Hide password'
-                                                : 'Show password'
-                                        }
+                                        disabled={countdown > 0 || loading}
+                                        onClick={handleSendOtp}
+                                        style={{
+                                            background: 'none',
+                                            border: 'none',
+                                            color: countdown > 0 ? '#aaa' : '#e84965',
+                                            fontWeight: '600',
+                                            cursor: countdown > 0 ? 'not-allowed' : 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '5px',
+                                            fontSize: '13px'
+                                        }}
                                     >
-                                        {showPassword ? (
-                                            <FiEyeOff />
-                                        ) : (
-                                            <FiEye />
-                                        )}
+                                        <FiRefreshCw size={13} className={loading ? 'spin' : ''} />
+                                        {countdown > 0 ? `Resend code in ${countdown}s` : 'Resend Code'}
                                     </button>
                                 </div>
-                            </div>
 
-                            {/* REMEMBER */}
-                            <label className="remember-row">
-                                <input type="checkbox" />
-                                <span>Keep me signed in</span>
-                            </label>
-
-                            {/* SUBMIT */}
-                            <button
-                                type="submit"
-                                className="btn btn-primary submit login-submit"
-                            >
-                                <span>{loading ? 'LOGGING IN...' : 'LOGIN TO SBV'}</span>
-                                <FiArrowRight />
-                            </button>
-                        </form>
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary submit login-submit"
+                                    disabled={loading || otp.length < 6}
+                                >
+                                    <span>{loading ? 'VERIFYING...' : 'VERIFY & LOGIN'}</span>
+                                    <FiArrowRight />
+                                </button>
+                            </form>
+                        )}
 
                         {/* SECURITY */}
                         <div className="login-security">
                             <FiShield />
-
                             <div>
                                 <strong>Secure & Private</strong>
                                 <span>
-                                    Your account information is protected.
+                                    Passwordless authentication powered by email OTP.
                                 </span>
                             </div>
                         </div>
@@ -226,7 +331,6 @@ export default function Login() {
                         {/* SIGNUP */}
                         <div className="login-register">
                             <span>Don't have an account?</span>
-
                             <Link to="/signup">
                                 Create Account
                                 <FiArrowRight />
