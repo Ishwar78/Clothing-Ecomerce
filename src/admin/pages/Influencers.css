@@ -1,160 +1,1081 @@
+/* =========================================================
+   INFLUENCERS ADMIN
+   ========================================================= */
+
 .influencers-admin-wrap {
   width: 100%;
+  position: relative;
 }
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.influencers-admin-wrap .admin-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.influencers-admin-wrap .admin-title h2 {
+  margin: 0 0 7px;
+  color: #171313;
+  font-size: 27px;
+  line-height: 1.2;
+  font-weight: 750;
+}
+
+.influencers-admin-wrap .admin-title p {
+  margin: 0;
+  color: #786d68;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+/* =========================================================
+   PRIMARY BUTTON
+   ========================================================= */
+
+.influencers-admin-wrap .admin-btn {
+  min-height: 42px;
+  padding: 0 17px;
+
+  border-radius: 9px;
+  border: 1px solid transparent;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  font-size: 13px;
+  font-weight: 750;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.influencers-admin-wrap .admin-btn-primary {
+  background: linear-gradient(
+    135deg,
+    #ff6d7d 0%,
+    #ed4765 100%
+  );
+
+  color: #fff;
+
+  box-shadow:
+    0 7px 18px rgba(237, 71, 101, 0.22);
+}
+
+.influencers-admin-wrap .admin-btn-primary:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 24px rgba(237, 71, 101, 0.3);
+}
+
+.influencers-admin-wrap .admin-btn-primary:active {
+  transform: translateY(0);
+}
+
+.influencers-admin-wrap .admin-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.influencers-admin-wrap .admin-btn-secondary {
+  background: #fff;
+
+  color: #5d534f;
+
+  border-color: #ded3ce;
+}
+
+.influencers-admin-wrap .admin-btn-secondary:hover {
+  background: #faf6f4;
+
+  border-color: #cfc0ba;
+
+  color: #292321;
+}
+
+/* =========================================================
+   STATS
+   ========================================================= */
+
+.influencers-admin-wrap .admin-stat-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 16px;
+}
+
+.influencers-admin-wrap .admin-stat {
+  min-height: 82px;
+
+  padding: 16px 18px;
+
+  display: grid;
+
+  grid-template-columns: 42px 1fr;
+  grid-template-rows: auto auto;
+
+  column-gap: 12px;
+
+  align-items: center;
+
+  background: #fff;
+
+  border: 1px solid #ebdcd7;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 4px 16px rgba(43, 27, 21, 0.04);
+}
+
+.influencers-admin-wrap .admin-stat .stat-icon {
+  width: 40px;
+  height: 40px;
+
+  padding: 10px;
+
+  grid-row: span 2;
+
+  border-radius: 10px;
+
+  background: #fff3f5;
+}
+
+.influencers-admin-wrap .admin-stat span {
+  color: #887c76;
+
+  font-size: 11px;
+
+  font-weight: 650;
+}
+
+.influencers-admin-wrap .admin-stat strong {
+  color: #211b19;
+
+  font-size: 21px;
+
+  line-height: 1.2;
+}
+
+/* =========================================================
+   INFLUENCER GRID
+   ========================================================= */
 
 .influencer-admin-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+
+  grid-template-columns:
+    repeat(auto-fill, minmax(235px, 1fr));
+
   gap: 20px;
 }
 
+/* =========================================================
+   INFLUENCER CARD
+   ========================================================= */
+
 .influencer-admin-card {
-  background: #fff;
-  border-radius: 12px;
-  border: 1px solid #ebd8d4;
-  overflow: hidden;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+
   display: flex;
   flex-direction: column;
+
+  background: #fff;
+
+  border: 1px solid #ebd8d4;
+
+  border-radius: 14px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 5px 18px rgba(46, 28, 22, 0.05);
+
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
 }
 
 .influencer-admin-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-4px);
+
+  border-color: #e6c9c4;
+
+  box-shadow:
+    0 12px 30px rgba(46, 28, 22, 0.1);
 }
+
+/* =========================================================
+   IMAGE
+   ========================================================= */
 
 .influencer-thumb-wrap {
   position: relative;
+
   width: 100%;
-  height: 270px;
+  height: 285px;
+
+  overflow: hidden;
+
   background: #fbf3f0;
+}
+
+.influencer-thumb-wrap::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 85px;
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.3),
+      transparent
+    );
+
+  pointer-events: none;
 }
 
 .influencer-thumb-wrap img {
   width: 100%;
   height: 100%;
+
+  display: block;
+
   object-fit: cover;
+
+  transition: transform 0.35s ease;
 }
+
+.influencer-admin-card:hover .influencer-thumb-wrap img {
+  transform: scale(1.035);
+}
+
+/* =========================================================
+   INSTAGRAM BADGE
+   ========================================================= */
 
 .insta-badge {
   position: absolute;
+
   top: 12px;
   left: 12px;
-  width: 32px;
-  height: 32px;
+
+  z-index: 3;
+
+  width: 34px;
+  height: 34px;
+
   border-radius: 50%;
-  background: #e1306c;
+
+  background:
+    linear-gradient(
+      135deg,
+      #feda75,
+      #fa7e1e,
+      #d62976,
+      #962fbf
+    );
+
   color: #fff;
+
   display: grid;
   place-items: center;
-  box-shadow: 0 3px 8px rgba(225, 48, 108, 0.4);
+
+  border: 2px solid rgba(255, 255, 255, 0.9);
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.status-pill {
+.insta-badge svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.influencer-admin-wrap .status-pill {
   position: absolute;
+
   top: 12px;
   right: 12px;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 9px;
+
+  z-index: 3;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 55px;
+
+  padding: 5px 10px;
+
   border-radius: 20px;
+
+  font-size: 10px;
+  font-weight: 800;
+
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+
+  letter-spacing: 0.55px;
+
+  border: 1px solid rgba(255, 255, 255, 0.65);
+
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
 }
 
-.status-pill.active {
-  background: #d1fae5;
+.influencer-admin-wrap .status-pill.active {
+  background: rgba(209, 250, 229, 0.92);
   color: #065f46;
 }
 
-.status-pill.inactive {
-  background: #fee2e2;
+.influencer-admin-wrap .status-pill.inactive {
+  background: rgba(254, 226, 226, 0.94);
   color: #991b1b;
 }
 
+/* =========================================================
+   CARD BODY
+   ========================================================= */
+
 .influencer-card-body {
-  padding: 14px 16px;
+  padding: 15px 16px 14px;
+
   display: flex;
   flex-direction: column;
+
   flex: 1;
+
+  min-height: 145px;
 }
 
 .influencer-card-body h4 {
-  margin: 0 0 4px;
+  margin: 0 0 5px;
+
   font-size: 15px;
-  color: #222;
-  font-weight: 700;
+
+  color: #211b19;
+
+  font-weight: 750;
+
+  line-height: 1.35;
 }
 
 .followers-text {
   margin: 0 0 8px;
-  font-size: 13px;
-  color: #666;
+
+  font-size: 12px;
+
+  color: #81756f;
+
+  line-height: 1.4;
 }
 
 .influencer-link {
+  width: fit-content;
+
   font-size: 12px;
+
   color: #ed4765;
+
   text-decoration: none;
+
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-weight: 600;
+
+  gap: 5px;
+
+  font-weight: 700;
+
   margin-bottom: 12px;
+
+  transition: color 0.2s ease;
 }
 
 .influencer-link:hover {
-  text-decoration: underline;
+  color: #d83454;
+  text-decoration: none;
 }
+
+/* =========================================================
+   CARD ACTIONS
+   ========================================================= */
 
 .influencer-actions {
   margin-top: auto;
+
   display: flex;
   align-items: center;
-  gap: 8px;
-  border-top: 1px solid #f4eae7;
-  padding-top: 10px;
+
+  gap: 7px;
+
+  border-top: 1px solid #f0e5e1;
+
+  padding-top: 11px;
 }
 
 .toggle-status-btn {
   flex: 1;
-  background: #fdf3f2;
-  border: 1px solid #eed6d2;
-  color: #444;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
+
+  min-height: 34px;
+
+  background: #fff7f6;
+
+  border: 1px solid #edd8d4;
+
+  color: #5b504c;
+
+  padding: 0 10px;
+
+  border-radius: 7px;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
   cursor: pointer;
-  transition: all 0.15s ease;
+
+  transition: all 0.18s ease;
 }
 
 .toggle-status-btn:hover {
-  background: #fce7e4;
+  background: #fff0f2;
+
   color: #ed4765;
+
+  border-color: #ed4765;
 }
 
 .icon-action {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  border: 1px solid #ddd;
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  border-radius: 7px;
+
+  border: 1px solid #ddd4d0;
+
   background: #fff;
+
+  color: #625854;
+
   display: grid;
   place-items: center;
+
   cursor: pointer;
-  transition: all 0.15s ease;
+
+  transition:
+    all 0.18s ease;
 }
 
 .icon-action.edit:hover {
   color: #2563eb;
+
   border-color: #2563eb;
+
   background: #eff6ff;
+
+  transform: translateY(-1px);
 }
 
 .icon-action.delete:hover {
   color: #dc2626;
+
   border-color: #dc2626;
+
   background: #fef2f2;
+
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.influencers-admin-wrap .admin-card {
+  background: #fff;
+
+  border: 1px solid #ebdcd7;
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 5px 18px rgba(46, 28, 22, 0.04);
+}
+
+/* =========================================================
+   =========================================================
+   ADD / EDIT INFLUENCER MODAL
+   =========================================================
+   ========================================================= */
+
+.influencers-admin-wrap .admin-modal-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  width: 100vw;
+  height: 100vh;
+
+  z-index: 99999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 22px;
+
+  background: rgba(20, 14, 13, 0.58);
+
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+
+  animation: influencerOverlayIn 0.2s ease;
+}
+
+/* =========================================================
+   MODAL BOX
+   ========================================================= */
+
+.influencers-admin-wrap .admin-modal-content {
+  position: relative;
+
+  width: min(520px, 100%);
+
+  max-width: 520px !important;
+
+  max-height: 90vh;
+
+  margin: 0;
+
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  background: #fff;
+
+  border: 1px solid #eadbd6;
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 30px 80px rgba(26, 16, 13, 0.25),
+    0 10px 30px rgba(26, 16, 13, 0.12);
+
+  animation: influencerModalIn 0.24s ease;
+}
+
+/* =========================================================
+   MODAL HEADER
+   ========================================================= */
+
+.influencers-admin-wrap .admin-modal-header {
+  position: relative;
+
+  flex-shrink: 0;
+
+  min-height: 76px;
+
+  padding: 18px 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fff8f7 0%,
+      #fff 100%
+    );
+
+  border-bottom: 1px solid #eee1dd;
+}
+
+.influencers-admin-wrap .admin-modal-header::before {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  top: 0;
+
+  width: 100%;
+  height: 3px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #ff7080,
+      #ed4765,
+      #ff9da5
+    );
+}
+
+.influencers-admin-wrap .admin-modal-header h3 {
+  margin: 0;
+
+  font-size: 20px;
+
+  line-height: 1.3;
+
+  color: #1e1816;
+
+  font-weight: 800;
+}
+
+/* =========================================================
+   CLOSE BUTTON
+   ========================================================= */
+
+.influencers-admin-wrap .admin-modal-header .close-btn {
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  border: 1px solid #e3d6d1;
+
+  background: #fff;
+
+  color: #6c615c;
+
+  cursor: pointer;
+
+  transition:
+    all 0.2s ease;
+}
+
+.influencers-admin-wrap .admin-modal-header .close-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.influencers-admin-wrap .admin-modal-header .close-btn:hover {
+  color: #ed4765;
+
+  border-color: #ed4765;
+
+  background: #fff3f5;
+
+  transform: rotate(90deg);
+}
+
+/* =========================================================
+   MODAL BODY
+   ========================================================= */
+
+.influencers-admin-wrap .admin-modal-body {
+  flex: 1;
+
+  min-height: 0;
+
+  overflow-y: auto;
+
+  padding: 22px 23px 23px;
+
+  scrollbar-width: thin;
+
+  scrollbar-color: #d8c8c2 transparent;
+}
+
+.influencers-admin-wrap .admin-modal-body::-webkit-scrollbar {
+  width: 7px;
+}
+
+.influencers-admin-wrap .admin-modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.influencers-admin-wrap .admin-modal-body::-webkit-scrollbar-thumb {
+  background: #d8c8c2;
+
+  border-radius: 20px;
+}
+
+.influencers-admin-wrap .admin-modal-body::-webkit-scrollbar-thumb:hover {
+  background: #bca9a2;
+}
+
+/* =========================================================
+   FORM GROUPS
+   ========================================================= */
+
+.influencers-admin-wrap .admin-modal-body .form-group {
+  margin-bottom: 18px !important;
+}
+
+.influencers-admin-wrap .admin-modal-body label {
+  display: block;
+
+  margin-bottom: 7px !important;
+
+  color: #302825;
+
+  font-size: 12px !important;
+
+  font-weight: 750 !important;
+
+  line-height: 1.4;
+}
+
+.influencers-admin-wrap .admin-modal-body input[type="text"],
+.influencers-admin-wrap .admin-modal-body input[type="number"],
+.influencers-admin-wrap .admin-modal-body input[type="url"] {
+  width: 100% !important;
+
+  min-height: 43px;
+
+  padding: 0 13px !important;
+
+  box-sizing: border-box;
+
+  border: 1px solid #dfd3ce !important;
+
+  border-radius: 8px !important;
+
+  background: #fff;
+
+  color: #292321;
+
+  font-size: 13px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.influencers-admin-wrap .admin-modal-body input::placeholder {
+  color: #aaa09b;
+}
+
+.influencers-admin-wrap .admin-modal-body input:hover {
+  border-color: #cfbeb8 !important;
+}
+
+.influencers-admin-wrap .admin-modal-body input:focus {
+  border-color: #ed4765 !important;
+
+  box-shadow:
+    0 0 0 3px rgba(237, 71, 101, 0.08);
+}
+
+/* =========================================================
+   IMAGE UPLOAD ROW
+   ========================================================= */
+
+.influencers-admin-wrap .admin-modal-body .form-group > div[style*="display: flex"] {
+  flex-wrap: wrap;
+}
+
+.influencers-admin-wrap .admin-modal-body .form-group > div[style*="display: flex"] .admin-btn-secondary {
+  min-height: 38px;
+
+  padding: 0 13px;
+
+  font-size: 12px;
+}
+
+/* =========================================================
+   IMAGE PREVIEW
+   ========================================================= */
+
+.influencers-admin-wrap .admin-modal-body img[alt="Preview"] {
+  width: 130px !important;
+  height: 165px !important;
+
+  object-fit: cover;
+
+  display: block;
+
+  margin: 0 auto;
+
+  border-radius: 9px !important;
+
+  border: 2px solid #f0dedb !important;
+
+  box-shadow:
+    0 5px 16px rgba(40, 25, 20, 0.1);
+}
+
+.influencers-admin-wrap .admin-modal-body p {
+  color: #887c76;
+}
+
+/* =========================================================
+   ACTIVE CHECKBOX
+   ========================================================= */
+
+.influencers-admin-wrap .admin-modal-body input[type="checkbox"] {
+  width: 18px !important;
+  height: 18px !important;
+
+  accent-color: #ed4765;
+
+  cursor: pointer;
+}
+
+.influencers-admin-wrap .admin-modal-body label[for="isActiveToggle"] {
+  margin: 0 !important;
+
+  font-size: 12px !important;
+
+  color: #3c322e;
+
+  font-weight: 700 !important;
+}
+
+/* =========================================================
+   MODAL BOTTOM ACTIONS
+   ========================================================= */
+
+.influencers-admin-wrap .admin-modal-body > div:last-child {
+  position: sticky;
+
+  bottom: -23px;
+
+  z-index: 5;
+
+  margin: 24px -23px -23px !important;
+
+  padding: 14px 23px;
+
+  background: rgba(255, 255, 255, 0.97);
+
+  border-top: 1px solid #eaded9;
+
+  box-shadow:
+    0 -5px 15px rgba(39, 25, 19, 0.04);
+}
+
+.influencers-admin-wrap .admin-modal-body > div:last-child .admin-btn {
+  min-height: 41px;
+
+  padding: 0 17px;
+}
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes influencerOverlayIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes influencerModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .influencers-admin-wrap .admin-title {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .influencers-admin-wrap .admin-title .admin-btn {
+    width: fit-content;
+  }
+
+  .influencer-admin-grid {
+    grid-template-columns:
+      repeat(auto-fill, minmax(210px, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .influencers-admin-wrap .admin-stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .influencer-admin-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 14px;
+  }
+
+  .influencer-thumb-wrap {
+    height: 245px;
+  }
+
+  .influencer-card-body {
+    padding: 13px;
+  }
+
+  .influencers-admin-wrap .admin-modal-overlay {
+    padding: 12px;
+  }
+
+  .influencers-admin-wrap .admin-modal-content {
+    width: 100%;
+
+    max-width: 100% !important;
+
+    max-height: 92vh;
+
+    border-radius: 14px;
+  }
+
+  .influencers-admin-wrap .admin-modal-header {
+    padding: 16px 18px;
+
+    min-height: 70px;
+  }
+
+  .influencers-admin-wrap .admin-modal-header h3 {
+    font-size: 18px;
+  }
+
+  .influencers-admin-wrap .admin-modal-body {
+    padding: 20px 18px 22px;
+  }
+
+  .influencers-admin-wrap .admin-modal-body > div:last-child {
+    margin: 22px -18px -22px !important;
+
+    padding: 13px 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .influencers-admin-wrap .admin-title h2 {
+    font-size: 23px;
+  }
+
+  .influencers-admin-wrap .admin-title .admin-btn {
+    width: 100%;
+  }
+
+  .influencer-admin-grid {
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+  }
+
+  .influencer-thumb-wrap {
+    height: 220px;
+  }
+
+  .influencer-card-body {
+    padding: 11px;
+  }
+
+  .influencer-card-body h4 {
+    font-size: 13px;
+  }
+
+  .followers-text {
+    font-size: 11px;
+  }
+
+  .influencer-actions {
+    gap: 5px;
+  }
+
+  .toggle-status-btn {
+    min-height: 32px;
+
+    padding: 0 6px;
+
+    font-size: 10px;
+  }
+
+  .icon-action {
+    width: 32px;
+    height: 32px;
+  }
+
+  .influencers-admin-wrap .admin-modal-overlay {
+    padding: 7px;
+  }
+
+  .influencers-admin-wrap .admin-modal-content {
+    max-height: 96vh;
+
+    border-radius: 12px;
+  }
+
+  .influencers-admin-wrap .admin-modal-header {
+    padding: 14px 15px;
+  }
+
+  .influencers-admin-wrap .admin-modal-header .close-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .influencers-admin-wrap .admin-modal-body {
+    padding: 18px 15px 20px;
+  }
+
+  .influencers-admin-wrap .admin-modal-body > div:last-child {
+    margin: 20px -15px -20px !important;
+
+    padding: 12px 15px;
+
+    flex-direction: column;
+  }
+
+  .influencers-admin-wrap .admin-modal-body > div:last-child .admin-btn {
+    width: 100%;
+  }
 }

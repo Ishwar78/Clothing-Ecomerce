@@ -189,14 +189,14 @@ export default function UserDashboard() {
     fetchUserTickets();
 
     try {
-      const w = JSON.parse(localStorage.getItem('sbv-wishlist') || '[]');
+      const w = JSON.parse(localStorage.getItem('Joyfulmarts-wishlist') || '[]');
       setWishlistCount(w.length);
     } catch {
       setWishlistCount(0);
     }
 
     try {
-      const c = JSON.parse(localStorage.getItem('sbv-cart') || '[]');
+      const c = JSON.parse(localStorage.getItem('Joyfulmarts-cart') || '[]');
       setCartCount(c.length);
     } catch {
       setCartCount(0);
@@ -412,7 +412,7 @@ export default function UserDashboard() {
             </div>
 
             <div>
-              <strong>{user?.name || 'SBV Customer'}</strong>
+              <strong>{user?.name || 'Joyfulmarts Customer'}</strong>
               <span>{user?.email || 'Premium Member'}</span>
             </div>
           </div>
@@ -501,7 +501,7 @@ export default function UserDashboard() {
               </div>
 
               <div>
-                <strong>{user?.name || 'SBV Customer'}</strong>
+                <strong>{user?.name || 'Joyfulmarts Customer'}</strong>
                 <span>{user?.phone || 'Customer'}</span>
               </div>
             </div>
@@ -583,7 +583,7 @@ export default function UserDashboard() {
                     <FiUser />
                   </div>
                   <div>
-                    <strong>{user?.name || 'SBV Customer'}</strong>
+                    <strong>{user?.name || 'Joyfulmarts Customer'}</strong>
                     <span>Member since 2026</span>
                   </div>
                 </div>
@@ -593,7 +593,7 @@ export default function UserDashboard() {
                 <div className="form-grid">
                   <div className="field">
                     <label><FiUser /> Full Name</label>
-                    <input type="text" readOnly value={user?.name || "SBV Customer"} />
+                    <input type="text" readOnly value={user?.name || "Joyfulmarts Customer"} />
                   </div>
 
                   <div className="field">
@@ -1061,7 +1061,7 @@ export default function UserDashboard() {
 
                   <div style={{ background: '#eff6ff', border: '1px solid #dbeafe', padding: '14px', borderRadius: '10px' }}>
                     <div style={{ fontSize: '11px', color: '#2563eb', fontWeight: 'bold' }}>EMAIL SUPPORT</div>
-                    <div style={{ fontSize: '15px', fontWeight: '800', color: '#111827', marginTop: '2px' }}>hello@sbvstore.in</div>
+                    <div style={{ fontSize: '15px', fontWeight: '800', color: '#111827', marginTop: '2px' }}>hello@Joyfulmartsstore.in</div>
                     <small style={{ color: '#6b7280' }}>Guaranteed response in 24 hrs</small>
                   </div>
 
@@ -1114,7 +1114,7 @@ export default function UserDashboard() {
                         {t.adminReply ? (
                           <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '12px 14px', marginTop: '10px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#166534', fontWeight: 'bold', fontSize: '12px', marginBottom: '4px' }}>
-                              <FiCheckCircle /> SBV Support Team Response:
+                              <FiCheckCircle /> Joyfulmarts Support Team Response:
                             </div>
                             <div style={{ fontSize: '12px', color: '#14532d', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>
                               {t.adminReply}
@@ -1242,7 +1242,7 @@ export default function UserDashboard() {
                 </div>
                 <div className="track-content">
                   <h4>Order Placed & Confirmed</h4>
-                  <p>Your order details have been verified and processed by S S Vastralaya.</p>
+                  <p>Your order details have been verified and processed by Joyfulmarts.</p>
                   <small>
                     {trackingOrder.createdAt ? new Date(trackingOrder.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Confirmed'}
                   </small>
@@ -1608,7 +1608,7 @@ export default function UserDashboard() {
                   </label>
                   <input
                     required
-                    placeholder="e.g. SBV-10024"
+                    placeholder="e.g. Joyfulmarts-10024"
                     value={returnForm.orderId}
                     onChange={(e) => setReturnForm({ ...returnForm, orderId: e.target.value })}
                     style={{ width: '100%', padding: '9px 12px', border: '1px solid #d1d5db', borderRadius: '7px', fontSize: '13px' }}
@@ -1970,7 +1970,7 @@ export default function UserDashboard() {
                     Related Order ID (Optional)
                   </label>
                   <input
-                    placeholder="e.g. SBV-10024"
+                    placeholder="e.g. Joyfulmarts-10024"
                     value={ticketForm.orderId}
                     onChange={(e) => setTicketForm({ ...ticketForm, orderId: e.target.value })}
                     style={{ width: '100%', padding: '9px 12px', border: '1px solid #d1d5db', borderRadius: '7px', fontSize: '13px' }}

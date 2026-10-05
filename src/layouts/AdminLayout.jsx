@@ -17,7 +17,8 @@ import {
     FiStar,
     FiInstagram,
     FiFileText,
-    FiCamera
+    FiCamera,
+    FiBookOpen
 } from 'react-icons/fi';
 import './AdminLayout.css';
 const links = [
@@ -27,6 +28,7 @@ const links = [
     ['/admin/banners', 'Home Banner', FiImage],
     ['/admin/influencers', 'Fashion Influencer', FiInstagram],
     ['/admin/style-share', 'Style It & Share It', FiCamera],
+    ['/admin/blogs', 'Blogs & Articles', FiBookOpen],
     ['/admin/orders', 'Orders', FiShoppingBag],
     ['/admin/users', 'Users', FiUsers],
     ['/admin/coupons', 'Coupon Codes', FiPercent],
@@ -43,7 +45,7 @@ export function AdminLayout({ children }) {
     return <div className="admin-shell">
         <aside className={open ? 'admin-side open' : 'admin-side'}>
             <div className="admin-logo">
-                <span>✦ SBV ✦</span>
+                <span>✦ Joyfulmarts ✦</span>
                 <small>ADMIN PANEL</small>
             </div>{links.map(([p, n, I]) =>
                 <button key={p} className={loc.pathname === p ? 'active' : ''} onClick={() => { nav(p); setOpen(false) }}><I />{n}</button>)}
@@ -52,7 +54,7 @@ export function AdminLayout({ children }) {
         </aside><div className="admin-main">
             <header className="admin-top">
                 <button className="admin-menu" onClick={() => setOpen(!open)}>{open ? <FiX /> : <FiMenu />}</button>
-                <div><h1>S S Vastralaya</h1>
+                <div><h1>Joyfulmarts</h1>
                     <p>Store Administration</p>
                 </div><div className="admin-user">Admin <span>SB</span>
                 </div>

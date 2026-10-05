@@ -25,10 +25,10 @@ export default function ProductCard({ product }) {
     }, [product]);
 
     const add = () => {
-        const c = JSON.parse(localStorage.getItem('sbv-cart') || '[]');
+        const c = JSON.parse(localStorage.getItem('Joyfulmarts-cart') || '[]');
         const safeProduct = { ...product, price: priceVal, mrp: mrpVal };
-        localStorage.setItem('sbv-cart', JSON.stringify([...c, safeProduct]));
-        window.dispatchEvent(new Event('sbv-cart-updated'));
+        localStorage.setItem('Joyfulmarts-cart', JSON.stringify([...c, safeProduct]));
+        window.dispatchEvent(new Event('Joyfulmarts-cart-updated'));
         window.dispatchEvent(new Event('storage'));
         alert(`${product.name} added to cart`);
     };

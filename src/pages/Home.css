@@ -1,25 +1,25 @@
 /* =========================================================
-   SBV HOME PAGE
+   Joyfulmarts HOME PAGE
    ALL HOME PAGE WIDTH / HEIGHT / SPACING IS MANAGED HERE
    ========================================================= */
 
 .home-page {
-  --sbv-primary: #f24d68;
-  --sbv-primary-dark: #df3857;
-  --sbv-orange: #f47d50;
-  --sbv-peach: #fff0eb;
-  --sbv-peach-dark: #f9ddd5;
-  --sbv-cream: #fffaf8;
-  --sbv-text: #292222;
-  --sbv-muted: #766969;
-  --sbv-border: #f0ded9;
-  --sbv-white: #ffffff;
+  --Joyfulmarts-primary: #f24d68;
+  --Joyfulmarts-primary-dark: #df3857;
+  --Joyfulmarts-orange: #f47d50;
+  --Joyfulmarts-peach: #fff0eb;
+  --Joyfulmarts-peach-dark: #f9ddd5;
+  --Joyfulmarts-cream: #fffaf8;
+  --Joyfulmarts-text: #292222;
+  --Joyfulmarts-muted: #766969;
+  --Joyfulmarts-border: #f0ded9;
+  --Joyfulmarts-white: #ffffff;
 
   width: 100%;
   max-width: 100%;
   overflow: hidden;
   background: #fffaf8;
-  color: var(--sbv-text);
+  color: var(--Joyfulmarts-text);
   font-family: "Montserrat", sans-serif;
 }
 
@@ -103,7 +103,7 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--sbv-primary);
+  background: var(--Joyfulmarts-primary);
 }
 
 /* =========================================================
@@ -140,8 +140,8 @@
   color: #fff;
   background: linear-gradient(
     135deg,
-    var(--sbv-primary),
-    var(--sbv-orange)
+    var(--Joyfulmarts-primary),
+    var(--Joyfulmarts-orange)
   );
   box-shadow: 0 7px 18px rgba(242, 77, 104, 0.2);
 }
@@ -258,7 +258,7 @@
   transform: translateY(-50%);
   border: 0;
   border-radius: 50%;
-  color: var(--sbv-primary);
+  color: var(--Joyfulmarts-primary);
   background: rgba(255, 255, 255, 0.85);
   box-shadow: 0 5px 18px rgba(60, 20, 20, 0.1);
   transition: 0.25s ease;
@@ -266,7 +266,7 @@
 
 .home-hero-arrow:hover {
   color: #fff;
-  background: var(--sbv-primary);
+  background: var(--Joyfulmarts-primary);
 }
 
 .home-hero-arrow svg {
@@ -302,7 +302,7 @@
 
 .home-hero-dots button.active {
   width: 42px;
-  background: var(--sbv-primary);
+  background: var(--Joyfulmarts-primary);
 }
 
 /* =========================================================
@@ -837,7 +837,7 @@
   height: 37px;
   padding: 6px;
   border-radius: 50%;
-  color: var(--sbv-primary);
+  color: var(--Joyfulmarts-primary);
   background: #ffe5df;
 }
 
@@ -976,8 +976,8 @@
 
 .home-outline-button:hover {
   color: #fff;
-  background: var(--sbv-primary);
-  border-color: var(--sbv-primary);
+  background: var(--Joyfulmarts-primary);
+  border-color: var(--Joyfulmarts-primary);
 }
 
 /* =========================================================
@@ -1014,7 +1014,7 @@
   left: 50%;
   height: 2px;
   border-radius: 5px;
-  background: var(--sbv-primary);
+  background: var(--Joyfulmarts-primary);
   opacity: 0;
   transform: translateX(-50%);
   transition: 0.25s ease;
@@ -1022,7 +1022,7 @@
 
 .home-trending-tabs button:hover,
 .home-trending-tabs button.active {
-  color: var(--sbv-primary);
+  color: var(--Joyfulmarts-primary);
 }
 
 .home-trending-tabs button.active::after {
@@ -1285,7 +1285,7 @@
   margin-bottom: 9px;
   place-items: center;
   border-radius: 50%;
-  color: var(--sbv-primary);
+  color: var(--Joyfulmarts-primary);
   background: #fff0ec;
 }
 
@@ -1463,8 +1463,8 @@
   color: #fff;
   background: linear-gradient(
     135deg,
-    var(--sbv-primary),
-    var(--sbv-orange)
+    var(--Joyfulmarts-primary),
+    var(--Joyfulmarts-orange)
   );
   font-size: 9px;
   font-weight: 800;

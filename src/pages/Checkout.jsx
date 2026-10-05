@@ -95,7 +95,7 @@ export default function Checkout() {
       .catch(err => console.error('Fetch coupons error:', err));
 
     try {
-      const cart = JSON.parse(localStorage.getItem('sbv-cart') || '[]');
+      const cart = JSON.parse(localStorage.getItem('Joyfulmarts-cart') || '[]');
       setItems(cart);
     } catch {
       setItems([]);
@@ -243,7 +243,7 @@ export default function Checkout() {
       if (paymentMethod === 'COD') {
         const res = await api.post('/orders', orderPayload);
         if (res.success) {
-          localStorage.removeItem('sbv-cart');
+          localStorage.removeItem('Joyfulmarts-cart');
           nav('/thank-you', { state: { orderId: res.order.orderId } });
         } else {
           setError(res.message || 'Failed to place order.');
@@ -276,7 +276,7 @@ export default function Checkout() {
           key: keyId,
           amount: rzpOrder.amount,
           currency: rzpOrder.currency || 'INR',
-          name: 'S S Vastralaya',
+          name: 'Joyfulmarts',
           description: `Order Payment (#${rzpOrder.id})`,
           order_id: rzpOrder.id,
           prefill: {
@@ -300,7 +300,7 @@ export default function Checkout() {
 
               const createRes = await api.post('/orders', fullOrderPayload);
               if (createRes.success) {
-                localStorage.removeItem('sbv-cart');
+                localStorage.removeItem('Joyfulmarts-cart');
                 nav('/thank-you', { state: { orderId: createRes.order.orderId } });
               } else {
                 setError(createRes.message || 'Payment received but failed to record order.');

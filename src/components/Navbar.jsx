@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
     FiHeart,
@@ -35,7 +35,7 @@ export default function Navbar() {
     const [wishlistCount, setWishlistCount] = useState(() => getWishlist().length);
     const [cartCount, setCartCount] = useState(() => {
         try {
-            return JSON.parse(localStorage.getItem('sbv-cart') || '[]').length;
+            return JSON.parse(localStorage.getItem('Joyfulmarts-cart') || '[]').length;
         } catch {
             return 0;
         }
@@ -46,7 +46,7 @@ export default function Navbar() {
     React.useEffect(() => {
         const updateCart = () => {
             try {
-                setCartCount(JSON.parse(localStorage.getItem('sbv-cart') || '[]').length);
+                setCartCount(JSON.parse(localStorage.getItem('Joyfulmarts-cart') || '[]').length);
             } catch {
                 setCartCount(0);
             }
@@ -54,11 +54,11 @@ export default function Navbar() {
         const unsubWish = subscribeWishlist((list) => {
             setWishlistCount(list.length);
         });
-        window.addEventListener('sbv-cart-updated', updateCart);
+        window.addEventListener('Joyfulmarts-cart-updated', updateCart);
         window.addEventListener('storage', updateCart);
         return () => {
             unsubWish();
-            window.removeEventListener('sbv-cart-updated', updateCart);
+            window.removeEventListener('Joyfulmarts-cart-updated', updateCart);
             window.removeEventListener('storage', updateCart);
         };
     }, []);
@@ -154,8 +154,8 @@ export default function Navbar() {
                         onClick={() => navigate('/')}
                     >
                         <img
-                            src="/assets/logo.png"
-                            alt="SBV Vastralaya"
+                            src="/assets/joyful-logo.png"
+                            alt="Joyfulmarts Vastralaya"
                             className="brand-logo"
                         />
                     </div>

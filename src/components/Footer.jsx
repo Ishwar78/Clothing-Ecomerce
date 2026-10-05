@@ -84,26 +84,6 @@ export default function Footer() {
     return (
         <footer className="site-footer">
 
-            {/* ================= BENEFITS ================= */}
-            <section className="footer-benefits-wrap">
-                <div className="footer-benefits container">
-                    {benefits.map((item, index) => (
-                        <div className="footer-benefit" key={index}>
-
-                            <div className="footer-benefit-icon">
-                                {item.icon}
-                            </div>
-
-                            <div className="footer-benefit-content">
-                                <strong>{item.title}</strong>
-                                <small>{item.text}</small>
-                            </div>
-
-                        </div>
-                    ))}
-                </div>
-            </section>
-
             {/* ================= MAIN FOOTER ================= */}
             <section className="footer-main-wrap">
                 <div className="footer-main container">
@@ -113,8 +93,8 @@ export default function Footer() {
 
                         <Link to="/" className="footer-brand-logo">
                             <img
-                                src="/assets/logo.png"
-                                alt="SBV Vastralaya"
+                                src="/assets/joyful-logo.png"
+                                alt="Joyfulmarts Vastralaya"
                                 className="footer-logo-image"
                             />
                         </Link>
@@ -172,7 +152,7 @@ export default function Footer() {
 
                     {/* ABOUT */}
                     <div className="footer-column">
-                        <h4>ABOUT SBV</h4>
+                        <h4>ABOUT Joyfulmarts</h4>
 
                         <div className="footer-links">
                             {aboutLinks.map((item) => (
@@ -199,7 +179,7 @@ export default function Footer() {
                                     <small>Customer Care</small>
 
                                     <a href="tel:+919876543210">
-                                        +91 98765 43210
+                                        +91 9466085809
                                     </a>
                                 </div>
                             </div>
@@ -212,8 +192,8 @@ export default function Footer() {
                                 <div>
                                     <small>Email</small>
 
-                                    <a href="mailto:hello@sbvstore.in">
-                                        hello@sbvstore.in
+                                    <a href="mailto:hello@Joyfulmartsstore.in">
+                                        hello@Joyfulmartsstore.in
                                     </a>
                                 </div>
                             </div>
@@ -243,7 +223,7 @@ export default function Footer() {
                 <div className="footer-bottom container">
 
                     <p>
-                        © 2026 <strong>SS Vastralaya</strong>.
+                        © 2026 <strong>Joyfulmarts</strong>.
                         All Rights Reserved.
                     </p>
 

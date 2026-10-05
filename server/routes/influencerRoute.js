@@ -5,7 +5,7 @@ const router = express.Router();
 
 const defaultInfluencers = [
     {
-        name: "@stylewithsbv",
+        name: "@stylewithJoyfulmarts",
         followers: "24K followers",
         image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=85",
         link: "https://instagram.com",

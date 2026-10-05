@@ -25,6 +25,7 @@ import Sale from './pages/Sale';
 import ContactPage from './pages/Contact';
 import TermsConditions from './pages/TermsConditions';
 import Blog from './pages/Blog';
+import BlogDetails from './pages/BlogDetails';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import About from './pages/About';
 import ShippingPolicy from './pages/ShippingPolicy';
@@ -49,6 +50,7 @@ import Inquiries from './admin/pages/Inquiries';
 import Reviews from './admin/pages/Reviews';
 import Influencers from './admin/pages/Influencers';
 import StyleShare from './admin/pages/StyleShare';
+import Blogs from './admin/pages/Blogs';
 import CompanySettings from './admin/pages/CompanySettings';
 import { FaQ } from 'react-icons/fa6';
 export default function AppRoutes() {
@@ -69,6 +71,7 @@ export default function AppRoutes() {
          <Route path='/term-&-condition' element={<Layout><TermsConditions /></Layout>} />
          <Route path='/privacy-policy' element={<Layout><PrivacyPolicy /></Layout>} />
          <Route path='/blog' element={<Layout><Blog /></Layout>} />
+         <Route path='/blog/:slug' element={<Layout><BlogDetails /></Layout>} />
          <Route path='/about-us' element={<Layout><About /></Layout>}  />
          <Route path='/shipping-policy' element={<Layout><ShippingPolicy /></Layout>} />
          <Route path='/return-&-refund' element={<Layout><ReturnRefund /></Layout>} />
@@ -92,6 +95,7 @@ export default function AppRoutes() {
         <Route path="/admin/banners" element={<AdminLayout><Banners /></AdminLayout>} />
         <Route path="/admin/influencers" element={<AdminLayout><Influencers /></AdminLayout>} />
         <Route path="/admin/style-share" element={<AdminLayout><StyleShare /></AdminLayout>} />
+        <Route path="/admin/blogs" element={<AdminLayout><Blogs /></AdminLayout>} />
         <Route path="/admin/orders" element={<AdminLayout><Orders /></AdminLayout>} />
         <Route path="/admin/users" element={<AdminLayout><Users /></AdminLayout>} />
         <Route path="/admin/coupons" element={<AdminLayout><Coupons /></AdminLayout>} />

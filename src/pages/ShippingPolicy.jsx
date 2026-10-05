@@ -63,7 +63,7 @@ export default function ShippingPolicy() {
       {/* Hero */}
       <section className="shipping-hero">
         <div className="shipping-hero-content">
-          <span className="shipping-eyebrow">SS VASTRALAYA</span>
+          <span className="shipping-eyebrow">Joyfulmarts</span>
 
           <h1>
             Shipping <span>Policy</span>
@@ -110,7 +110,7 @@ export default function ShippingPolicy() {
               </div>
 
               <p>
-                At SS Vastralaya, we work hard to make sure your order reaches
+                At Joyfulmarts, we work hard to make sure your order reaches
                 you safely and on time. Once your order is confirmed, our team
                 begins processing and preparing your package for dispatch.
               </p>

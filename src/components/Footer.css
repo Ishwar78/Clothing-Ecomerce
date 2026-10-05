@@ -1,5 +1,5 @@
 /* =========================================================
-   SBV PREMIUM FOOTER
+   Joyfulmarts PREMIUM FOOTER
    ========================================================= */
 
 .site-footer {
@@ -126,7 +126,7 @@
 }
 
 .footer-newsletter::before {
-    content: "SBV";
+    content: "Joyfulmarts";
     position: absolute;
     right: 5%;
     top: -35px;

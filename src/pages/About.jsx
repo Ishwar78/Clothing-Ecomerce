@@ -87,7 +87,7 @@ export default function About() {
           </h1>
 
           <p>
-            Welcome to SS Vastralaya — a fashion destination where timeless
+            Welcome to Joyfulmarts — a fashion destination where timeless
             traditions meet contemporary trends, bringing you carefully
             selected styles for every occasion.
           </p>
@@ -112,7 +112,7 @@ export default function About() {
 
         <div className="about-hero-badge">
           <FiStar />
-          <strong>SS Vastralaya</strong>
+          <strong>Joyfulmarts</strong>
           <span>Tradition Meets Trend</span>
         </div>
       </section>
@@ -128,7 +128,7 @@ export default function About() {
           </h2>
 
           <p>
-            SS Vastralaya is built around a simple idea — fashion should feel
+            Joyfulmarts is built around a simple idea — fashion should feel
             beautiful, comfortable and effortless. We bring together
             traditional elegance and modern fashion to create collections
             that fit naturally into your lifestyle.
@@ -144,7 +144,7 @@ export default function About() {
           <div className="about-signature">
             <span>✦</span>
             <div>
-              <strong>SS Vastralaya</strong>
+              <strong>Joyfulmarts</strong>
               <small>Tradition Meets Trend</small>
             </div>
           </div>
@@ -273,7 +273,7 @@ export default function About() {
               <FiAward />
             </div>
 
-            <span>THE SBV DIFFERENCE</span>
+            <span>THE Joyfulmarts DIFFERENCE</span>
 
             <h3>
               Designed for
@@ -307,7 +307,7 @@ export default function About() {
 
             <h2>
               Be part of the
-              <span> SBV family.</span>
+              <span> Joyfulmarts family.</span>
             </h2>
 
             <p>
@@ -326,7 +326,7 @@ export default function About() {
       {/* FINAL CTA */}
       <section className="about-final container">
         <div className="final-content">
-          <span>✦ SS VASTRALAYA ✦</span>
+          <span>✦ Joyfulmarts ✦</span>
 
           <h2>
             Your style.

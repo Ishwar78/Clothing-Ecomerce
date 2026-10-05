@@ -6,7 +6,7 @@ import './ThankYou.css';
 export default function ThankYou() {
   const nav = useNavigate();
   const location = useLocation();
-  const orderId = location.state?.orderId || `SBV-${Math.floor(100000 + Math.random() * 899999)}`;
+  const orderId = location.state?.orderId || `Joyfulmarts-${Math.floor(100000 + Math.random() * 899999)}`;
 
   return (
     <div className="thank-page">

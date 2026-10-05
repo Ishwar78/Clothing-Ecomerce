@@ -33,7 +33,7 @@ router.post('/', upload.single('image'), (req, res) => {
         }
         
         // Return the URL for the uploaded image
-        const imageUrl = `http://localhost:5035/uploads/${req.file.filename}`;
+        const imageUrl = `https://joyfulmarts.com/uploads/${req.file.filename}`;
         res.json({ success: true, imageUrl });
     } catch (error) {
         console.error('Upload error:', error);

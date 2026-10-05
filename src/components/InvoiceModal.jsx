@@ -6,7 +6,7 @@ import './InvoiceModal.css';
 export default function InvoiceModal({ order, onClose }) {
   const [company, setCompany] = useState({
     companyName: 'Shree Balaji Vastraalaya',
-    tagline: 'SBV Fashion Store - Complete Family Wear',
+    tagline: 'Joyfulmarts Fashion Store - Complete Family Wear',
     gstin: '06ABCDE1234F1Z5',
     panNumber: 'ABCDE1234F',
     phone: '+91 98765 43210',
@@ -15,7 +15,7 @@ export default function InvoiceModal({ order, onClose }) {
     city: 'Rohtak',
     state: 'Haryana',
     pincode: '124001',
-    invoicePrefix: 'INV-SBV-',
+    invoicePrefix: 'INV-Joyfulmarts-',
     terms: '1. Goods once sold can be returned/exchanged within 7 days in unused condition with original tags.\n2. All disputes are subject to Rohtak jurisdiction.\n3. This is a computer-generated tax invoice.',
     authorizedSignatory: 'For Shree Balaji Vastraalaya'
   });
@@ -31,7 +31,7 @@ export default function InvoiceModal({ order, onClose }) {
   if (!order) return null;
 
   const orderId = order.orderId || order._id || 'ORD-000000';
-  const prefix = company.invoicePrefix || 'INV-SBV-';
+  const prefix = company.invoicePrefix || 'INV-Joyfulmarts-';
   const invoiceNum = prefix + (orderId.replace(/[^0-9]/g, '') || Math.floor(100000 + Math.random() * 900000));
   const orderDate = new Date(order.createdAt || Date.now()).toLocaleDateString('en-IN', {
     day: '2-digit',
@@ -79,7 +79,7 @@ export default function InvoiceModal({ order, onClose }) {
           {/* HEADER */}
           <div className="invoice-header">
             <div className="invoice-brand">
-              <div className="invoice-logo-badge">✦ SBV ✦</div>
+              <div className="invoice-logo-badge">✦ Joyfulmarts ✦</div>
               <h2>{company.companyName}</h2>
               <p className="invoice-tagline">{company.tagline}</p>
               <p className="invoice-address-line">

@@ -26,15 +26,15 @@ export default function Wishlist() {
     });
 
     setItems(updated);
-    localStorage.setItem("sbv-wishlist", JSON.stringify(updated));
-    window.dispatchEvent(new CustomEvent('sbv-wishlist-updated', { detail: { list: updated } }));
+    localStorage.setItem("Joyfulmarts-wishlist", JSON.stringify(updated));
+    window.dispatchEvent(new CustomEvent('Joyfulmarts-wishlist-updated', { detail: { list: updated } }));
     window.dispatchEvent(new Event('storage'));
   };
 
   const clearWishlist = () => {
     setItems([]);
-    localStorage.setItem("sbv-wishlist", "[]");
-    window.dispatchEvent(new CustomEvent('sbv-wishlist-updated', { detail: { list: [] } }));
+    localStorage.setItem("Joyfulmarts-wishlist", "[]");
+    window.dispatchEvent(new CustomEvent('Joyfulmarts-wishlist-updated', { detail: { list: [] } }));
     window.dispatchEvent(new Event('storage'));
   };
 

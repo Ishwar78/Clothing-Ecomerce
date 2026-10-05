@@ -33,7 +33,7 @@ export default function AdminLogin() {
         <div className="admin-login">
             <div className="admin-login-card">
                 <div className="admin-login-logo">
-                    ✦ SBV ✦<small>ADMIN PANEL</small>
+                    ✦ Joyfulmarts ✦<small>ADMIN PANEL</small>
                 </div>
                 <h1>Welcome Back</h1>
                 <p>Sign in to manage your fashion store.</p>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import api from "../lib/api";
 import {
   FiArrowRight,
@@ -152,14 +152,14 @@ const slides = [
     title: "Fashion for Every You",
     text: "Men • Women • Kids • Ethnic Wear",
     image:
-      "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1800&q=90",
+      "/assets/homebanner.png",
   },
   {
     eyebrow: "NEW ARRIVALS +",
     title: "New Season, New Style",
     text: "Premium looks for every occasion",
     image:
-      "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1800&q=90",
+      "/assets/mens.png",
   },
   {
     eyebrow: "THE ETHNIC EDIT +",
@@ -225,7 +225,7 @@ const influencers = [
   {
     image:
       "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=85",
-    name: "@stylewithsbv",
+    name: "@stylewithJoyfulmarts",
     followers: "24K followers",
   },
   {
@@ -906,10 +906,10 @@ export default function Home() {
           />
 
           <div className="home-social-grid">
-            {(dbStyleShares.length > 0 ? dbStyleShares : instagramImages.map((img, i) => ({ _id: i, image: img, title: `SBV style ${i + 1}`, link: 'https://instagram.com' }))).map((item, index) => {
+            {(dbStyleShares.length > 0 ? dbStyleShares : instagramImages.map((img, i) => ({ _id: i, image: img, title: `Joyfulmarts style ${i + 1}`, link: 'https://instagram.com' }))).map((item, index) => {
               const imgSrc = typeof item === 'string' ? item : item.image;
               const link = typeof item === 'object' && item.link ? item.link : 'https://instagram.com';
-              const title = typeof item === 'object' && item.title ? item.title : `SBV style ${index + 1}`;
+              const title = typeof item === 'object' && item.title ? item.title : `Joyfulmarts style ${index + 1}`;
               return (
                 <div
                   className="home-social-card"

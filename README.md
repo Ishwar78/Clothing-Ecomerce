@@ -1,6 +1,6 @@
-# SBV Fashion Store
+# Joyfulmarts Fashion Store
 
-Premium React + Vite ecommerce frontend and admin dashboard based on the supplied SBV design references.
+Premium React + Vite ecommerce frontend and admin dashboard based on the supplied Joyfulmarts design references.
 
 ## Run
 

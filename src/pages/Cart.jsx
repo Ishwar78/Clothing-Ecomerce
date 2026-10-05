@@ -7,7 +7,7 @@ export default function Cart({ inDashboard = false }) {
   const nav = useNavigate();
   const [items, setItems] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('sbv-cart') || '[]');
+      return JSON.parse(localStorage.getItem('Joyfulmarts-cart') || '[]');
     } catch {
       return [];
     }
@@ -15,7 +15,7 @@ export default function Cart({ inDashboard = false }) {
 
   const saveItems = (newItems) => {
     setItems(newItems);
-    localStorage.setItem('sbv-cart', JSON.stringify(newItems));
+    localStorage.setItem('Joyfulmarts-cart', JSON.stringify(newItems));
   };
 
   const updateQty = (index, delta) => {

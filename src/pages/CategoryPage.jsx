@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+﻿import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   FiChevronDown,
@@ -258,10 +258,10 @@ export default function CategoryPage({ slug: propSlug }) {
   };
 
   const addToCart = (product) => {
-    const cart = JSON.parse(localStorage.getItem("sbv-cart") || "[]");
+    const cart = JSON.parse(localStorage.getItem("Joyfulmarts-cart") || "[]");
 
     localStorage.setItem(
-      "sbv-cart",
+      "Joyfulmarts-cart",
       JSON.stringify([
         ...cart,
         {
@@ -280,7 +280,7 @@ export default function CategoryPage({ slug: propSlug }) {
       {/* ================= HERO ================= */}
       <section className="category-hero">
         <div className="category-hero-content">
-          <span className="category-kicker">SBV COLLECTION</span>
+          <span className="category-kicker">Joyfulmarts COLLECTION</span>
 
           <h1>
             {title}
@@ -302,7 +302,7 @@ export default function CategoryPage({ slug: propSlug }) {
         <div className="category-hero-image">
           <img
             src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1600&q=90"
-            alt="SBV Collection"
+            alt="Joyfulmarts Collection"
           />
 
           <div className="hero-side-text">

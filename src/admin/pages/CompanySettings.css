@@ -1,0 +1,690 @@
+/* =========================================================
+   COMPANY SETTINGS ADMIN
+   Dedicated CSS
+   No DataPages.css required
+   ========================================================= */
+
+.company-settings-admin-wrap {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+
+  padding: 0;
+
+  color: #211b19;
+
+  box-sizing: border-box;
+}
+
+.company-settings-admin-wrap *,
+.company-settings-admin-wrap *::before,
+.company-settings-admin-wrap *::after {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.company-settings-admin-wrap .admin-title {
+  width: 100%;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin: 0 0 24px;
+}
+
+.company-settings-admin-wrap .admin-title h2 {
+  margin: 0 0 7px;
+
+  color: #171313;
+
+  font-size: 27px;
+
+  line-height: 1.2;
+
+  font-weight: 800;
+
+  letter-spacing: -0.3px;
+}
+
+.company-settings-admin-wrap .admin-title p {
+  margin: 0;
+
+  max-width: 760px;
+
+  color: #786d68;
+
+  font-size: 14px;
+
+  line-height: 1.55;
+}
+
+/* =========================================================
+   SUCCESS MESSAGE
+   ========================================================= */
+
+.company-settings-admin-wrap > form ~ * {
+  box-sizing: border-box;
+}
+
+.company-settings-admin-wrap .success-message {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 12px 16px;
+
+  margin-bottom: 20px;
+
+  border: 1px solid #a7f3d0;
+
+  border-radius: 9px;
+
+  background: #ecfdf5;
+
+  color: #065f46;
+
+  font-size: 13px;
+
+  font-weight: 650;
+}
+
+/*
+   The current JSX uses inline styles for success message.
+   These selectors style the existing success block safely.
+*/
+
+.company-settings-admin-wrap > div[style*="d1fae5"] {
+  display: flex !important;
+
+  align-items: center;
+
+  gap: 10px !important;
+
+  padding: 12px 16px !important;
+
+  margin-bottom: 20px !important;
+
+  border: 1px solid #a7f3d0 !important;
+
+  border-radius: 9px !important;
+
+  background: #ecfdf5 !important;
+
+  color: #065f46 !important;
+
+  font-size: 13px;
+
+  font-weight: 650 !important;
+}
+
+.company-settings-admin-wrap > div[style*="d1fae5"] svg {
+  flex-shrink: 0;
+
+  color: #059669;
+}
+
+/* =========================================================
+   MAIN FORM GRID
+   ========================================================= */
+
+.company-settings-admin-wrap form > div:first-child {
+  display: grid !important;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr)) !important;
+
+  gap: 22px !important;
+
+  align-items: stretch;
+}
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.company-settings-admin-wrap .admin-card {
+  position: relative;
+
+  width: 100%;
+
+  padding: 24px !important;
+
+  background: #fff;
+
+  border: 1px solid #ebdcd7;
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 5px 18px rgba(46, 28, 22, 0.045);
+
+  overflow: hidden;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.company-settings-admin-wrap .admin-card:hover {
+  border-color: #e3cdc7;
+
+  box-shadow:
+    0 8px 25px rgba(46, 28, 22, 0.065);
+}
+
+/* top pink accent */
+
+.company-settings-admin-wrap .admin-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 3px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #ff7080,
+      #ed4765,
+      #ff9da5
+    );
+}
+
+/* =========================================================
+   CARD HEADINGS
+   ========================================================= */
+
+.company-settings-admin-wrap .admin-card h3 {
+  display: flex !important;
+
+  align-items: center;
+
+  gap: 9px !important;
+
+  margin: 0 0 18px !important;
+
+  color: #211b19 !important;
+
+  font-size: 17px !important;
+
+  line-height: 1.35;
+
+  font-weight: 800;
+
+  letter-spacing: -0.1px;
+}
+
+.company-settings-admin-wrap .admin-card h3 svg {
+  flex-shrink: 0;
+
+  width: 19px;
+  height: 19px;
+
+  color: #ed4765 !important;
+}
+
+/* =========================================================
+   FORM GROUP
+   ========================================================= */
+
+.company-settings-admin-wrap .form-group {
+  width: 100%;
+
+  margin-bottom: 15px;
+}
+
+.company-settings-admin-wrap .form-group:last-child {
+  margin-bottom: 0;
+}
+
+/* =========================================================
+   LABELS
+   ========================================================= */
+
+.company-settings-admin-wrap .admin-card label {
+  display: block;
+
+  margin-bottom: 6px !important;
+
+  color: #3b322e;
+
+  font-size: 12px !important;
+
+  line-height: 1.4;
+
+  font-weight: 750 !important;
+}
+
+.company-settings-admin-wrap .admin-card label::first-letter {
+  color: inherit;
+}
+
+/* =========================================================
+   ALL INPUTS
+   ========================================================= */
+
+.company-settings-admin-wrap .admin-card input[type="text"],
+.company-settings-admin-wrap .admin-card input[type="email"],
+.company-settings-admin-wrap .admin-card input[type="tel"],
+.company-settings-admin-wrap .admin-card input[type="number"] {
+  width: 100% !important;
+
+  min-height: 43px;
+
+  padding: 0 13px !important;
+
+  border: 1px solid #ded3ce !important;
+
+  border-radius: 8px !important;
+
+  background: #fff;
+
+  color: #28221f;
+
+  font-family: inherit;
+
+  font-size: 13px;
+
+  line-height: 1.4;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.company-settings-admin-wrap .admin-card input:hover {
+  border-color: #cdbdb6 !important;
+}
+
+.company-settings-admin-wrap .admin-card input:focus {
+  border-color: #ed4765 !important;
+
+  background: #fff;
+
+  box-shadow:
+    0 0 0 3px rgba(237, 71, 101, 0.08);
+}
+
+.company-settings-admin-wrap .admin-card input::placeholder {
+  color: #aaa09b;
+}
+
+/* =========================================================
+   UPPERCASE TAX FIELDS
+   ========================================================= */
+
+.company-settings-admin-wrap input[name="gstin"],
+.company-settings-admin-wrap input[name="panNumber"] {
+  text-transform: uppercase;
+  letter-spacing: 0.25px;
+}
+
+/* =========================================================
+   SMALL FIELD HINT
+   ========================================================= */
+
+.company-settings-admin-wrap .admin-card small {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #948781 !important;
+
+  font-size: 11px !important;
+
+  line-height: 1.4;
+}
+
+/* =========================================================
+   TWO COLUMN FORM ROWS
+   ========================================================= */
+
+.company-settings-admin-wrap .admin-card > div[style*="gridTemplateColumns"] {
+  width: 100%;
+
+  display: grid !important;
+
+  gap: 12px !important;
+}
+
+.company-settings-admin-wrap .admin-card > div[style*="gridTemplateColumns: '1fr 1fr'"] {
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr)) !important;
+}
+
+/* =========================================================
+   CITY / STATE / PINCODE ROW
+   ========================================================= */
+
+.company-settings-admin-wrap .admin-card > div[style*="repeat(3, 1fr)"] {
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr)) !important;
+}
+
+/* =========================================================
+   INVOICE TERMS CARD
+   ========================================================= */
+
+.company-settings-admin-wrap form > .admin-card {
+  grid-column: 1 / -1;
+
+  margin-top: 22px !important;
+}
+
+.company-settings-admin-wrap form > .admin-card h3 {
+  margin-bottom: 15px !important;
+}
+
+/* =========================================================
+   TEXTAREA
+   ========================================================= */
+
+.company-settings-admin-wrap .admin-card textarea {
+  width: 100% !important;
+
+  min-height: 125px;
+
+  padding: 12px 13px !important;
+
+  border: 1px solid #ded3ce !important;
+
+  border-radius: 8px !important;
+
+  background: #fff;
+
+  color: #28221f;
+
+  font-family: inherit;
+
+  font-size: 13px;
+
+  line-height: 1.55;
+
+  resize: vertical;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.company-settings-admin-wrap .admin-card textarea:hover {
+  border-color: #cdbdb6 !important;
+}
+
+.company-settings-admin-wrap .admin-card textarea:focus {
+  border-color: #ed4765 !important;
+
+  box-shadow:
+    0 0 0 3px rgba(237, 71, 101, 0.08);
+}
+
+/* =========================================================
+   SAVE BUTTON AREA
+   ========================================================= */
+
+.company-settings-admin-wrap form > .admin-card > div:last-child {
+  display: flex;
+
+  justify-content: flex-end;
+
+  margin-top: 3px;
+}
+
+/* =========================================================
+   SAVE BUTTON
+   ========================================================= */
+
+.company-settings-admin-wrap .admin-btn {
+  min-height: 43px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 0 20px;
+
+  border-radius: 8px;
+
+  font-family: inherit;
+
+  font-size: 13px;
+
+  font-weight: 750;
+
+  cursor: pointer;
+
+  outline: none;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.company-settings-admin-wrap .admin-btn-primary {
+  border: 1px solid transparent;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ff6d7d 0%,
+      #ed4765 100%
+    );
+
+  color: #fff;
+
+  box-shadow:
+    0 7px 18px rgba(237, 71, 101, 0.22);
+}
+
+.company-settings-admin-wrap .admin-btn-primary:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 24px rgba(237, 71, 101, 0.3);
+}
+
+.company-settings-admin-wrap .admin-btn-primary:active {
+  transform: translateY(0);
+}
+
+.company-settings-admin-wrap .admin-btn-primary:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+
+  transform: none;
+
+  box-shadow: none;
+}
+
+.company-settings-admin-wrap .admin-btn svg {
+  width: 17px;
+  height: 17px;
+
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   LOADING STATE
+   ========================================================= */
+
+.company-settings-loading {
+  min-height: 180px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 40px;
+
+  color: #786d68;
+
+  font-size: 14px;
+}
+
+/* Existing inline loading state */
+
+.company-settings-admin-wrap
+  + div[style*="Loading company profile"] {
+  color: #786d68 !important;
+}
+
+/* =========================================================
+   INPUT AUTOFILL
+   ========================================================= */
+
+.company-settings-admin-wrap input:-webkit-autofill,
+.company-settings-admin-wrap input:-webkit-autofill:hover,
+.company-settings-admin-wrap input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #28221f;
+
+  -webkit-box-shadow:
+    0 0 0 1000px #fff inset;
+
+  transition:
+    background-color 5000s ease-in-out 0s;
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .company-settings-admin-wrap {
+    max-width: 100%;
+
+    padding: 0;
+  }
+
+  .company-settings-admin-wrap form > div:first-child {
+    grid-template-columns:
+      1fr !important;
+  }
+
+  .company-settings-admin-wrap form > .admin-card {
+    grid-column: auto;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 650px) {
+  .company-settings-admin-wrap .admin-title {
+    margin-bottom: 19px;
+  }
+
+  .company-settings-admin-wrap .admin-title h2 {
+    font-size: 23px;
+  }
+
+  .company-settings-admin-wrap .admin-title p {
+    font-size: 13px;
+  }
+
+  .company-settings-admin-wrap .admin-card {
+    padding: 18px !important;
+
+    border-radius: 12px;
+  }
+
+  .company-settings-admin-wrap .admin-card h3 {
+    font-size: 16px !important;
+
+    margin-bottom: 16px !important;
+  }
+
+  /* 2-column fields become one column */
+
+  .company-settings-admin-wrap
+    .admin-card
+    > div[style*="gridTemplateColumns: '1fr 1fr'"] {
+    grid-template-columns:
+      1fr !important;
+  }
+
+  .company-settings-admin-wrap
+    .admin-card
+    > div[style*="repeat(3, 1fr)"] {
+    grid-template-columns:
+      1fr !important;
+  }
+
+  .company-settings-admin-wrap form > .admin-card {
+    margin-top: 16px !important;
+  }
+
+  .company-settings-admin-wrap form > .admin-card > div:last-child {
+    justify-content: stretch;
+  }
+
+  .company-settings-admin-wrap
+    form
+    > .admin-card
+    > div:last-child
+    .admin-btn {
+    width: 100%;
+  }
+
+  .company-settings-admin-wrap .admin-btn {
+    min-height: 44px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 430px) {
+  .company-settings-admin-wrap .admin-title h2 {
+    font-size: 21px;
+  }
+
+  .company-settings-admin-wrap .admin-title p {
+    font-size: 12px;
+
+    line-height: 1.5;
+  }
+
+  .company-settings-admin-wrap .admin-card {
+    padding: 16px !important;
+  }
+
+  .company-settings-admin-wrap .admin-card h3 {
+    font-size: 15px !important;
+  }
+
+  .company-settings-admin-wrap .admin-card input[type="text"],
+  .company-settings-admin-wrap .admin-card input[type="email"],
+  .company-settings-admin-wrap .admin-card input[type="tel"],
+  .company-settings-admin-wrap .admin-card textarea {
+    font-size: 13px;
+  }
+
+  .company-settings-admin-wrap .admin-card textarea {
+    min-height: 115px;
+  }
+}

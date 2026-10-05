@@ -17,7 +17,7 @@ export default function TermsConditions() {
                     <h1>Terms & Conditions</h1>
 
                     <p>
-                        Please read these terms carefully before using SBV Vastralaya
+                        Please read these terms carefully before using Joyfulmarts Vastralaya
                         or placing an order with us.
                     </p>
 
@@ -37,7 +37,7 @@ export default function TermsConditions() {
                     </div>
 
                     <div>
-                        <h2>Welcome to SBV Vastralaya</h2>
+                        <h2>Welcome to Joyfulmarts Vastralaya</h2>
                         <p>
                             By accessing or using this website, you agree to comply
                             with the terms and conditions mentioned below. These
@@ -92,7 +92,7 @@ export default function TermsConditions() {
                         <div>
                             <h2>Acceptance of Terms</h2>
                             <p>
-                                By visiting and using the SBV Vastralaya website,
+                                By visiting and using the Joyfulmarts Vastralaya website,
                                 you acknowledge that you have read, understood and
                                 agreed to these Terms & Conditions.
                             </p>
@@ -207,7 +207,7 @@ export default function TermsConditions() {
                             <p>
                                 Website content including logos, graphics, images,
                                 text, designs and other materials may belong to
-                                SBV Vastralaya or its respective owners.
+                                Joyfulmarts Vastralaya or its respective owners.
                             </p>
                             <p>
                                 Such content should not be copied, reproduced or
@@ -236,7 +236,7 @@ export default function TermsConditions() {
                         <div>
                             <h2>Changes to These Terms</h2>
                             <p>
-                                SBV Vastralaya may update these Terms & Conditions
+                                Joyfulmarts Vastralaya may update these Terms & Conditions
                                 from time to time. Updated terms will be published
                                 on this page.
                             </p>
@@ -259,7 +259,7 @@ export default function TermsConditions() {
                             <div className="terms-contact">
                                 <div>
                                     <strong>Email</strong>
-                                    <span>hello@sbvstore.in</span>
+                                    <span>hello@Joyfulmartsstore.in</span>
                                 </div>
 
                                 <div>
@@ -281,7 +281,7 @@ export default function TermsConditions() {
                 <div className="terms-note">
                     <FiShield />
                     <div>
-                        <strong>Thank you for shopping with SBV Vastralaya.</strong>
+                        <strong>Thank you for shopping with Joyfulmarts Vastralaya.</strong>
                         <p>
                             We appreciate your trust and aim to provide you with
                             a smooth, transparent and enjoyable shopping experience.

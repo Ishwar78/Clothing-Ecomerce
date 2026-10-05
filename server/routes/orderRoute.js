@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const Razorpay = require('razorpay');
 const Order = require('../models/Order');
 const User = require('../models/User');
+const { sendOrderConfirmationEmail, sendOrderDeliveredEmail } = require('../utils/mailer');
 
 const router = express.Router();
 
@@ -110,7 +111,7 @@ router.post('/', async (req, res) => {
         // Generate unique order ID
         const orderCount = await Order.countDocuments();
         const randomSuffix = Math.floor(1000 + Math.random() * 9000);
-        const orderId = `SBV${10000 + orderCount + 1}-${randomSuffix}`;
+        const orderId = `Joyfulmarts${10000 + orderCount + 1}-${randomSuffix}`;
 
         const newOrder = new Order({
             orderId,
@@ -151,6 +152,14 @@ router.post('/', async (req, res) => {
         });
 
         await newOrder.save();
+
+        // Send order confirmation email to customer
+        try {
+            await sendOrderConfirmationEmail(newOrder);
+            console.log(`Order confirmation email sent for #${newOrder.orderId}`);
+        } catch (mailErr) {
+            console.error('Failed to send order confirmation email:', mailErr);
+        }
 
         // Auto-save shipping address to logged-in user profile
         try {
@@ -266,14 +275,25 @@ router.put('/:id/status', async (req, res) => {
         if (orderStatus) updateData.orderStatus = orderStatus;
         if (paymentStatus) updateData.paymentStatus = paymentStatus;
 
+        const previousOrder = await Order.findById(req.params.id);
+        if (!previousOrder) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+
         const order = await Order.findByIdAndUpdate(
             req.params.id,
             { $set: updateData },
             { new: true }
         );
 
-        if (!order) {
-            return res.status(404).json({ success: false, message: 'Order not found' });
+        // If order status is set to Delivered, send celebratory Delivered email to customer
+        if (orderStatus === 'Delivered' && previousOrder.orderStatus !== 'Delivered') {
+            try {
+                await sendOrderDeliveredEmail(order);
+                console.log(`Order delivered email sent successfully for #${order.orderId}`);
+            } catch (mailErr) {
+                console.error('Failed to send order delivered email:', mailErr);
+            }
         }
 
         res.json({ success: true, order, message: 'Order status updated' });

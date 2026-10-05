@@ -22,7 +22,7 @@ export default function ReturnRefund() {
             <section className="return-hero">
                 <div className="return-hero-content">
                     <span className="return-eyebrow">
-                        SS VASTRALAYA
+                        Joyfulmarts
                     </span>
 
                     <h1>Returns & Refunds</h1>

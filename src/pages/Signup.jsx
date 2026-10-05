@@ -149,7 +149,7 @@ export default function Signup() {
         <div className="signup-visual-content">
 
           <span className="signup-pill">
-            JOIN SBV
+            JOIN Joyfulmarts
           </span>
 
           <h1>
@@ -159,7 +159,7 @@ export default function Signup() {
           </h1>
 
           <p className="signup-visual-description">
-            Create your SBV account and enjoy a smoother,
+            Create your Joyfulmarts account and enjoy a smoother,
             more personalised shopping experience.
           </p>
 
@@ -201,8 +201,8 @@ export default function Signup() {
           </div>
 
           <div className="signup-brand-mark">
-            <span>✦ SBV ✦</span>
-            <small>SS VASTRALAYA</small>
+            <span>✦ Joyfulmarts ✦</span>
+            <small>Joyfulmarts</small>
             <em>TRADITION MEETS TREND</em>
           </div>
 
@@ -238,7 +238,7 @@ export default function Signup() {
 
           <p>
             {step === 'details'
-              ? 'Join SBV with easy email verification — no password required.'
+              ? 'Join Joyfulmarts with easy email verification — no password required.'
               : `Enter the 6-digit code sent to ${form.email}`}
           </p>
 

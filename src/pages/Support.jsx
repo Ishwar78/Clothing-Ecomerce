@@ -65,7 +65,7 @@ export default function Support(){
                     <FiMessageCircle/>
                     <h3>Live Support</h3>
                     <p>Chat with our customer support team.</p>
-                    <a href="mailto:hello@sbvstore.in" className="btn btn-outline" style={{ textDecoration: 'none', display: 'inline-block' }}>Contact Us</a>
+                    <a href="mailto:hello@Joyfulmartsstore.in" className="btn btn-outline" style={{ textDecoration: 'none', display: 'inline-block' }}>Contact Us</a>
                 </div>
                 <div className="support-card">
                     <FiPhone/>
@@ -77,7 +77,7 @@ export default function Support(){
                     <FiMail/>
                     <h3>Email</h3>
                     <p>We reply within 24 hours.</p>
-                    <b>hello@sbvstore.in</b>
+                    <b>hello@Joyfulmartsstore.in</b>
                 </div>
                 <div className="support-card">
                     <FiHelpCircle/>

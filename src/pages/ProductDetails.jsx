@@ -399,7 +399,7 @@ export default function ProductDetails() {
 
   const addToCart = (item = product) => {
     const existingCart = JSON.parse(
-      localStorage.getItem("sbv-cart") || "[]"
+      localStorage.getItem("Joyfulmarts-cart") || "[]"
     );
 
     const isCurrentProduct = (item._id || item.id) === (product._id || product.id);
@@ -442,7 +442,7 @@ export default function ProductDetails() {
       updatedCart = [...existingCart, cartItem];
     }
 
-    localStorage.setItem("sbv-cart", JSON.stringify(updatedCart));
+    localStorage.setItem("Joyfulmarts-cart", JSON.stringify(updatedCart));
     alert(`${item.name} (Size: ${chosenSize}${chosenColor ? ', Color: ' + chosenColor : ''}) added to cart`);
   };
 
@@ -461,7 +461,7 @@ export default function ProductDetails() {
 
   const [wishlist, setWishlist] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem("sbv-wishlist") || "[]");
+      return JSON.parse(localStorage.getItem("Joyfulmarts-wishlist") || "[]");
     } catch {
       return [];
     }
@@ -503,8 +503,8 @@ export default function ProductDetails() {
       alert(`${item.name} added to wishlist`);
     }
     setWishlist(updated);
-    localStorage.setItem("sbv-wishlist", JSON.stringify(updated));
-    window.dispatchEvent(new CustomEvent('sbv-wishlist-updated', { detail: { list: updated } }));
+    localStorage.setItem("Joyfulmarts-wishlist", JSON.stringify(updated));
+    window.dispatchEvent(new CustomEvent('Joyfulmarts-wishlist-updated', { detail: { list: updated } }));
     window.dispatchEvent(new Event('storage'));
   };
 

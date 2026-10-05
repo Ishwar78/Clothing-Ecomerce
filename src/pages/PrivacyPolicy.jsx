@@ -25,7 +25,7 @@ export default function PrivacyPolicy() {
                     <h1>Privacy Policy</h1>
 
                     <p>
-                        Your trust matters to us. Learn how SS Vastralaya
+                        Your trust matters to us. Learn how Joyfulmarts
                         collects, uses and protects your personal information.
                     </p>
 
@@ -48,7 +48,7 @@ export default function PrivacyPolicy() {
                         <h2>Your Privacy Is Important To Us</h2>
 
                         <p>
-                            At <strong>SS Vastralaya</strong>, we respect your
+                            At <strong>Joyfulmarts</strong>, we respect your
                             privacy and are committed to protecting your
                             personal information. This Privacy Policy explains
                             how we collect, use, store and protect information
@@ -330,9 +330,9 @@ export default function PrivacyPolicy() {
                         </p>
 
                         <div className="privacy-contact-details">
-                            <a href="mailto:hello@sbvstore.in">
+                            <a href="mailto:hello@Joyfulmartsstore.in">
                                 <FiMail />
-                                hello@sbvstore.in
+                                hello@Joyfulmartsstore.in
                             </a>
 
                             <a href="tel:+919876543210">

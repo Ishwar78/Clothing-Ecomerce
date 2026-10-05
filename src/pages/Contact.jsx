@@ -90,7 +90,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="sbv-contact-page">
+    <div className="Joyfulmarts-contact-page">
 
       {/* ================= HERO ================= */}
       <section className="contact-hero">
@@ -370,7 +370,7 @@ export default function Contact() {
                 />
 
                 <div className="contact-image-content">
-                  <span>SBV COLLECTION</span>
+                  <span>Joyfulmarts COLLECTION</span>
 
                   <h3>
                     Style With
@@ -388,7 +388,7 @@ export default function Contact() {
               <div className="contact-social-card">
                 <div>
                   <strong>Follow Our Journey</strong>
-                  <small>Stay connected with SBV</small>
+                  <small>Stay connected with Joyfulmarts</small>
                 </div>
 
                 <div className="contact-socials">

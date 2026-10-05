@@ -108,12 +108,12 @@ export default function Login() {
                     <div className="login-visual-content">
                         <div className="login-brand-mark">
                             <span>✦</span>
-                            <strong>SBV</strong>
+                            <strong>Joyfulmarts</strong>
                             <span>✦</span>
                         </div>
 
                         <span className="login-kicker">
-                            SBV MEMBERS
+                            Joyfulmarts MEMBERS
                         </span>
 
                         <h1>
@@ -132,7 +132,7 @@ export default function Login() {
                         <div className="login-visual-meta">
                             <span>Premium Fashion</span>
                             <span>•</span>
-                            <span>SS Vastralaya</span>
+                            <span>Joyfulmarts</span>
                         </div>
                     </div>
 
@@ -148,7 +148,7 @@ export default function Login() {
 
                         <div className="mobile-login-logo">
                             <span>✦</span>
-                            <strong>SBV</strong>
+                            <strong>Joyfulmarts</strong>
                             <span>✦</span>
                         </div>
 

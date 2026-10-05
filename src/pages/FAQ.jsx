@@ -186,7 +186,7 @@ export default function FAQ() {
                     <div className="faq-hero-content">
 
                         <span className="faq-eyebrow">
-                            SS VASTRALAYA
+                            Joyfulmarts
                         </span>
 
                         <h1>

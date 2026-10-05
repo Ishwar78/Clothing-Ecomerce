@@ -1,8 +1,8 @@
-// Unified Wishlist Helper for SBV Fashion Store
+// Unified Wishlist Helper for Joyfulmarts Fashion Store
 
 export const getWishlist = () => {
     try {
-        return JSON.parse(localStorage.getItem('sbv-wishlist') || '[]');
+        return JSON.parse(localStorage.getItem('Joyfulmarts-wishlist') || '[]');
     } catch {
         return [];
     }
@@ -74,13 +74,13 @@ export const toggleWishlist = (product) => {
     }
 
     try {
-        localStorage.setItem('sbv-wishlist', JSON.stringify(updated));
+        localStorage.setItem('Joyfulmarts-wishlist', JSON.stringify(updated));
     } catch (e) {
         console.error('Failed to save wishlist:', e);
     }
 
     // Notify all components across the app
-    window.dispatchEvent(new CustomEvent('sbv-wishlist-updated', { detail: { list: updated, added, product } }));
+    window.dispatchEvent(new CustomEvent('Joyfulmarts-wishlist-updated', { detail: { list: updated, added, product } }));
     window.dispatchEvent(new Event('storage'));
 
     return added;
@@ -95,8 +95,8 @@ export const removeFromWishlist = (idOrSlug) => {
         return iid !== target && islug !== target;
     });
 
-    localStorage.setItem('sbv-wishlist', JSON.stringify(updated));
-    window.dispatchEvent(new CustomEvent('sbv-wishlist-updated', { detail: { list: updated, added: false } }));
+    localStorage.setItem('Joyfulmarts-wishlist', JSON.stringify(updated));
+    window.dispatchEvent(new CustomEvent('Joyfulmarts-wishlist-updated', { detail: { list: updated, added: false } }));
     window.dispatchEvent(new Event('storage'));
     return updated;
 };
@@ -105,10 +105,10 @@ export const subscribeWishlist = (callback) => {
     const handler = (e) => {
         callback(getWishlist(), e?.detail);
     };
-    window.addEventListener('sbv-wishlist-updated', handler);
+    window.addEventListener('Joyfulmarts-wishlist-updated', handler);
     window.addEventListener('storage', handler);
     return () => {
-        window.removeEventListener('sbv-wishlist-updated', handler);
+        window.removeEventListener('Joyfulmarts-wishlist-updated', handler);
         window.removeEventListener('storage', handler);
     };
 };

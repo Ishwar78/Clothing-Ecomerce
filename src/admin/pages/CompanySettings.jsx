@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { FiSave, FiCheckCircle, FiFileText, FiPhone, FiMail, FiMapPin, FiHash, FiShield } from 'react-icons/fi';
+import { FiSave, 
+  FiCheckCircle,
+   FiFileText,
+    FiPhone,
+     FiMail, 
+     FiMapPin, 
+     FiHash, 
+     FiShield
+     } from 'react-icons/fi';
 import api from '../../lib/api';
-import './DataPages.css';
+// import './DataPages.css';
+
+import './CompanySettings.css';
 
 export default function CompanySettings() {
   const [loading, setLoading] = useState(true);
@@ -9,21 +19,21 @@ export default function CompanySettings() {
   const [successMsg, setSuccessMsg] = useState('');
 
   const [form, setForm] = useState({
-    companyName: 'Shree Balaji Vastraalaya',
-    tagline: 'SBV Fashion Store - Complete Family Wear',
+    companyName: 'Joyfulmarts',
+    tagline: 'Joyfulmarts Fashion Store - Complete Family Wear',
     gstin: '06ABCDE1234F1Z5',
     panNumber: 'ABCDE1234F',
     phone: '+91 98765 43210',
     alternatePhone: '+91 98765 43211',
-    email: 'billing@shreebalaji.com',
-    supportEmail: 'support@shreebalaji.com',
-    address: 'Shop No. 12-14, Shree Balaji Complex, Main Cloth Market',
+    email: 'billing@Joyfulmarts.com',
+    supportEmail: 'support@Joyfulmarts.com',
+    address: 'Shop No. 12-14,  Main Cloth Market',
     city: 'Rohtak',
     state: 'Haryana',
     pincode: '124001',
-    invoicePrefix: 'INV-SBV-',
+    invoicePrefix: 'INV-Joyfulmarts-',
     terms: '1. Goods once sold can be returned/exchanged within 7 days in unused condition with original tags.\n2. All disputes are subject to local jurisdiction.\n3. This is a computer-generated tax invoice.',
-    authorizedSignatory: 'For Shree Balaji Vastraalaya'
+    authorizedSignatory: 'For Joyfulmarts'
   });
 
   useEffect(() => {
@@ -176,10 +186,10 @@ export default function CompanySettings() {
                 name="invoicePrefix"
                 value={form.invoicePrefix}
                 onChange={handleChange}
-                placeholder="INV-SBV-"
+                placeholder="INV-Joyfulmarts-"
                 style={{ width: '100%', padding: '9px 12px', border: '1px solid #ddd', borderRadius: '6px' }}
               />
-              <small style={{ color: '#888', fontSize: '11px' }}>Example: INV-SBV-10023</small>
+              <small style={{ color: '#888', fontSize: '11px' }}>Example: INV-Joyfulmarts-10023</small>
             </div>
 
             <div className="form-group">

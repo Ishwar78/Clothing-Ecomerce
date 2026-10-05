@@ -29,6 +29,7 @@ const reviewRoute = require('./routes/reviewRoute');
 const influencerRoute = require('./routes/influencerRoute');
 const companyRoute = require('./routes/companyRoute');
 const styleShareRoute = require('./routes/styleShareRoute');
+const blogRoute = require('./routes/blogRoute');
 const Admin = require('./models/Admin');
 const Category = require('./models/Category');
 
@@ -60,6 +61,7 @@ app.use('/api/reviews', reviewRoute);
 app.use('/api/influencers', influencerRoute);
 app.use('/api/company', companyRoute);
 app.use('/api/style-share', styleShareRoute);
+app.use('/api/blogs', blogRoute);
 
 // MongoDB Connection
 async function connectDB() {

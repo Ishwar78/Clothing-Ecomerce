@@ -256,7 +256,7 @@ export default function Influencers() {
                 <input
                   type="text"
                   required
-                  placeholder="@stylewithsbv or Rahul Sharma"
+                  placeholder="@stylewithJoyfulmarts or Rahul Sharma"
                   value={formData.name}
                   onChange={e => setFormData({ ...formData, name: e.target.value })}
                   style={{ width: '100%', padding: '10px 12px', border: '1px solid #ddd', borderRadius: '6px' }}
