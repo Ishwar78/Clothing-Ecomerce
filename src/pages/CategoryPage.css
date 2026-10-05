@@ -1019,6 +1019,18 @@
   color: #fff;
 }
 
+.category-pagination button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: #e4d8d5;
+  color: #a8a09f;
+}
+
+.category-pagination button:disabled:hover {
+  border-color: #e4d8d5;
+  color: #a8a09f;
+}
+
 .category-pagination span {
   color: #756767;
   font-size: 12px;

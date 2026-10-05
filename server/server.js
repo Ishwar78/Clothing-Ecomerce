@@ -90,7 +90,7 @@ async function connectDB() {
         if (!existingAdmin) {
             const hashedPassword = await bcrypt.hash(
                 'Clothing@1234#',
-                10
+                
             );
 
             const newAdmin = new Admin({

@@ -178,8 +178,8 @@ export default function Footer() {
                                 <div>
                                     <small>Customer Care</small>
 
-                                    <a href="tel:+919876543210">
-                                        +91 9466085809
+                                    <a href="tel:+9186072-89490">
+                                        +91 86072-89490
                                     </a>
                                 </div>
                             </div>
@@ -207,7 +207,8 @@ export default function Footer() {
                                     <small>Store Location</small>
 
                                     <span>
-                                        Rohtak, Haryana
+                                       Near Ram bagh Rama mandi bathinda  (punjab)151301
+
                                     </span>
                                 </div>
                             </div>
@@ -238,11 +239,7 @@ export default function Footer() {
                             Terms
                         </Link>
 
-                        <span>•</span>
-
-                        <Link to="/support">
-                            Support
-                        </Link>
+                        
                     </div>
 
                     {/* 

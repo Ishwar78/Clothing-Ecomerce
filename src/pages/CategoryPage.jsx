@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   FiChevronDown,
@@ -243,7 +243,43 @@ export default function CategoryPage({ slug: propSlug }) {
     }
 
     return result;
-  }, [slug, sort, selectedFilters, dbProducts]);
+  }, [slug, sort, selectedFilters, dbProducts, urlSearch]);
+
+  const PRODUCTS_PER_PAGE = 12;
+  const totalPages = Math.max(1, Math.ceil(products.length / PRODUCTS_PER_PAGE));
+  const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
+  const paginatedProducts = products.slice(startIndex, startIndex + PRODUCTS_PER_PAGE);
+  const startCount = products.length === 0 ? 0 : startIndex + 1;
+  const endCount = Math.min(startIndex + PRODUCTS_PER_PAGE, products.length);
+
+  useEffect(() => {
+    setPage(1);
+  }, [slug, sort, selectedFilters, urlSearch]);
+
+  useEffect(() => {
+    if (page > totalPages && totalPages > 0) {
+      setPage(1);
+    }
+  }, [page, totalPages]);
+
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > totalPages || newPage === page) return;
+    setPage(newPage);
+    window.scrollTo({ top: 400, behavior: 'smooth' });
+  };
+
+  const getPaginationNumbers = (currentPage, total) => {
+    if (total <= 7) {
+      return Array.from({ length: total }, (_, i) => i + 1);
+    }
+    if (currentPage <= 4) {
+      return [1, 2, 3, 4, 5, '...', total];
+    }
+    if (currentPage >= total - 3) {
+      return [1, '...', total - 4, total - 3, total - 2, total - 1, total];
+    }
+    return [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', total];
+  };
 
   const toggleFilter = (value) => {
     setSelectedFilters((current) =>
@@ -504,8 +540,8 @@ export default function CategoryPage({ slug: propSlug }) {
           <div className="listing-toolbar">
 
             <div className="listing-count">
-              Showing <strong>1–24</strong> of{" "}
-              <strong>{totalProducts}</strong> products
+              Showing <strong>{startCount}–{endCount}</strong> of{" "}
+              <strong>{products.length}</strong> products
             </div>
 
             <div className="listing-actions">
@@ -543,7 +579,7 @@ export default function CategoryPage({ slug: propSlug }) {
                 <p>No products have been added to this category yet.</p>
               </div>
             )}
-            {products.map((product) => (
+            {paginatedProducts.map((product) => (
               <article
                 className="category-product-card"
                 key={product._id || product.id}
@@ -636,32 +672,44 @@ export default function CategoryPage({ slug: propSlug }) {
           </div>
 
           {/* PAGINATION */}
-          <div className="category-pagination">
+          {products.length > 0 && (
+            <div className="category-pagination">
 
-            <button type="button">
-              <FiChevronLeft />
-            </button>
-
-            {[1, 2, 3, 4, 5].map((number) => (
               <button
                 type="button"
-                key={number}
-                className={page === number ? "active" : ""}
-                onClick={() => setPage(number)}
+                disabled={page <= 1}
+                onClick={() => handlePageChange(page - 1)}
+                aria-label="Previous Page"
               >
-                {number}
+                <FiChevronLeft />
               </button>
-            ))}
 
-            <span>...</span>
+              {getPaginationNumbers(page, totalPages).map((item, idx) => (
+                item === '...' ? (
+                  <span key={`ellipsis-${idx}`}>...</span>
+                ) : (
+                  <button
+                    type="button"
+                    key={`page-${item}`}
+                    className={page === item ? "active" : ""}
+                    onClick={() => handlePageChange(item)}
+                  >
+                    {item}
+                  </button>
+                )
+              ))}
 
-            <button type="button">18</button>
+              <button
+                type="button"
+                disabled={page >= totalPages}
+                onClick={() => handlePageChange(page + 1)}
+                aria-label="Next Page"
+              >
+                <FiChevronRight />
+              </button>
 
-            <button type="button">
-              <FiChevronRight />
-            </button>
-
-          </div>
+            </div>
+          )}
         </main>
       </section>
 
